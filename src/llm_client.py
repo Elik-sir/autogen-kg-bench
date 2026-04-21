@@ -1,6 +1,8 @@
 import os
 from openai import OpenAI
+from dotenv import load_dotenv
 
+load_dotenv()
 class LLMClient:
     def __init__(self):
         api_key = os.getenv("OPENROUTER_API_KEY")
@@ -9,7 +11,7 @@ class LLMClient:
             base_url="https://openrouter.ai/api/v1",
             api_key=api_key,
         )
-        self.model = os.getenv("LLM_MODEL", "openai/gpt-4o-mini")
+        self.model = os.getenv("LLM_MODEL")
 
     def generate_response(self, system_prompt, user_prompt):
         """Отправляет запрос к LLM через OpenRouter."""
