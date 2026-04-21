@@ -1,0 +1,116 @@
+[
+  {
+    "complexity": "simple",
+    "question": "Как называется компания с тикером MSFT?",
+    "cypher": "MATCH (c:Company {ticker: 'MSFT'}) RETURN c.name",
+    "ideal_context": "Microsoft Corp."
+  },
+  {
+    "complexity": "simple",
+    "question": "В каком секторе работает компания, упомянутая в статье 'Apple faces supply chain delays for next-generation devices'?",
+    "cypher": "MATCH (a:NewsArticle {title: 'Apple faces supply chain delays for next-generation devices'})<-[:MENTIONED_IN]-(c:Company)-[:BELONGS_TO]->(s:Sector) RETURN s.name",
+    "ideal_context": "Technology"
+  },
+  {
+    "complexity": "simple",
+    "question": "Кто является CEO компании, упомянутой в статье с заголовком 'Apple faces supply chain delays for next-generation devices'?",
+    "cypher": "MATCH (a:NewsArticle {title: 'Apple faces supply chain delays for next-generation devices'})<-[:MENTIONED_IN]-(c:Company)<-[:CEO_OF]-(p:Person) RETURN p.name",
+    "ideal_context": "Tim Cook"
+  },
+  {
+    "complexity": "simple",
+    "question": "Какой технологией занимается компания Microsoft Corp.?",
+    "cypher": "MATCH (co:Company {name: 'Microsoft Corp.'})-[:DEVELOPES]->(t:Technology) RETURN t.name",
+    "ideal_context": "Generative AI"
+  },
+  {
+    "complexity": "multi-hop",
+    "question": "Какие статьи упоминают инвесторов, вложившихся в компанию Microsoft Corp.?",
+    "cypher": "MATCH (c:Company {name: 'Microsoft Corp.'})<-[:INVESTED_IN]-(ii:InstitutionalInvestor)-[:MENTIONED_IN]->(a:NewsArticle) RETURN a.title",
+    "ideal_context": "BlackRock increases stake in AI-driven companies"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Сколько всего компаний упоминается в статье 'Apple faces supply chain delays for next-generation devices'?",
+    "cypher": "MATCH (a:NewsArticle {title: 'Apple faces supply chain delays for next-generation devices'})<-[:MENTIONED_IN]-(c:Company) RETURN count(c) AS company_count",
+    "ideal_context": "1"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Какой средний процент владения у институциональных инвесторов в компании Microsoft Corp.?",
+    "cypher": "MATCH (ii:InstitutionalInvestor)-[r:INVESTED_IN]->(c:Company {name: 'Microsoft Corp.'}) RETURN avg(r.percentage) AS average_investment",
+    "ideal_context": "7.7"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Какие 3 компании имеют наибольшую рыночную капитализацию?",
+    "cypher": "MATCH (c:Company) RETURN c.name ORDER BY c.market_cap_bln DESC LIMIT 3",
+    "ideal_context": "Microsoft Corp.; Apple Inc.; NVIDIA Corp."
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Сколько технологий находится на стадии Mainstream?",
+    "cypher": "MATCH (t:Technology {maturity: 'Mainstream'}) RETURN count(t) AS technology_count",
+    "ideal_context": "1"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Какой институциональный инвестор имеет наибольшее количество упоминаний в новостях?",
+    "cypher": "MATCH (ii:InstitutionalInvestor)-[:MENTIONED_IN]->(a:NewsArticle) RETURN ii.name, count(a) AS mention_count ORDER BY mention_count DESC LIMIT 1",
+    "ideal_context": "BlackRock Inc., 1"
+  },
+  {
+    "complexity": "simple",
+    "question": "Как называется компания с тикером MSFT?",
+    "cypher": "MATCH (c:Company {ticker: 'MSFT'}) RETURN c.name",
+    "ideal_context": "Microsoft Corp."
+  },
+  {
+    "complexity": "simple",
+    "question": "Кто является CEO компании, упомянутой в статье с заголовком 'Apple faces supply chain delays for next-generation devices'?",
+    "cypher": "MATCH (n:NewsArticle {title: 'Apple faces supply chain delays for next-generation devices'})<-[:MENTIONED_IN]-(co:Company)<-[:CEO_OF]-(p:Person) RETURN p.name",
+    "ideal_context": "Tim Cook"
+  },
+  {
+    "complexity": "simple",
+    "question": "В каком секторе работает компания Microsoft Corp.?",
+    "cypher": "MATCH (c:Company {name: 'Microsoft Corp.'})-[:BELONGS_TO]->(s:Sector) RETURN s.name",
+    "ideal_context": "Technology"
+  },
+  {
+    "complexity": "multi-hop",
+    "question": "Какие статьи упоминают инвесторов, вкладывающих в компанию, которой руководит Satya Nadella?",
+    "cypher": "MATCH (p:Person {name: 'Satya Nadella'})-[:CEO_OF]->(c:Company)<-[:INVESTED_IN]-(ii:InstitutionalInvestor)-[:MENTIONED_IN]->(na:NewsArticle) RETURN na.title",
+    "ideal_context": "BlackRock increases stake in AI-driven companies"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Сколько всего компаний упоминается в статье с заголовком 'Apple faces supply chain delays for next-generation devices'?",
+    "cypher": "MATCH (n:NewsArticle {title: 'Apple faces supply chain delays for next-generation devices'})<-[:MENTIONED_IN]-(co:Company) RETURN count(co)",
+    "ideal_context": "1"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Какой средний рыночный капитал компаний, входящих в сектор Financials?",
+    "cypher": "MATCH (s:Sector {name: 'Financials'})<-[:BELONGS_TO]-(c:Company) RETURN avg(c.market_cap_bln)",
+    "ideal_context": "500.0"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Какие 3 технологий разрабатываются наибольшим числом компаний?",
+    "cypher": "MATCH (t:Technology)<-[:DEVELOPES]-(c:Company) RETURN t.name, count(c) AS company_count ORDER BY company_count DESC LIMIT 3",
+    "ideal_context": "Generative AI, 2; Electric Vehicles, 1"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Какой институциональный инвестор имеет наибольшую долю владения в одной компании?",
+    "cypher": "MATCH (ii:InstitutionalInvestor)-[r:INVESTED_IN]->(c:Company) RETURN ii.name, max(r.percentage) AS max_percentage ORDER BY max_percentage DESC LIMIT 1",
+    "ideal_context": "Vanguard Group, 8.1"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Сколько статей с негативным сентиментом упоминают компании, производящие продукт Comirnaty?",
+    "cypher": "MATCH (p:Product {name: 'Comirnaty'})<-[:PRODUCES]-(co:Company)-[:MENTIONED_IN]->(na:NewsArticle {sentiment: 'negative'}) RETURN count(na)",
+    "ideal_context": "0"
+  }
+]
