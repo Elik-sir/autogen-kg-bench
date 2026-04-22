@@ -1,2 +1,8 @@
 __pycache__
 .env
+src/benchmarks/light-rag/.venv
+src/benchmarks/vector-rag/.venv
+
+.lightrag_data
+
+.vector_rag_data

@@ -1,0 +1,10 @@
+[project]
+name = "lightrag-bench"
+version = "0.1.0"
+description = "LightRAG benchmark runner; uv создаёт .venv в этой папке, без конфликта с корневым autogen-kg-bench"
+requires-python = ">=3.12"
+dependencies = [
+    "lightrag-hku>=1.4.0",
+    "python-dotenv>=1.0.0",
+    "openai>=2.32.0",
+]
