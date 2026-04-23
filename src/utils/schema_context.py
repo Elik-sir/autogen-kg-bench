@@ -3,6 +3,9 @@ from __future__ import annotations
 
 from utils.rel_type_cover import select_nodes_covering_schema_rel_types
 
+# Сколько узлов максимум отдавать в data_samples на одну метку (промпт LLM).
+DATA_SAMPLES_PER_LABEL_LIMIT = 5
+
 
 def get_schema(db_manager):
     """Извлекает схему БД, чтобы LLM не галлюцинировала значения."""
@@ -39,27 +42,56 @@ def get_samples(db_manager):
                 labels_with_missing_rel_types[label] = missing_rel_types
 
             # Если по покрытию ничего не выбралось (например, label без рёбер),
-            # берём до 2 узлов как fallback.
+            # берём до DATA_SAMPLES_PER_LABEL_LIMIT узлов как fallback.
             if not selected_ids:
                 safe = label.replace("`", "``")
                 fallback_query = f"""
                 MATCH (n:`{safe}`)
                 RETURN properties(n) AS props
-                LIMIT 2
+                LIMIT $limit
                 """
-                fallback_rows = db_manager.run_query(fallback_query)
+                fallback_rows = db_manager.run_query(
+                    fallback_query, {"limit": DATA_SAMPLES_PER_LABEL_LIMIT}
+                )
                 samples[label] = [row["props"] for row in fallback_rows if row.get("props")]
                 fallback_labels.append(label)
                 continue
 
+            ids_for_fetch = selected_ids[: DATA_SAMPLES_PER_LABEL_LIMIT]
             samples_query = """
             UNWIND $ids AS eid
             MATCH (n)
             WHERE elementId(n) = eid
             RETURN properties(n) AS props
             """
-            samples_rows = db_manager.run_query(samples_query, {"ids": selected_ids})
-            samples[label] = [row["props"] for row in samples_rows if row.get("props")]
+            samples_rows = db_manager.run_query(samples_query, {"ids": ids_for_fetch})
+            props_list = [row["props"] for row in samples_rows if row.get("props")]
+
+            need = DATA_SAMPLES_PER_LABEL_LIMIT - len(props_list)
+            if need > 0:
+                safe = label.replace("`", "``")
+                extra_query = f"""
+                MATCH (n:`{safe}`)
+                WHERE NOT elementId(n) IN $exclude
+                RETURN properties(n) AS props
+                LIMIT $limit
+                """
+                exclude = list(ids_for_fetch)
+                extra_rows = db_manager.run_query(extra_query, {"exclude": exclude, "limit": need})
+                seen = {frozenset(p.items()) for p in props_list if isinstance(p, dict)}
+                for row in extra_rows:
+                    p = row.get("props")
+                    if not p or not isinstance(p, dict):
+                        continue
+                    key = frozenset(p.items())
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    props_list.append(p)
+                    if len(props_list) >= DATA_SAMPLES_PER_LABEL_LIMIT:
+                        break
+
+            samples[label] = props_list
 
         print(
             f"[SAMPLES] labels={len(node_labels)}, fallback={len(fallback_labels)}, "
