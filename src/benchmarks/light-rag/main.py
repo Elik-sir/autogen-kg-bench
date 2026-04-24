@@ -29,10 +29,10 @@ def _tokenize(s: str) -> set[str]:
     return set(re.findall(r"[\w\.\-]+", s, re.UNICODE)) - {""}
 
 
-def recall_overlap(ideal: str, answer: str) -> float:
-    if not ideal.strip():
+def recall_overlap(ground_truth: str, answer: str) -> float:
+    if not ground_truth.strip():
         return 1.0
-    g = _tokenize(ideal)
+    g = _tokenize(ground_truth)
     if not g:
         return 0.0
     a = _tokenize(answer) if answer else set()
@@ -140,7 +140,7 @@ async def _run() -> int:
         results: list[dict] = []
         for i, it in enumerate(items, 1):
             q = it.get("question", "")
-            ideal = it.get("ideal_context", "")
+            ground_truth = it.get("ground_truth")
             complexity = it.get("complexity", "")
 
             try:
@@ -154,23 +154,25 @@ async def _run() -> int:
             rdict = {
                 "index": i,
                 "complexity": complexity,
-                "recall_on_ideal_tokens": round(recall_overlap(ideal, str(answer)), 4),
+                "recall_on_ground_truth_tokens": round(
+                    recall_overlap(ground_truth, str(answer)), 4
+                ),
                 "question": q,                
-                "ideal_context": ideal,
+                "ground_truth": ground_truth,
                 "answer": answer
             }
             results.append(rdict)
-            sc = rdict["recall_on_ideal_tokens"]
+            sc = rdict["recall_on_ground_truth_tokens"]
             print(f"  [{i}/{len(items)}] recall={sc:.3f}  {q[:70]}…" if len(q) > 70 else f"  [{i}/{len(items)}] recall={sc:.3f}  {q}")
 
-        mean_recall = sum(r["recall_on_ideal_tokens"] for r in results) / max(len(results), 1)
+        mean_recall = sum(r["recall_on_ground_truth_tokens"] for r in results) / max(len(results), 1)
         summary = {
             "settings": "settings.py",
             "corpus": str(corpus_path),
             "benchmark": str(bench_path),
             "mode": mode,
             "n": len(results),
-            "mean_recall_on_ideal_tokens": round(mean_recall, 4),
+            "mean_recall_on_ground_truth_tokens": round(mean_recall, 4),
         }
         out_path = _resolve_output_path()
         _write_results(out_path, summary, results)

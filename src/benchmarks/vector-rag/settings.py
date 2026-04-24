@@ -28,12 +28,12 @@ OUTPUT_FILE: str = "vector_benchmark_data.jsonl"
 WORKING_DIR: str = ".vector_rag_data"
 
 # Чанкинг и поиск
-CHUNK_SIZE: int = 1000
-CHUNK_OVERLAP: int = 150
+CHUNK_SIZE: int = 600
+CHUNK_OVERLAP: int = 100
 RETRIEVAL_K: int = 5
 LLM_TEMPERATURE: float = 0.2
 
-REBUILD_INDEX: bool = False
+REBUILD_INDEX: bool = True
 LIMIT_QUESTIONS: int = 0
 
 VECTOR_RAG_DIR: Path = _VR

@@ -1,0 +1,146 @@
+{
+  "source_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\light-rag\\benchmark_data.jsonl",
+  "judge_model": "qwen/qwen3-235b-a22b-2507",
+  "n_scored": 19,
+  "n_errors": 0,
+  "mean": {
+    "comprehensiveness": 1.8421052631578947,
+    "diversity": 1.631578947368421,
+    "empowerment": 1.8421052631578947
+  },
+  "items": [
+    {
+      "index": 1,
+      "comprehensiveness": 5.0,
+      "diversity": 3.0,
+      "empowerment": 5.0,
+      "error": null
+    },
+    {
+      "index": 2,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 3,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 4,
+      "comprehensiveness": 5.0,
+      "diversity": 4.0,
+      "empowerment": 5.0,
+      "error": null
+    },
+    {
+      "index": 5,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 6,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 7,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 8,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 9,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 10,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 11,
+      "comprehensiveness": 5.0,
+      "diversity": 3.0,
+      "empowerment": 5.0,
+      "error": null
+    },
+    {
+      "index": 12,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 13,
+      "comprehensiveness": 5.0,
+      "diversity": 4.0,
+      "empowerment": 5.0,
+      "error": null
+    },
+    {
+      "index": 14,
+      "comprehensiveness": 1.0,
+      "diversity": 2.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 15,
+      "comprehensiveness": 1.0,
+      "diversity": 2.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 16,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 17,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 18,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    },
+    {
+      "index": 19,
+      "comprehensiveness": 1.0,
+      "diversity": 1.0,
+      "empowerment": 1.0,
+      "error": null
+    }
+  ]
+}

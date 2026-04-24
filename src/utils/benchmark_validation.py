@@ -25,7 +25,7 @@ def value_to_text(value):
     return str(value)
 
 
-def result_to_ideal_context(question, result_rows):
+def result_to_ground_truth(question, result_rows):
     lowered_question = question.strip().lower()
     if lowered_question.startswith("есть ли"):
         first_row = result_rows[0] if result_rows else {}

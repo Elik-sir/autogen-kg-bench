@@ -2,7 +2,7 @@
 Метрики Comprehensiveness, Diversity, Empowerment (CDE) по файлу `benchmark_data.jsonl`.
 
 Протокол: LLM-судья оценивает ответ (answer) в контексте вопроса (question) и эталона
-(ideal_context), в духе оценок качества GraphRAG / query-focused summarization.
+(ground_truth), в духе оценок качества GraphRAG / query-focused summarization.
 
 Запуск (из папки light-rag, с PYTHONPATH=../..):
   python cde_metrics.py
@@ -76,7 +76,7 @@ JSON одной строкой, без пояснений:
 
 
 def _recall_block(row: dict[str, Any]) -> str:
-    v = row.get("recall_on_ideal_tokens")
+    v = row.get("recall_on_ground_truth_tokens")
     if v is None:
         return ""
     try:
@@ -193,7 +193,7 @@ def run_cde(
     for row in items:
         idx = row.get("index", len(per_index) + 1)
         q = str(row.get("question", ""))
-        ideal = str(row.get("ideal_context", ""))
+        ideal = str(row.get("ground_truth"))
         ans = str(row.get("answer", ""))
         try:
             s = score_answer(client, model, q, ideal, ans, row)
@@ -247,7 +247,7 @@ def _parse() -> argparse.Namespace:
         "--input",
         type=Path,
         default=_LIGHT_RAG / "benchmark_data.jsonl",
-        help="JSONL с kind=item (question, ideal_context, answer)",
+        help="JSONL с kind=item (question, ground_truth, answer)",
     )
     p.add_argument(
         "--output",
