@@ -66,27 +66,46 @@ class BenchmarkGenerator:
         if not contexts_for_prompt:
             print("[ПРОПУСК] Нет полезного контекста для subgraph-deep-analytics.")
             return []
-        generated = self._generate_by_prompt_builder(
-            build_subgraph_deep_analytics_prompts, schema, contexts_for_prompt, num_questions
-        )
-        if not generated:
-            return []
 
-        # Для этого типа `cypher` нужен только для debug-выгрузки подграфа.
-        # `answer` — эталонный ответ от LLM, `ground_truth` — контекст генерации.
+        # Один вызов LLM на один контекст: иначе модель смешивает якоря, и ground_truth
+        # по индексу не совпадает с answer.
         out = []
-        for idx, item in enumerate(generated):
-            ctx = subgraph_contexts[idx % len(subgraph_contexts)]
+        max_attempts = max(num_questions * 4, len(contexts_for_prompt) * 3, 12)
+        attempts = 0
+        ctx_i = 0
+        while len(out) < num_questions and attempts < max_attempts:
+            attempts += 1
+            ctx = contexts_for_prompt[ctx_i % len(contexts_for_prompt)]
+            ctx_i += 1
+            generated = self._generate_by_prompt_builder(
+                build_subgraph_deep_analytics_prompts, schema, [ctx], 1
+            )
+            if isinstance(generated, dict):
+                generated = [generated]
+            if not generated:
+                continue
+            item = generated[0]
+            if not isinstance(item, dict):
+                continue
+
+            # Для этого типа `cypher` нужен только для debug-выгрузки подграфа.
+            # `answer` — эталонный ответ от LLM; `ground_truth` — тот же useful_context,
+            # что был в промпте (должен достаточен для проверки answer).
             item["complexity"] = "subgraph-deep-analytics"
             item["cypher"] = ctx.get("debug_cypher", "")
             item["params"] = ctx.get("debug_params", {})
             item["debug_only_cypher"] = True
-            generated_answer = str(item.get("answer", "")).strip()
-            item["answer"] = generated_answer
+            item["answer"] = str(item.get("answer", "")).strip()
             item["ground_truth"] = str(ctx.get("useful_context", "")).strip()
             item["subgraph_context"] = ctx.get("subgraph_context", "")
             item["useful_context"] = ctx.get("useful_context", "")
             out.append(item)
+
+        if len(out) < num_questions:
+            print(
+                f"[ПРЕДУПРЕЖДЕНИЕ] subgraph-deep-analytics: получено {len(out)}/{num_questions} "
+                f"после {attempts} попыток (пустые или невалидные ответы LLM)."
+            )
         return out
 
     def validate_and_build_benchmark(self, generated_items):
@@ -138,10 +157,10 @@ class BenchmarkGenerator:
 
             # Каждый тип генерируется отдельной функцией и своим промптом.
             generated_items = []
-            generated_items.extend(self.generate_simple_pairs(schema, data_samples, num_questions=5))
-            generated_items.extend(self.generate_multi_hop_pairs(schema, data_samples, num_questions=5))
-            generated_items.extend(self.generate_aggregation_pairs(schema, data_samples, num_questions=5))
-            generated_items.extend(self.generate_cross_branch_pairs(schema, data_samples, num_questions=5))
+            generated_items.extend(self.generate_simple_pairs(schema, data_samples, num_questions=2))
+            generated_items.extend(self.generate_multi_hop_pairs(schema, data_samples, num_questions=3))
+            generated_items.extend(self.generate_aggregation_pairs(schema, data_samples, num_questions=4))
+            generated_items.extend(self.generate_cross_branch_pairs(schema, data_samples, num_questions=3))
             generated_items.extend(self.generate_subgraph_deep_analytics_pairs(schema, num_questions=5))
             
             valid_items = self.validate_and_build_benchmark(generated_items)

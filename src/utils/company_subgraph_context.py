@@ -41,8 +41,8 @@ def _pick_anchor_candidates(db_manager, company_label: str, limit: int) -> list[
 def _get_subgraph_snapshot(
     db_manager,
     anchor_id: str,
-    hop1_limit: int = 20,
-    hop2_limit: int = 30,
+    hop1_limit: int = 64,
+    hop2_limit: int = 96,
 ) -> dict[str, Any]:
     # Берем локальный подграф вокруг anchor в 1 и 2 hops, но ограничиваем
     # объем, чтобы контекст оставался пригодным для промпта.
@@ -73,6 +73,156 @@ def _get_subgraph_snapshot(
     if not rows:
         return {}
     return _sanitize_snapshot(rows[0])
+
+
+def _anchor_search_needles(anchor_props: dict[str, Any]) -> list[str]:
+    """Подстроки для проверки, что текст новости/статьи относится к якорной компании."""
+    if not isinstance(anchor_props, dict):
+        return []
+    out: list[str] = []
+
+    def _push_name_variant(raw: str) -> None:
+        n = raw.strip()
+        if len(n) < 4:
+            return
+        low = n.lower()
+        out.append(low)
+        first = n.split(",")[0].strip()
+        if len(first) >= 4 and first.lower() != low:
+            out.append(first.lower())
+        t = low
+        for suf in (
+            " incorporated",
+            " corporation",
+            " corp.",
+            " corp",
+            " plc",
+            " ltd.",
+            " ltd",
+            ", inc.",
+            " inc.",
+            " inc",
+            ", inc",
+        ):
+            if t.endswith(suf):
+                t = t[: -len(suf)].strip()
+                break
+        if len(t) >= 4 and t not in out:
+            out.append(t)
+
+    name = anchor_props.get("name")
+    if isinstance(name, str):
+        _push_name_variant(name)
+    ticker = anchor_props.get("ticker")
+    if isinstance(ticker, str):
+        t = ticker.strip().lstrip("$").lower()
+        if len(t) >= 2:
+            out.append(t)
+            out.append(f"${t}")
+    seen: set[str] = set()
+    uniq: list[str] = []
+    for x in out:
+        if x and x not in seen:
+            seen.add(x)
+            uniq.append(x)
+    return uniq
+
+
+def _text_blob_from_props(props: dict[str, Any]) -> str:
+    if not isinstance(props, dict):
+        return ""
+    parts: list[str] = []
+    for v in props.values():
+        if isinstance(v, str):
+            parts.append(v.lower())
+        elif isinstance(v, (int, float)):
+            parts.append(str(v).lower())
+    return " ".join(parts)
+
+
+def _props_match_company(needles: list[str], props: dict[str, Any]) -> bool:
+    if not needles:
+        return True
+    blob = _text_blob_from_props(props)
+    if not blob.strip():
+        return False
+    return any(n in blob for n in needles)
+
+
+def _is_news_like_node(labels: Any, rel_type: str | None) -> bool:
+    lab = " ".join(labels or []).lower() if labels else ""
+    rt = (rel_type or "").lower()
+    return "news" in lab or "article" in lab or "press" in lab or "news" in rt
+
+
+def _filter_hop1_relevant(anchor_props: dict[str, Any], hop1: list[Any]) -> list[dict[str, Any]]:
+    needles = _anchor_search_needles(anchor_props)
+    kept: list[dict[str, Any]] = []
+    for item in hop1:
+        if not isinstance(item, dict) or not item.get("rel_type"):
+            continue
+        labels = item.get("node_labels")
+        rel_type = item.get("rel_type")
+        props = item.get("node_props") or {}
+        if _is_news_like_node(labels, str(rel_type) if rel_type else None):
+            if not needles or not _props_match_company(needles, props):
+                continue
+        kept.append(item)
+
+    def _sort_key(row: dict[str, Any]) -> tuple[str, str]:
+        p = row.get("node_props") or {}
+        h = p.get("headline") or p.get("title") or ""
+        return (str(row.get("rel_type") or ""), str(h))
+
+    kept.sort(key=_sort_key)
+    return kept
+
+
+def _filter_hop2_relevant(anchor_props: dict[str, Any], hop2: list[Any]) -> list[dict[str, Any]]:
+    needles = _anchor_search_needles(anchor_props)
+    kept: list[dict[str, Any]] = []
+    for item in hop2:
+        if not isinstance(item, dict):
+            continue
+        r1 = item.get("rel_type_1")
+        r2 = item.get("rel_type_2")
+        mid_labels = item.get("mid_labels")
+        mid_props = item.get("mid_props") or {}
+        n2_labels = item.get("node2_labels")
+        n2_props = item.get("node2_props") or {}
+        if _is_news_like_node(mid_labels, str(r1) if r1 else None):
+            if not needles or not _props_match_company(needles, mid_props):
+                continue
+        if _is_news_like_node(n2_labels, str(r2) if r2 else None):
+            if not needles or not _props_match_company(needles, n2_props):
+                continue
+        if not item.get("rel_type_1") or not item.get("rel_type_2"):
+            continue
+        kept.append(item)
+
+    def _sort_key2(row: dict[str, Any]) -> tuple[str, str, str]:
+        p2 = row.get("node2_props") or {}
+        h = p2.get("headline") or p2.get("title") or ""
+        return (str(row.get("rel_type_1") or ""), str(row.get("rel_type_2") or ""), str(h))
+
+    kept.sort(key=_sort_key2)
+    return kept
+
+
+def _prune_snapshot_to_anchor_relevant(snapshot: dict[str, Any]) -> dict[str, Any]:
+    """
+    Убирает из снапшота новости/статьи, в тексте которых нет имени или тикера якоря
+    (типичный шум при широком матчинге NEWS_ABOUT_COMPANY). Остальные соседи сохраняются.
+    """
+    anchor_props = snapshot.get("anchor_props") or {}
+    hop1_raw = snapshot.get("hop1") or []
+    hop2_raw = snapshot.get("hop2") or []
+    hop1 = _filter_hop1_relevant(anchor_props, hop1_raw)[:20]
+    hop2 = _filter_hop2_relevant(anchor_props, hop2_raw)[:30]
+    out = dict(snapshot)
+    out["hop1"] = hop1
+    out["hop2"] = hop2
+    return out
 
 
 def _should_drop_key(key: str) -> bool:
@@ -301,6 +451,7 @@ def build_company_subgraph_contexts(
         snapshot = _get_subgraph_snapshot(db_manager, anchor_id)
         if not snapshot:
             continue
+        snapshot = _prune_snapshot_to_anchor_relevant(snapshot)
         context_text = _snapshot_to_text(snapshot)
         if not context_text:
             continue

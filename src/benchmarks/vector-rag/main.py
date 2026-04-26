@@ -13,6 +13,7 @@ from __future__ import annotations
 import json
 import re
 import sys
+import time
 from pathlib import Path
 
 _SRC = Path(__file__).resolve().parent.parent.parent
@@ -84,6 +85,62 @@ def _write_results(path: Path, summary: dict, items: list[dict]) -> None:
         )
 
 
+def _run_llm_accuracy_judge(results: list[dict], summary: dict) -> None:
+    if not getattr(settings, "ENABLE_LLM_ACCURACY", True):
+        summary["llm_accuracy"] = {"skipped": True, "reason": "ENABLE_LLM_ACCURACY=false"}
+        return
+    key = (settings.OPENROUTER_API_KEY or "").strip()
+    if not key:
+        summary["llm_accuracy"] = {"skipped": True, "reason": "no OPENROUTER_API_KEY"}
+        return
+
+    from llm_accuracy import judge_correct, judge_model, openai_client  # noqa: WPS433
+
+    delay = float(getattr(settings, "METRICS_API_DELAY_SEC", 0.0))
+    model = judge_model()
+    try:
+        client = openai_client()
+    except Exception as e:  # noqa: BLE001
+        summary["llm_accuracy"] = {"skipped": True, "reason": str(e)}
+        return
+
+    summary["llm_judge_model"] = model
+    n_scored = 0
+    n_correct = 0
+    n_skipped_empty_gt = 0
+
+    for r in results:
+        gt = r.get("ground_truth")
+        if gt is None or not str(gt).strip():
+            n_skipped_empty_gt += 1
+            continue
+        q = str(r.get("question", ""))
+        ans = str(r.get("answer", ""))
+        try:
+            ok = judge_correct(client, model, q, str(gt), ans)
+            r["llm_accuracy_correct"] = ok
+            r["llm_accuracy_error"] = None
+            n_scored += 1
+            if ok:
+                n_correct += 1
+            tag = "✓" if ok else "✗"
+            print(f"  [judge] #{r.get('index')} accuracy {tag}", flush=True)
+        except Exception as ex:  # noqa: BLE001
+            r["llm_accuracy_correct"] = None
+            r["llm_accuracy_error"] = str(ex)
+            print(f"  [judge] #{r.get('index')} error: {ex}", flush=True)
+        if delay > 0:
+            time.sleep(delay)
+
+    acc = round(n_correct / n_scored, 4) if n_scored else None
+    summary["llm_accuracy"] = {
+        "mean_accuracy": acc,
+        "n_judged": n_scored,
+        "n_correct": n_correct,
+        "n_skipped_empty_ground_truth": n_skipped_empty_gt,
+    }
+
+
 def run() -> int:
     from corpus_text import load_corpus, resolved_corpus_path  # noqa: WPS433
     from vector_rag import answer_from_store, build_or_load_vectorstore  # noqa: WPS433
@@ -132,6 +189,8 @@ def run() -> int:
             "question": q,
             "ground_truth": ground_truth,
             "answer": answer,
+            "llm_accuracy_correct": None,
+            "llm_accuracy_error": None,
         }
         results.append(rdict)
         sc = rdict["recall_on_ground_truth_tokens"]
@@ -142,7 +201,7 @@ def run() -> int:
         )
 
     mean_recall = sum(r["recall_on_ground_truth_tokens"] for r in results) / max(len(results), 1)
-    summary = {
+    summary: dict = {
         "settings": "settings.py",
         "backend": "vector-rag-langchain-faiss",
         "corpus": corpus_path,
@@ -153,6 +212,8 @@ def run() -> int:
         "n": len(results),
         "mean_recall_on_ground_truth_tokens": round(mean_recall, 4),
     }
+
+    _run_llm_accuracy_judge(results, summary)
     out_path = _resolve_output_path()
     _write_results(out_path, summary, results)
     print(json.dumps(summary, ensure_ascii=False, indent=2))

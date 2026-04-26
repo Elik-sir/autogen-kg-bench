@@ -33,7 +33,12 @@ CHUNK_OVERLAP: int = 100
 RETRIEVAL_K: int = 5
 LLM_TEMPERATURE: float = 0.2
 
-REBUILD_INDEX: bool = True
+REBUILD_INDEX: bool = False
 LIMIT_QUESTIONS: int = 0
+
+# LLM-as-judge для метрики accuracy (пустая строка = тот же LLM_MODEL)
+METRICS_JUDGE_MODEL: str = ""
+METRICS_API_DELAY_SEC: float = 0.0
+ENABLE_LLM_ACCURACY: bool = True
 
 VECTOR_RAG_DIR: Path = _VR
