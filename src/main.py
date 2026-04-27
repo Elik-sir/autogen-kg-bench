@@ -43,6 +43,8 @@ class BenchmarkGenerator:
     def __init__(self):
         self.db = Neo4jManager()
         self.llm = LLMClient()
+        # Сквозной курсор по subgraph-контекстам между вызовами генератора.
+        self._subgraph_ctx_cursor = 0
 
     def _generate_by_prompt_builder(
         self,
@@ -150,11 +152,11 @@ class BenchmarkGenerator:
         out = []
         max_attempts = max(num_questions * 4, len(contexts_for_prompt) * 3, 12)
         attempts = 0
-        ctx_i = 0
+        cursor = self._subgraph_ctx_cursor % len(contexts_for_prompt)
         while len(out) < num_questions and attempts < max_attempts:
             attempts += 1
-            ctx = contexts_for_prompt[ctx_i % len(contexts_for_prompt)]
-            ctx_i += 1
+            ctx = contexts_for_prompt[cursor]
+            cursor = (cursor + 1) % len(contexts_for_prompt)
             generated = self._generate_by_prompt_builder(
                 build_subgraph_deep_analytics_prompts, schema, [ctx], 1, existing_questions=existing_questions
             )
@@ -176,8 +178,9 @@ class BenchmarkGenerator:
             item["answer"] = str(item.get("answer", "")).strip()
             item["ground_truth"] = str(ctx.get("useful_context", "")).strip()
             item["subgraph_context"] = ctx.get("subgraph_context", "")
-            item["useful_context"] = ctx.get("useful_context", "")
             out.append(item)
+
+        self._subgraph_ctx_cursor = cursor
 
         if len(out) < num_questions:
             print(
@@ -286,7 +289,7 @@ class BenchmarkGenerator:
                 lambda n, existing_questions=None: self.generate_subgraph_deep_analytics_pairs(
                     schema, num_questions=n, existing_questions=existing_questions
                 ),
-                1,
+                5,
             ),
             # ("same-type-common", lambda n, existing_questions=None: self.generate_same_type_common_pairs(schema, data_samples, num_questions=n, existing_questions=existing_questions), 2),
         ]
@@ -369,10 +372,10 @@ if __name__ == "__main__":
         target_size=30,
         sample_entities_per_type=10,
         per_type_targets={
-            "simple": 5,
-            "multi-hop": 10,
-            "aggregation": 10,
-            "cross-branch": 2,
-            "subgraph-deep-analytics": 10,
+            "simple": 1,
+            "multi-hop": 1,
+            "aggregation": 1,
+            "cross-branch": 1,
+            "subgraph-deep-analytics": 3,
         },
     )
