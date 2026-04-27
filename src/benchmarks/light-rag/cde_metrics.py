@@ -193,7 +193,7 @@ def run_cde(
     for row in items:
         idx = row.get("index", len(per_index) + 1)
         q = str(row.get("question", ""))
-        ideal = str(row.get("ground_truth"))
+        ideal = str(row.get("ideal_for_scoring") or row.get("ground_truth") or "")
         ans = str(row.get("answer", ""))
         try:
             s = score_answer(client, model, q, ideal, ans, row)

@@ -126,6 +126,70 @@ def build_cross_branch_prompts(schema, data_samples, count):
     return BASE_SYSTEM_PROMPT, user_prompt
 
 
+def build_same_type_common_prompts(schema, data_samples, pair_context: dict):
+    """
+    Один кейс за вызов: pair_context из same_type_common_context.find_same_type_common_contexts.
+    """
+    ctx = pair_context if isinstance(pair_context, dict) else {}
+    lbl = ctx.get("node_label", "?")
+    pa = ctx.get("props_a") or {}
+    pb = ctx.get("props_b") or {}
+    cl = ctx.get("common_labels") or []
+    cc = ctx.get("common_props") or {}
+    hop_a = ctx.get("hop1_text_a", "")
+    hop_b = ctx.get("hop1_text_b", "")
+    da = ctx.get("dist_a")
+    db = ctx.get("dist_b")
+    pha = ctx.get("path_hint_a")
+    phb = ctx.get("path_hint_b")
+
+    path_lines = []
+    if da is not None and db is not None:
+        path_lines.append(
+            f"Длины найденных путей A→общая и B→общая (в рёбрах): {da} и {db} (каждый не более 3)."
+        )
+    if pha:
+        path_lines.append(f"Пример кратчайшего пути A→общая: {pha}")
+    if phb:
+        path_lines.append(f"Пример кратчайшего пути B→общая: {phb}")
+    path_block = "\n".join(path_lines) if path_lines else ""
+
+    case_block = f"""
+КЕЙС (метка узлов: {lbl})
+Узел A (с B нет прямой связи): {pa}
+Узел B (с A нет прямой связи): {pb}
+Окрестность 1-hop у A:
+{hop_a}
+Окрестность 1-hop у B:
+{hop_b}
+{path_block}
+
+Служебно для синтеза Cypher (не повторяй в вопросе дословно): общая сущность — метки {cl}, ключевые поля {cc}.
+Формулировка вопроса: «что общего / что объединяет / общий элемент контекста» для A и B, без явного названия значений из {cc}.
+"""
+
+    user_prompt = (
+        _base_user_prompt(schema, data_samples)
+        + """
+=== ТИП ЗАДАЧИ: SAME-TYPE-COMMON ===
+Сгенерируй ровно 1 вопрос по кейсу ниже.
+
+Логика:
+- A и B — узлы одной метки, между ними нет ребра.
+- Есть сущность, достижимая от A и от B по цепочкам длиной 1–3 рёбер (в т.ч. только через 2–3 шага, без общего прямого соседа).
+- Локальные 1-hop списки и подсказки по путям даны для контекста; вопрос должен нацеливаться на эту общую сущность.
+
+Требования:
+1) В вопросе ссылайся на A и B по полям из кейса (name/title/ticker и т.д.).
+2) Не называй в вопросе общую сущность — ответ должен получаться запросом.
+3) Cypher однозначно возвращает эту общую сущность (RETURN понятных полей узла). Допускаются пути фиксированной длины или *1..3, если это следует из схемы. Только метки/типы рёбер из схемы.
+"""
+        + case_block
+        + _output_format_prompt("same-type-common")
+    )
+    return BASE_SYSTEM_PROMPT, user_prompt
+
+
 def build_subgraph_deep_analytics_prompts(schema, subgraph_contexts, count):
     system_prompt = (
         "Ты — аналитик. Твоя задача: по бизнес-контексту сформулировать сложные вопросы "
