@@ -189,12 +189,20 @@ class BenchmarkGenerator:
             )
         return out
 
-    def validate_and_build_benchmark(self, generated_items, seen_exact_questions=None, seen_normalized_questions=None):
+    def validate_and_build_benchmark(
+        self,
+        generated_items,
+        seen_exact_questions=None,
+        seen_normalized_questions=None,
+        output_file=None,
+        existing_benchmark=None,
+    ):
         """Выполняет Cypher в базе. Если есть результат -> сохраняем в бенчмарк."""
         print("Валидация запросов в Neo4j...")
-        benchmark_dataset =[]
+        benchmark_dataset = []
         seen_exact_questions = seen_exact_questions if seen_exact_questions is not None else set()
         seen_normalized_questions = seen_normalized_questions if seen_normalized_questions is not None else []
+        prefix = existing_benchmark if existing_benchmark is not None else []
 
         for item in generated_items:
             cypher_query = item.get("cypher", "")
@@ -234,7 +242,11 @@ class BenchmarkGenerator:
                 seen_exact_questions.add(normalized_question)
                 seen_normalized_questions.append(normalized_question)
                 print(f"[УСПЕХ] Добавлен вопрос ({item['complexity']}): {question}")
-                
+                if output_file is not None:
+                    snapshot = [*prefix, *benchmark_dataset]
+                    with open(output_file, "w", encoding="utf-8") as f:
+                        json.dump(snapshot, f, ensure_ascii=False, indent=2)
+
             except Exception as e:
                 # Если синтаксическая ошибка в Cypher - бракуем
                 print(f"[ОШИБКА SYNTAX] {e} | Query: {cypher_query}")
@@ -268,14 +280,14 @@ class BenchmarkGenerator:
                 lambda n, existing_questions=None: self.generate_multi_hop_pairs(
                     schema, data_samples, num_questions=n, existing_questions=existing_questions
                 ),
-                1,
+                7,
             ),
             (
                 "aggregation",
                 lambda n, existing_questions=None: self.generate_aggregation_pairs(
                     schema, data_samples, num_questions=n, existing_questions=existing_questions
                 ),
-                1,
+                7,
             ),
             (
                 "cross-branch",
@@ -339,6 +351,8 @@ class BenchmarkGenerator:
                     generated_items or [],
                     seen_exact_questions=seen_exact_questions,
                     seen_normalized_questions=seen_normalized_questions,
+                    output_file=output_file,
+                    existing_benchmark=final_benchmark,
                 )
                 final_benchmark.extend(valid_items)
                 added_for_type = sum(
