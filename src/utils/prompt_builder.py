@@ -31,7 +31,24 @@ USEFUL_ENTITY_KEYS = {
 }
 
 
-def _base_user_prompt(schema, data_samples):
+def _existing_questions_prompt(existing_questions):
+    questions = [str(q).strip() for q in (existing_questions or []) if str(q).strip()]
+    if not questions:
+        return ""
+    formatted = "\n".join(f"- {q}" for q in questions[-200:])
+    return f"""
+
+3. УЖЕ СГЕНЕРИРОВАННЫЕ ВОПРОСЫ (НЕ ПОВТОРЯТЬ):
+{formatted}
+
+=== АНТИДУБЛИКАТНЫЕ ПРАВИЛА (ОБЯЗАТЕЛЬНО) ===
+- Запрещено дословно повторять любой вопрос из списка.
+- Запрещено делать близкий парафраз уже существующего вопроса.
+- Если кандидат слишком похож по смыслу, выбери другую сущность, другую метрику или другой ракурс.
+"""
+
+
+def _base_user_prompt(schema, data_samples, existing_questions=None):
     return f"""
 Ты — Senior Neo4j Architect и эксперт по оценке систем GraphRAG.
 Твоя задача — создать "Золотой стандарт" датасета для оценки качества извлечения знаний из графа.
@@ -42,6 +59,7 @@ def _base_user_prompt(schema, data_samples):
 
 2. ПРИМЕРЫ ДАННЫХ:
 {data_samples}
+{_existing_questions_prompt(existing_questions)}
 
 === ОБЩИЕ ПРАВИЛА (ОБЯЗАТЕЛЬНО) ===
 1. Используй только Labels/Relationships/Properties, существующие в схеме.
@@ -66,9 +84,9 @@ def _output_format_prompt(complexity):
 """
 
 
-def build_simple_prompts(schema, data_samples, count):
+def build_simple_prompts(schema, data_samples, count, existing_questions=None):
     user_prompt = (
-        _base_user_prompt(schema, data_samples)
+        _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
         + f"""
 === ТИП ЗАДАЧИ: SIMPLE ===
 Сгенерируй {count} вопросов типа "simple":
@@ -80,9 +98,9 @@ def build_simple_prompts(schema, data_samples, count):
     return BASE_SYSTEM_PROMPT, user_prompt
 
 
-def build_multi_hop_prompts(schema, data_samples, count):
+def build_multi_hop_prompts(schema, data_samples, count, existing_questions=None):
     user_prompt = (
-        _base_user_prompt(schema, data_samples)
+        _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
         + f"""
 === ТИП ЗАДАЧИ: MULTI-HOP ===
 Сгенерируй {count} вопросов типа "multi-hop":
@@ -94,9 +112,9 @@ def build_multi_hop_prompts(schema, data_samples, count):
     return BASE_SYSTEM_PROMPT, user_prompt
 
 
-def build_aggregation_prompts(schema, data_samples, count):
+def build_aggregation_prompts(schema, data_samples, count, existing_questions=None):
     user_prompt = (
-        _base_user_prompt(schema, data_samples)
+        _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
         + f"""
 === ТИП ЗАДАЧИ: AGGREGATION ===
 Сгенерируй {count} вопросов типа "aggregation":
@@ -108,9 +126,9 @@ def build_aggregation_prompts(schema, data_samples, count):
     return BASE_SYSTEM_PROMPT, user_prompt
 
 
-def build_cross_branch_prompts(schema, data_samples, count):
+def build_cross_branch_prompts(schema, data_samples, count, existing_questions=None):
     user_prompt = (
-        _base_user_prompt(schema, data_samples)
+        _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
         + f"""
 === ТИП ЗАДАЧИ: CROSS-BRANCH (SUMMARIZATION/ANALYTICS) ===
 Сгенерируй {count} вопросов типа "cross-branch" по алгоритму:
@@ -126,7 +144,7 @@ def build_cross_branch_prompts(schema, data_samples, count):
     return BASE_SYSTEM_PROMPT, user_prompt
 
 
-def build_same_type_common_prompts(schema, data_samples, pair_context: dict):
+def build_same_type_common_prompts(schema, data_samples, pair_context: dict, existing_questions=None):
     """
     Один кейс за вызов: pair_context из same_type_common_context.find_same_type_common_contexts.
     """
@@ -169,7 +187,7 @@ def build_same_type_common_prompts(schema, data_samples, pair_context: dict):
 """
 
     user_prompt = (
-        _base_user_prompt(schema, data_samples)
+        _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
         + """
 === ТИП ЗАДАЧИ: SAME-TYPE-COMMON ===
 Сгенерируй ровно 1 вопрос по кейсу ниже.
@@ -190,7 +208,7 @@ def build_same_type_common_prompts(schema, data_samples, pair_context: dict):
     return BASE_SYSTEM_PROMPT, user_prompt
 
 
-def build_subgraph_deep_analytics_prompts(schema, subgraph_contexts, count):
+def build_subgraph_deep_analytics_prompts(schema, subgraph_contexts, count, existing_questions=None):
     system_prompt = (
         "Ты — аналитик. Твоя задача: по бизнес-контексту сформулировать сложные вопросы "
         "для проверки способности находить скрытые зависимости. "
@@ -253,6 +271,10 @@ def build_subgraph_deep_analytics_prompts(schema, subgraph_contexts, count):
 5) Ответ должен быть кратким, точным и опираться только на данный контекст (без выдумок).
 6) Используй только полезные параметры сущностей (например: name, title, description и т.п.),
    игнорируй технические поля вроде embedding/vector.
+7) Не повторяй и не перефразируй уже сгенерированные вопросы.
+
+УЖЕ СГЕНЕРИРОВАННЫЕ ВОПРОСЫ (НЕ ПОВТОРЯТЬ):
+{chr(10).join(f"- {q}" for q in (existing_questions or [])[-200:]) if existing_questions else "- (пока нет)"}
 
 КОНТЕКСТЫ:
 {contexts_text}

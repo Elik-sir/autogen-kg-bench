@@ -44,36 +44,48 @@ class BenchmarkGenerator:
         self.db = Neo4jManager()
         self.llm = LLMClient()
 
-    def _generate_by_prompt_builder(self, prompt_builder, schema, data_samples, num_questions):
-        system_prompt, user_prompt = prompt_builder(schema, data_samples, num_questions)
+    def _generate_by_prompt_builder(
+        self,
+        prompt_builder,
+        schema,
+        data_samples,
+        num_questions,
+        existing_questions=None,
+    ):
+        system_prompt, user_prompt = prompt_builder(
+            schema,
+            data_samples,
+            num_questions,
+            existing_questions=existing_questions,
+        )
         response = self.llm.generate_response(system_prompt, user_prompt)
         return parse_qa_pairs_response(response)
 
-    def generate_simple_pairs(self, schema, data_samples, num_questions=2):
+    def generate_simple_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} simple-вопросов...")
         return self._generate_by_prompt_builder(
-            build_simple_prompts, schema, data_samples, num_questions
+            build_simple_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
         )
 
-    def generate_multi_hop_pairs(self, schema, data_samples, num_questions=2):
+    def generate_multi_hop_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} multi-hop-вопросов...")
         return self._generate_by_prompt_builder(
-            build_multi_hop_prompts, schema, data_samples, num_questions
+            build_multi_hop_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
         )
 
-    def generate_aggregation_pairs(self, schema, data_samples, num_questions=2):
+    def generate_aggregation_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} aggregation-вопросов...")
         return self._generate_by_prompt_builder(
-            build_aggregation_prompts, schema, data_samples, num_questions
+            build_aggregation_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
         )
 
-    def generate_cross_branch_pairs(self, schema, data_samples, num_questions=2):
+    def generate_cross_branch_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} cross-branch-вопросов...")
         return self._generate_by_prompt_builder(
-            build_cross_branch_prompts, schema, data_samples, num_questions
+            build_cross_branch_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
         )
 
-    def generate_same_type_common_pairs(self, schema, data_samples, num_questions=2):
+    def generate_same_type_common_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} same-type-common-вопросов...")
         contexts = find_same_type_common_contexts(
             self.db,
@@ -95,7 +107,7 @@ class BenchmarkGenerator:
             ctx = contexts[ctx_i % len(contexts)]
             ctx_i += 1
             system_prompt, user_prompt = build_same_type_common_prompts(
-                schema, data_samples, ctx
+                schema, data_samples, ctx, existing_questions=existing_questions
             )
             response = self.llm.generate_response(system_prompt, user_prompt)
             parsed = parse_qa_pairs_response(response)
@@ -116,7 +128,7 @@ class BenchmarkGenerator:
             )
         return out
 
-    def generate_subgraph_deep_analytics_pairs(self, schema, num_questions=3):
+    def generate_subgraph_deep_analytics_pairs(self, schema, num_questions=3, existing_questions=None):
         print(f"Генерация {num_questions} subgraph-deep-analytics-вопросов...")
         subgraph_contexts = build_company_subgraph_contexts(
             db_manager=self.db,
@@ -144,7 +156,7 @@ class BenchmarkGenerator:
             ctx = contexts_for_prompt[ctx_i % len(contexts_for_prompt)]
             ctx_i += 1
             generated = self._generate_by_prompt_builder(
-                build_subgraph_deep_analytics_prompts, schema, [ctx], 1
+                build_subgraph_deep_analytics_prompts, schema, [ctx], 1, existing_questions=existing_questions
             )
             if isinstance(generated, dict):
                 generated = [generated]
@@ -241,12 +253,42 @@ class BenchmarkGenerator:
         seen_normalized_questions = []
 
         generation_plan = [
-            ("simple", lambda n: self.generate_simple_pairs(schema, data_samples, num_questions=n), 1),
-            ("multi-hop", lambda n: self.generate_multi_hop_pairs(schema, data_samples, num_questions=n), 1),
-            ("aggregation", lambda n: self.generate_aggregation_pairs(schema, data_samples, num_questions=n), 1),
-            ("cross-branch", lambda n: self.generate_cross_branch_pairs(schema, data_samples, num_questions=n), 1),
-            ("subgraph-deep-analytics", lambda n: self.generate_subgraph_deep_analytics_pairs(schema, num_questions=n), 1),
-            # ("same-type-common", lambda n: self.generate_same_type_common_pairs(schema, data_samples, num_questions=n), 2),
+            (
+                "simple",
+                lambda n, existing_questions=None: self.generate_simple_pairs(
+                    schema, data_samples, num_questions=n, existing_questions=existing_questions
+                ),
+                1,
+            ),
+            (
+                "multi-hop",
+                lambda n, existing_questions=None: self.generate_multi_hop_pairs(
+                    schema, data_samples, num_questions=n, existing_questions=existing_questions
+                ),
+                1,
+            ),
+            (
+                "aggregation",
+                lambda n, existing_questions=None: self.generate_aggregation_pairs(
+                    schema, data_samples, num_questions=n, existing_questions=existing_questions
+                ),
+                1,
+            ),
+            (
+                "cross-branch",
+                lambda n, existing_questions=None: self.generate_cross_branch_pairs(
+                    schema, data_samples, num_questions=n, existing_questions=existing_questions
+                ),
+                1,
+            ),
+            (
+                "subgraph-deep-analytics",
+                lambda n, existing_questions=None: self.generate_subgraph_deep_analytics_pairs(
+                    schema, num_questions=n, existing_questions=existing_questions
+                ),
+                1,
+            ),
+            # ("same-type-common", lambda n, existing_questions=None: self.generate_same_type_common_pairs(schema, data_samples, num_questions=n, existing_questions=existing_questions), 2),
         ]
 
         if per_type_targets is None:
@@ -281,7 +323,12 @@ class BenchmarkGenerator:
                 attempts += 1
                 remaining = target_for_type - collected_for_type
                 request_n = min(batch_size, remaining)
-                generated_items = generator_fn(request_n)
+                existing_questions = [
+                    str(item.get("question", "")).strip()
+                    for item in final_benchmark
+                    if item.get("complexity") == type_name and str(item.get("question", "")).strip()
+                ]
+                generated_items = generator_fn(request_n, existing_questions=existing_questions)
                 if isinstance(generated_items, dict):
                     generated_items = [generated_items]
 
