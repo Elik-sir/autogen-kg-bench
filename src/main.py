@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 import json
+import os
 import re
 from difflib import SequenceMatcher
 from neo4j_manager import Neo4jManager
@@ -19,6 +20,8 @@ from utils.schema_context import get_schema, get_samples
 from utils.company_subgraph_context import build_company_subgraph_contexts
 
 load_dotenv()
+
+GROUND_TRUTH_ROW_LIMIT = max(1, int(os.getenv("BENCHMARK_GROUND_TRUTH_LIMIT", "10")))
 
 
 def normalize_question_text(text: str) -> str:
@@ -65,12 +68,54 @@ def _should_skip_low_signal_result(cypher_query: str, result: list[dict]) -> boo
     return False
 
 
+def _append_limit_if_missing(cypher_query: str, row_limit: int) -> str:
+    """Добавляет LIMIT к Cypher, если его нет, чтобы не раздувать ground_truth."""
+    q = str(cypher_query or "").strip()
+    if not q:
+        return q
+    if re.search(r"\blimit\s+\d+\b", q, flags=re.IGNORECASE):
+        return q
+    # UNION обычно требует отдельного LIMIT по подзапросам; не трогаем автоматически.
+    if re.search(r"\bunion\b", q, flags=re.IGNORECASE):
+        return q
+    q = q.rstrip(";")
+    return f"{q} LIMIT {row_limit}"
+
+
 class BenchmarkGenerator:
     def __init__(self):
         self.db = Neo4jManager()
         self.llm = LLMClient()
         # Сквозной курсор по subgraph-контекстам между вызовами генератора.
         self._subgraph_ctx_cursor = 0
+
+    def _build_answer_from_context(self, question: str, ground_truth: str, fallback: str = "") -> str:
+        """
+        Формирует эталонный answer по тому же принципу, что и subgraph-deep-analytics:
+        LLM получает вопрос + контекст и возвращает краткий проверяемый ответ.
+        """
+        if not str(ground_truth or "").strip():
+            return str(fallback or "").strip()
+        system_prompt = (
+            "Ты аналитик и составитель эталонных ответов для бенчмарка GraphRAG. "
+            "Отвечай только по данному контексту, без выдумок и внешних знаний."
+        )
+        user_prompt = f"""
+Вопрос:
+{question}
+
+Контекст (ground_truth):
+{ground_truth}
+
+Сформируй краткий и точный эталонный ответ только по этому контексту.
+Если контекста недостаточно для прямого ответа, верни максимально корректный краткий вывод по имеющимся данным.
+Только текст ответа, без пояснений и без markdown.
+"""
+        response = self.llm.generate_response(system_prompt, user_prompt)
+        if response is None:
+            return str(fallback or ground_truth).strip()
+        answer = str(response).strip()
+        return answer or str(fallback or ground_truth).strip()
 
     def _generate_by_prompt_builder(
         self,
@@ -255,6 +300,13 @@ class BenchmarkGenerator:
 
                 result = []
                 if cypher_query:
+                    limited_cypher = _append_limit_if_missing(
+                        cypher_query,
+                        row_limit=GROUND_TRUTH_ROW_LIMIT,
+                    )
+                    if limited_cypher != cypher_query:
+                        item["cypher"] = limited_cypher
+                        cypher_query = limited_cypher
                     # Для subgraph-deep-analytics это debug-запрос, не источник ground_truth.
                     result = self.db.run_query(cypher_query, params)
                     if not result and not (debug_only_cypher and has_precomputed_context):
@@ -269,6 +321,11 @@ class BenchmarkGenerator:
                 # Если ground_truth уже подготовлен заранее, используем его.
                 if not has_precomputed_context:
                     item["ground_truth"] = result_to_ground_truth(question, result)
+                item["answer"] = self._build_answer_from_context(
+                    question=question,
+                    ground_truth=str(item.get("ground_truth", "")),
+                    fallback=str(item.get("answer", "")),
+                )
                 benchmark_dataset.append(item)
                 seen_exact_questions.add(normalized_question)
                 seen_normalized_questions.append(normalized_question)
