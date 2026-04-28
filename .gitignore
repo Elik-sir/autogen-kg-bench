@@ -6,3 +6,4 @@ src/benchmarks/vector-rag/.venv
 .lightrag_data
 
 .vector_rag_data
+graphrag
