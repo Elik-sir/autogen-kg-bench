@@ -58,9 +58,11 @@ def _truncate_text(text: str, max_chars: int) -> str:
 
 
 def _trim_value(value):
-    if isinstance(value, str):
-        return _truncate_text(value, MAX_VALUE_CHARS)
+    if value is None or isinstance(value, (str, int, float, bool)):
+        return _truncate_text(value, MAX_VALUE_CHARS) if isinstance(value, str) else value
     if isinstance(value, list):
+        return [_trim_value(v) for v in value[:5]]
+    if isinstance(value, tuple):
         return [_trim_value(v) for v in value[:5]]
     if isinstance(value, dict):
         out = {}
@@ -69,7 +71,8 @@ def _trim_value(value):
                 break
             out[str(k)] = _trim_value(v)
         return out
-    return value
+    # Neo4j temporal/spatial and other driver-specific values are not JSON-serializable.
+    return _truncate_text(str(value), MAX_VALUE_CHARS)
 
 
 def _compact_schema(schema) -> str:
