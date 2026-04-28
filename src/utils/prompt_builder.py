@@ -1,3 +1,7 @@
+import json
+import os
+
+
 BASE_SYSTEM_PROMPT = (
     "Ты — Data Scientist. Твоя задача — создать бенчмарк для тестирования систем GraphRAG. "
     "Тебе даны схема графовой базы Neo4j и ПРИМЕРЫ реальных данных из нее. "
@@ -31,6 +35,109 @@ USEFUL_ENTITY_KEYS = {
 }
 
 
+MAX_SCHEMA_CHARS = max(2_000, int(os.getenv("BENCHMARK_MAX_SCHEMA_CHARS", "12000")))
+MAX_SAMPLES_CHARS = max(2_000, int(os.getenv("BENCHMARK_MAX_SAMPLES_CHARS", "24000")))
+MAX_SCHEMA_PROPS_PER_TYPE = max(
+    5, int(os.getenv("BENCHMARK_MAX_SCHEMA_PROPS_PER_TYPE", "40"))
+)
+MAX_SAMPLE_LABELS = max(1, int(os.getenv("BENCHMARK_MAX_SAMPLE_LABELS", "30")))
+MAX_SAMPLES_PER_LABEL = max(1, int(os.getenv("BENCHMARK_MAX_SAMPLES_PER_LABEL", "3")))
+MAX_PROPS_PER_SAMPLE = max(3, int(os.getenv("BENCHMARK_MAX_PROPS_PER_SAMPLE", "12")))
+MAX_VALUE_CHARS = max(20, int(os.getenv("BENCHMARK_MAX_VALUE_CHARS", "180")))
+
+
+def _truncate_text(text: str, max_chars: int) -> str:
+    text = str(text or "")
+    if len(text) <= max_chars:
+        return text
+    keep_head = max_chars // 2
+    keep_tail = max_chars - keep_head
+    return (
+        f"{text[:keep_head]}\n...[TRUNCATED {len(text) - max_chars} chars]...\n{text[-keep_tail:]}"
+    )
+
+
+def _trim_value(value):
+    if isinstance(value, str):
+        return _truncate_text(value, MAX_VALUE_CHARS)
+    if isinstance(value, list):
+        return [_trim_value(v) for v in value[:5]]
+    if isinstance(value, dict):
+        out = {}
+        for i, (k, v) in enumerate(value.items()):
+            if i >= MAX_PROPS_PER_SAMPLE:
+                break
+            out[str(k)] = _trim_value(v)
+        return out
+    return value
+
+
+def _compact_schema(schema) -> str:
+    if not isinstance(schema, dict):
+        return _truncate_text(str(schema), MAX_SCHEMA_CHARS)
+
+    nodes = {}
+    rels = {}
+    for type_name, entry in schema.items():
+        if not isinstance(entry, dict):
+            continue
+        type_kind = str(entry.get("type", "")).lower()
+        properties = entry.get("properties") if isinstance(entry.get("properties"), dict) else {}
+        prop_names = sorted(str(p) for p in properties.keys())[:MAX_SCHEMA_PROPS_PER_TYPE]
+        record = {"properties": prop_names}
+        if type_kind == "node":
+            nodes[str(type_name)] = record
+        elif type_kind == "relationship":
+            rels[str(type_name)] = record
+
+    compact = {
+        "node_labels": dict(sorted(nodes.items())),
+        "relationship_types": dict(sorted(rels.items())),
+    }
+    rendered = json.dumps(compact, ensure_ascii=False, indent=2)
+    return _truncate_text(rendered, MAX_SCHEMA_CHARS)
+
+
+def _is_useful_sample_key(key: str) -> bool:
+    lowered = key.lower()
+    if lowered in USEFUL_ENTITY_KEYS:
+        return True
+    return lowered.endswith("id") or lowered in {"id", "uuid", "symbol"}
+
+
+def _compact_samples(data_samples) -> str:
+    if not isinstance(data_samples, dict):
+        return _truncate_text(str(data_samples), MAX_SAMPLES_CHARS)
+
+    labels = sorted(data_samples.keys())[:MAX_SAMPLE_LABELS]
+    compact = {}
+    for label in labels:
+        rows = data_samples.get(label, [])
+        if not isinstance(rows, list):
+            continue
+        compact_rows = []
+        for row in rows[:MAX_SAMPLES_PER_LABEL]:
+            if not isinstance(row, dict):
+                continue
+            useful = {}
+            for k, v in row.items():
+                key_str = str(k)
+                if _is_useful_sample_key(key_str):
+                    useful[key_str] = _trim_value(v)
+                if len(useful) >= MAX_PROPS_PER_SAMPLE:
+                    break
+            if not useful:
+                for i, (k, v) in enumerate(row.items()):
+                    if i >= MAX_PROPS_PER_SAMPLE:
+                        break
+                    useful[str(k)] = _trim_value(v)
+            compact_rows.append(useful)
+        compact[str(label)] = compact_rows
+
+    rendered = json.dumps(compact, ensure_ascii=False, indent=2)
+    return _truncate_text(rendered, MAX_SAMPLES_CHARS)
+
+
 def _existing_questions_prompt(existing_questions):
     questions = [str(q).strip() for q in (existing_questions or []) if str(q).strip()]
     if not questions:
@@ -49,16 +156,18 @@ def _existing_questions_prompt(existing_questions):
 
 
 def _base_user_prompt(schema, data_samples, existing_questions=None):
+    compact_schema = _compact_schema(schema)
+    compact_samples = _compact_samples(data_samples)
     return f"""
 Ты — Senior Neo4j Architect и эксперт по оценке систем GraphRAG.
 Твоя задача — создать "Золотой стандарт" датасета для оценки качества извлечения знаний из графа.
 
 === ВХОДНЫЕ ДАННЫЕ ===
 1. СХЕМА ГРАФА (Labels, Relationships, Properties):
-{schema}
+{compact_schema}
 
 2. ПРИМЕРЫ ДАННЫХ:
-{data_samples}
+{compact_samples}
 {_existing_questions_prompt(existing_questions)}
 
 === ОБЩИЕ ПРАВИЛА (ОБЯЗАТЕЛЬНО) ===
