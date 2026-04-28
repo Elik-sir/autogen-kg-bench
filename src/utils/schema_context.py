@@ -10,6 +10,22 @@ DATA_SAMPLES_MAX_PER_LABEL = 10
 DATA_SAMPLES_PER_LABEL_DEFAULT = 10
 
 
+def _freeze_value(value):
+    """Convert nested values to hashable representation for deduplication."""
+    if isinstance(value, dict):
+        return tuple(sorted((k, _freeze_value(v)) for k, v in value.items()))
+    if isinstance(value, list):
+        return tuple(_freeze_value(v) for v in value)
+    if isinstance(value, set):
+        return tuple(sorted(_freeze_value(v) for v in value))
+    return value
+
+
+def _props_dedup_key(props: dict) -> tuple:
+    """Build stable hashable key for a node properties dict."""
+    return tuple(sorted((k, _freeze_value(v)) for k, v in props.items()))
+
+
 def get_schema(db_manager):
     """Извлекает схему БД, чтобы LLM не галлюцинировала значения."""
     print("Извлечение схемы данных...")
@@ -91,12 +107,12 @@ def get_samples(db_manager, per_label_limit: int = DATA_SAMPLES_PER_LABEL_DEFAUL
                 """
                 exclude = list(ids_for_fetch)
                 extra_rows = db_manager.run_query(extra_query, {"exclude": exclude, "limit": need})
-                seen = {frozenset(p.items()) for p in props_list if isinstance(p, dict)}
+                seen = {_props_dedup_key(p) for p in props_list if isinstance(p, dict)}
                 for row in extra_rows:
                     p = row.get("props")
                     if not p or not isinstance(p, dict):
                         continue
-                    key = frozenset(p.items())
+                    key = _props_dedup_key(p)
                     if key in seen:
                         continue
                     seen.add(key)
