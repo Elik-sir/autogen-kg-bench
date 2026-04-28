@@ -300,13 +300,14 @@ class BenchmarkGenerator:
 
                 result = []
                 if cypher_query:
-                    limited_cypher = _append_limit_if_missing(
-                        cypher_query,
-                        row_limit=GROUND_TRUTH_ROW_LIMIT,
-                    )
-                    if limited_cypher != cypher_query:
-                        item["cypher"] = limited_cypher
-                        cypher_query = limited_cypher
+                    if not debug_only_cypher:
+                        limited_cypher = _append_limit_if_missing(
+                            cypher_query,
+                            row_limit=GROUND_TRUTH_ROW_LIMIT,
+                        )
+                        if limited_cypher != cypher_query:
+                            item["cypher"] = limited_cypher
+                            cypher_query = limited_cypher
                     # Для subgraph-deep-analytics это debug-запрос, не источник ground_truth.
                     result = self.db.run_query(cypher_query, params)
                     if not result and not (debug_only_cypher and has_precomputed_context):
