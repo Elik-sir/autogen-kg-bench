@@ -2,8 +2,10 @@ __pycache__
 .env
 src/benchmarks/light-rag/.venv
 src/benchmarks/vector-rag/.venv
+src/benchmarks/hippo-rag/.venv
 
 .lightrag_data
+.hipporag_data
 
 .vector_rag_data
 graphrag

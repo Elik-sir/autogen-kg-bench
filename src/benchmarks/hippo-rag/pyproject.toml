@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hippo-rag-bench"
+version = "0.1.0"
+description = "HippoRAG benchmark runner"
+requires-python = ">=3.12"
+dependencies = [
+    "python-dotenv>=1.0.0",
+    "openai>=1.0.0",
+    "hipporag",
+]
+
+# Без этого setuptools видит несколько .py в корне и падает с
+# "Multiple top-level modules discovered in a flat-layout".
+[tool.setuptools]
+py-modules = ["main", "corpus_text", "llm_accuracy", "settings"]

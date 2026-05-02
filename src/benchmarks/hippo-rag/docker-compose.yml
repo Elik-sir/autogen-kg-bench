@@ -1,0 +1,14 @@
+services:
+  hippo-rag-bench:
+    build:
+      context: ../../..
+      dockerfile: src/benchmarks/hippo-rag/Dockerfile
+    image: hippo-rag-bench:latest
+    working_dir: /app/src/benchmarks/hippo-rag
+    env_file:
+      - .env
+    environment:
+      HIPPORAG_EMBEDDING_MODEL: ${HIPPORAG_EMBEDDING_MODEL:-}
+    volumes:
+      - ../../..:/app
+    command: python main.py
