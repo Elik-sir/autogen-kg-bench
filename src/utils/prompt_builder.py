@@ -2,11 +2,18 @@ import json
 import os
 
 
+ENGLISH_BENCHMARK_TEXT_RULE = (
+    "LANGUAGE (mandatory): All natural-language content you produce for the benchmark must be in English: "
+    "especially the `question` field. For complexity `subgraph-deep-analytics`, also write `answer` and every "
+    "string in `analysis_focus` in English. Keep proper names, tickers, and literals exactly as they appear in the sample data."
+)
+
 BASE_SYSTEM_PROMPT = (
-    "Ты — Data Scientist. Твоя задача — создать бенчмарк для тестирования систем GraphRAG. "
-    "Тебе даны схема графовой базы Neo4j и ПРИМЕРЫ реальных данных из нее. "
-    "Ты должен вернуть строго валидный JSON-массив объектов. Без markdown, без текста до/после. "
-    "Генерируй только вопросы, на которые можно дать однозначный ответ по данным графа."
+    "You are a Data Scientist. Your task is to build a benchmark for evaluating GraphRAG systems. "
+    "You are given the Neo4j graph schema and SAMPLE rows from the database. "
+    "You must return a strictly valid JSON array of objects. No markdown, no text before or after. "
+    "Generate only questions that admit an unambiguous answer from the graph data. "
+    + ENGLISH_BENCHMARK_TEXT_RULE
 )
 
 USEFUL_ENTITY_KEYS = {
@@ -148,13 +155,13 @@ def _existing_questions_prompt(existing_questions):
     formatted = "\n".join(f"- {q}" for q in questions[-200:])
     return f"""
 
-3. УЖЕ СГЕНЕРИРОВАННЫЕ ВОПРОСЫ (НЕ ПОВТОРЯТЬ):
+3. ALREADY GENERATED QUESTIONS (DO NOT REPEAT):
 {formatted}
 
-=== АНТИДУБЛИКАТНЫЕ ПРАВИЛА (ОБЯЗАТЕЛЬНО) ===
-- Запрещено дословно повторять любой вопрос из списка.
-- Запрещено делать близкий парафраз уже существующего вопроса.
-- Если кандидат слишком похож по смыслу, выбери другую сущность, другую метрику или другой ракурс.
+=== ANTI-DUPLICATION RULES (MANDATORY) ===
+- Do not copy any question from the list verbatim.
+- Do not produce a close paraphrase of an existing question.
+- If a candidate would be too similar in meaning, pick another entity, metric, or angle.
 """
 
 
@@ -162,34 +169,35 @@ def _base_user_prompt(schema, data_samples, existing_questions=None):
     compact_schema = _compact_schema(schema)
     compact_samples = _compact_samples(data_samples)
     return f"""
-Ты — Senior Neo4j Architect и эксперт по оценке систем GraphRAG.
-Твоя задача — создать "Золотой стандарт" датасета для оценки качества извлечения знаний из графа.
+You are a Senior Neo4j Architect and GraphRAG evaluation expert.
+Your task is to produce a high-quality "gold standard" dataset for measuring knowledge retrieval from the graph.
 
-=== ВХОДНЫЕ ДАННЫЕ ===
-1. СХЕМА ГРАФА (Labels, Relationships, Properties):
+=== INPUT ===
+1. GRAPH SCHEMA (labels, relationships, properties):
 {compact_schema}
 
-2. ПРИМЕРЫ ДАННЫХ:
+2. SAMPLE DATA:
 {compact_samples}
 {_existing_questions_prompt(existing_questions)}
 
-=== ОБЩИЕ ПРАВИЛА (ОБЯЗАТЕЛЬНО) ===
-1. Используй только Labels/Relationships/Properties, существующие в схеме.
-2. Используй реальные значения из примеров данных в фильтрах WHERE/паттернах, чтобы запросы не были пустыми.
-3. Формулируй вопрос естественно, как бизнес-аналитик.
-4. Возвращай в RETURN конкретные поля, а не голые узлы.
-5. Привязывайся к конкретным сущностям по идентифицирующим полям (name/title/ticker/id), избегай только категориальных фильтров.
+=== GENERAL RULES (MANDATORY) ===
+1. Use only labels, relationship types, and properties that exist in the schema.
+2. Use real values from the samples in WHERE clauses and patterns so queries are not empty.
+3. Phrase each question naturally in English, as a business analyst would.
+4. In RETURN, use concrete fields, not bare nodes.
+5. Anchor to specific entities via identifying fields (name/title/ticker/id); avoid purely categorical filters.
+6. {ENGLISH_BENCHMARK_TEXT_RULE}
 """
 
 
 def _output_format_prompt(complexity):
     return f"""
-=== ФОРМАТ ВЫВОДА ===
-Верни только валидный JSON-массив:
+=== OUTPUT FORMAT ===
+Return only a valid JSON array:
 [
   {{
     "complexity": "{complexity}",
-    "question": "Текст вопроса на русском языке",
+    "question": "Clear English benchmark question text",
     "cypher": "MATCH ... RETURN ..."
   }}
 ]
@@ -200,10 +208,10 @@ def build_simple_prompts(schema, data_samples, count, existing_questions=None):
     user_prompt = (
         _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
         + f"""
-=== ТИП ЗАДАЧИ: SIMPLE ===
-Сгенерируй {count} вопросов типа "simple":
-- доступ к атрибутам одного узла или его прямых соседей (1 hop),
-- минимум один конкретный фильтр по сущности.
+=== TASK TYPE: SIMPLE ===
+Generate {count} questions of type "simple":
+- read attributes of one node or its direct neighbors (1 hop),
+- at least one concrete entity filter.
 """
         + _output_format_prompt("simple")
     )
@@ -214,21 +222,21 @@ def build_multi_hop_prompts(schema, data_samples, count, existing_questions=None
     user_prompt = (
         _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
         + f"""
-=== ТИП ЗАДАЧИ: MULTI-HOP ===
-Сгенерируй {count} вопросов типа "multi-hop":
-- путь 2-4 связи через разные типы узлов,
-- фокус на скрытых связях/зависимостях.
+=== TASK TYPE: MULTI-HOP ===
+Generate {count} questions of type "multi-hop":
+- paths of 2–4 hops across different node types,
+- focus on non-obvious links or dependencies.
 
-=== ДОПОЛНИТЕЛЬНЫЕ ПРАВИЛА ДЛЯ НЕПУСТОГО РЕЗУЛЬТАТА (ОБЯЗАТЕЛЬНО) ===
-1. Каждый вопрос должен быть привязан минимум к одному "якорю" (name/title/ticker), который ЯВНО присутствует в ПРИМЕРАХ ДАННЫХ.
-2. Не используй в WHERE редкие/экзотические значения, если они не встречаются в ПРИМЕРАХ ДАННЫХ.
-3. Избегай чрезмерно узких комбинаций фильтров (город + отрасль + ресурс + ключевое слово) в одном запросе.
-4. Перед финализацией Cypher проведи внутреннюю self-check:
-   - есть ли в запросе хотя бы один конкретный якорь из примеров;
-   - не приведет ли набор фильтров к пустому пересечению;
-   - нельзя ли сделать запрос менее хрупким без потери multi-hop-смысла.
-5. Если запрос агрегатный (COUNT/SUM/AVG/MIN/MAX), он должен быть сформулирован так, чтобы результат был информативным (не null и не тривиальный ноль).
-6. Предпочитай паттерны, где хотя бы один hop "подтвержден" примерами (т.е. сущности и связи встречаются в предоставленных данных).
+=== EXTRA RULES FOR NON-EMPTY RESULTS (MANDATORY) ===
+1. Each question must tie to at least one anchor (name/title/ticker) that CLEARLY appears in the SAMPLE DATA.
+2. Do not use rare or exotic WHERE values that do not appear in the SAMPLE DATA.
+3. Avoid overly tight filter combinations (city + industry + resource + keyword) in one query.
+4. Before finalizing Cypher, run an internal self-check:
+   - is there at least one concrete anchor from the samples;
+   - could the filter set yield an empty intersection;
+   - can the query be made less brittle without losing the multi-hop intent.
+5. If the query is aggregate (COUNT/SUM/AVG/MIN/MAX), phrase it so the result is informative (not null and not a trivial zero).
+6. Prefer patterns where at least one hop is supported by the samples (entities and relationships appear in the provided data).
 """
         + _output_format_prompt("multi-hop")
     )
@@ -239,10 +247,10 @@ def build_aggregation_prompts(schema, data_samples, count, existing_questions=No
     user_prompt = (
         _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
         + f"""
-=== ТИП ЗАДАЧИ: AGGREGATION ===
-Сгенерируй {count} вопросов типа "aggregation":
-- используй COUNT, MAX, MIN, AVG, ORDER BY или LIMIT,
-- формулировка должна быть аналитической (топы, сравнения, динамика).
+=== TASK TYPE: AGGREGATION ===
+Generate {count} questions of type "aggregation":
+- use COUNT, MAX, MIN, AVG, ORDER BY, or LIMIT,
+- the wording should be analytical (rankings, comparisons, trends).
 """
         + _output_format_prompt("aggregation")
     )
@@ -253,14 +261,14 @@ def build_cross_branch_prompts(schema, data_samples, count, existing_questions=N
     user_prompt = (
         _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
         + f"""
-=== ТИП ЗАДАЧИ: CROSS-BRANCH (SUMMARIZATION/ANALYTICS) ===
-Сгенерируй {count} вопросов типа "cross-branch" по алгоритму:
-1) Выбери центральный Anchor-узел.
-2) Построй ветку A от Anchor к Entity_A.
-3) Построй независимую ветку B от Anchor к Entity_B.
-4) В тексте вопроса избегай прямых имён Entity_A/Entity_B (Entity Masking), но Cypher должен извлекать их явно.
+=== TASK TYPE: CROSS-BRANCH (SUMMARIZATION / ANALYTICS) ===
+Generate {count} questions of type "cross-branch" using this recipe:
+1) Pick a central anchor node.
+2) Build branch A from the anchor to Entity_A.
+3) Build an independent branch B from the anchor to Entity_B.
+4) In the question text, avoid naming Entity_A/Entity_B directly (entity masking), but Cypher must retrieve them explicitly.
 
-Критерий успешности: ответ требует объединить контекст обеих цепочек Anchor->Entity_A и Anchor->Entity_B.
+Success criterion: answering requires combining context from both chains Anchor→Entity_A and Anchor→Entity_B.
 """
         + _output_format_prompt("cross-branch")
     )
@@ -269,7 +277,7 @@ def build_cross_branch_prompts(schema, data_samples, count, existing_questions=N
 
 def build_same_type_common_prompts(schema, data_samples, pair_context: dict, existing_questions=None):
     """
-    Один кейс за вызов: pair_context из same_type_common_context.find_same_type_common_contexts.
+    One case per call: pair_context from same_type_common_context.find_same_type_common_contexts.
     """
     ctx = pair_context if isinstance(pair_context, dict) else {}
     lbl = ctx.get("node_label", "?")
@@ -287,43 +295,43 @@ def build_same_type_common_prompts(schema, data_samples, pair_context: dict, exi
     path_lines = []
     if da is not None and db is not None:
         path_lines.append(
-            f"Длины найденных путей A→общая и B→общая (в рёбрах): {da} и {db} (каждый не более 3)."
+            f"Lengths of shortest paths A→common and B→common (in hops): {da} and {db} (each at most 3)."
         )
     if pha:
-        path_lines.append(f"Пример кратчайшего пути A→общая: {pha}")
+        path_lines.append(f"Example shortest path A→common: {pha}")
     if phb:
-        path_lines.append(f"Пример кратчайшего пути B→общая: {phb}")
+        path_lines.append(f"Example shortest path B→common: {phb}")
     path_block = "\n".join(path_lines) if path_lines else ""
 
     case_block = f"""
-КЕЙС (метка узлов: {lbl})
-Узел A (с B нет прямой связи): {pa}
-Узел B (с A нет прямой связи): {pb}
-Окрестность 1-hop у A:
+CASE (node label: {lbl})
+Node A (no direct edge to B): {pa}
+Node B (no direct edge to A): {pb}
+1-hop neighborhood of A:
 {hop_a}
-Окрестность 1-hop у B:
+1-hop neighborhood of B:
 {hop_b}
 {path_block}
 
-Служебно для синтеза Cypher (не повторяй в вопросе дословно): общая сущность — метки {cl}, ключевые поля {cc}.
-Формулировка вопроса: «что общего / что объединяет / общий элемент контекста» для A и B, без явного названия значений из {cc}.
+For Cypher synthesis only (do not repeat verbatim in the question): common entity labels {cl}, key fields {cc}.
+Question style: what connects / what is shared / common contextual element for A and B, without naming values from {cc} explicitly.
 """
 
     user_prompt = (
         _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
         + """
-=== ТИП ЗАДАЧИ: SAME-TYPE-COMMON ===
-Сгенерируй ровно 1 вопрос по кейсу ниже.
+=== TASK TYPE: SAME-TYPE-COMMON ===
+Generate exactly 1 question for the case below.
 
-Логика:
-- A и B — узлы одной метки, между ними нет ребра.
-- Есть сущность, достижимая от A и от B по цепочкам длиной 1–3 рёбер (в т.ч. только через 2–3 шага, без общего прямого соседа).
-- Локальные 1-hop списки и подсказки по путям даны для контекста; вопрос должен нацеливаться на эту общую сущность.
+Logic:
+- A and B share one label and have no edge between them.
+- Some entity is reachable from both A and B along chains of 1–3 hops (including only 2–3 steps with no shared direct neighbor).
+- Local 1-hop lists and path hints are for context; the question should target that shared entity.
 
-Требования:
-1) В вопросе ссылайся на A и B по полям из кейса (name/title/ticker и т.д.).
-2) Не называй в вопросе общую сущность — ответ должен получаться запросом.
-3) Cypher однозначно возвращает эту общую сущность (RETURN понятных полей узла). Допускаются пути фиксированной длины или *1..3, если это следует из схемы. Только метки/типы рёбер из схемы.
+Requirements:
+1) In the question, refer to A and B using fields from the case (name/title/ticker, etc.).
+2) Do not name the common entity in the question—the answer must come from the query.
+3) Cypher must unambiguously return that common entity (RETURN clear node fields). Fixed-length paths or *1..3 are allowed if consistent with the schema. Only labels and relationship types from the schema.
 """
         + case_block
         + _output_format_prompt("same-type-common")
@@ -333,9 +341,10 @@ def build_same_type_common_prompts(schema, data_samples, pair_context: dict, exi
 
 def build_subgraph_deep_analytics_prompts(schema, subgraph_contexts, count, existing_questions=None):
     system_prompt = (
-        "Ты — аналитик. Твоя задача: по бизнес-контексту сформулировать сложные вопросы "
-        "для проверки способности находить скрытые зависимости. "
-        "Не упоминай графы, узлы, рёбра, связи, hop, cypher, schema."
+        "You are an analyst. From the business context, formulate difficult questions "
+        "that test the ability to spot hidden dependencies. "
+        "Do not mention graphs, nodes, edges, relationships, hops, Cypher, or schema. "
+        + ENGLISH_BENCHMARK_TEXT_RULE
     )
 
     def _is_useful_key(key: str) -> bool:
@@ -364,51 +373,50 @@ def build_subgraph_deep_analytics_prompts(schema, subgraph_contexts, count, exis
             anchor = _pick_useful_props(ctx.get("anchor_props", {}))
             if anchor:
                 useful_lines.append(f"anchor: {anchor}")
-            # Полный контекст уже заранее очищен в company_subgraph_context,
-            # но здесь дополнительно фиксируем, что нужны только полезные параметры сущностей.
             if ctx.get("useful_context"):
                 useful_lines.append(str(ctx.get("useful_context")))
         else:
             useful_lines.append(str(ctx))
-        contexts_text += f"\nКОНТЕКСТ {idx}:\n" + "\n".join(useful_lines) + "\n"
+        contexts_text += f"\nCONTEXT {idx}:\n" + "\n".join(useful_lines) + "\n"
 
     single_block = len(subgraph_contexts) == 1 and count == 1
     if single_block:
-        intro = """Ниже дан один фрагмент бизнес-контекста по компании.
-Сгенерируй ровно одну пару «сложный аналитический вопрос + эталонный ответ».
-Вопрос и ответ должны полностью опираться только на этот фрагмент: любой факт в ответе должен выводиться из приведённых сигналов (без внешних знаний)."""
+        intro = """Below is one business-context fragment about a company.
+Generate exactly one pair: a complex analytical question and a reference answer.
+The question and answer must rely only on this fragment: every fact in the answer must follow from the signals shown (no outside knowledge).
+All of the question, answer, and analysis_focus strings must be in English."""
     else:
-        intro = f"""Ниже даны фрагменты бизнес-контекста по компаниям.
-Сгенерируй {count} пар «сложный аналитический вопрос + эталонный ответ».
-Критично для нумерации: i-я пара в JSON-массиве опирается только на КОНТЕКСТ i — не смешивай факты разных компаний и не переноси сигналы между блоками."""
+        intro = f"""Below are business-context fragments about companies.
+Generate {count} pairs: each pair is a complex analytical question and a reference answer.
+Critical for indexing: pair i in the JSON array must use ONLY CONTEXT i—do not mix facts across companies or move signals between blocks.
+All questions, answers, and analysis_focus strings must be in English."""
 
     user_prompt = f"""
 {intro}
-Основная задача сделать вопрос полезным для аналитика, пусть он будет направлен на суммаризацию фактов из статей.
-Также из предоставленного контекста надо будет исключить некоторые узлы и связи, для того, чтобы вопрос был направлен на поиск этого узла или связи
-Критично:
-1) Вопросы должны звучать как вопросы для стратегии/риска/рынка/операций.
-2) Вопросы должны требовать синтеза нескольких сигналов, а не одного факта.
-3) Не используй термины структуры данных (граф, узел, ребро, связь, путь, hop, cypher).
-4) Вопрос может быть открытым, но должен быть проверяемым по данному контексту.
-5) Ответ должен быть кратким, точным и опираться только на данный контекст (без выдумок).
-6) Используй только полезные параметры сущностей (например: name, title, description и т.п.),
-   игнорируй технические поля вроде embedding/vector.
-7) Не повторяй и не перефразируй уже сгенерированные вопросы.
+The question should be useful to an analyst and may summarize facts from news or articles.
+You may mentally omit some nodes or links from the provided context so the question targets finding a specific node or relationship.
+Critical:
+1) Questions should read like strategy / risk / market / operations inquiries.
+2) Questions must require synthesizing several signals, not a single fact.
+3) Do not use data-structure jargon (graph, node, edge, relationship, path, hop, Cypher).
+4) A question may be open-ended but must be verifiable against this context.
+5) The answer must be short, precise, and grounded only in this context (no fabrication).
+6) Use only useful entity attributes (e.g. name, title, description); ignore technical fields like embeddings/vectors.
+7) Do not repeat or closely paraphrase questions already generated.
 
-УЖЕ СГЕНЕРИРОВАННЫЕ ВОПРОСЫ (НЕ ПОВТОРЯТЬ):
-{chr(10).join(f"- {q}" for q in (existing_questions or [])[-200:]) if existing_questions else "- (пока нет)"}
+ALREADY GENERATED QUESTIONS (DO NOT REPEAT):
+{chr(10).join(f"- {q}" for q in (existing_questions or [])[-200:]) if existing_questions else "- (none yet)"}
 
-КОНТЕКСТЫ:
+CONTEXTS:
 {contexts_text}
 
-Верни только JSON-массив из {count} объектов (ровно {count}):
+Return only a JSON array of exactly {count} objects:
 [
   {{
     "complexity": "subgraph-deep-analytics",
-    "question": "Текст сложного аналитического вопроса",
-    "answer": "Краткий эталонный ответ на этот вопрос",
-    "analysis_focus": ["сигнал 1", "сигнал 2", "сигнал 3"]
+    "question": "Complex analytical question in English",
+    "answer": "Short reference answer in English",
+    "analysis_focus": ["signal 1", "signal 2", "signal 3"]
   }}
 ]
 """

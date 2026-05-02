@@ -116,9 +116,9 @@ def _build_masked_question(anchor_label: str, branch_a: BranchPath, branch_b: Br
     mask_a = _entity_mask(branch_a.end_label, branch_a.rel_type)
     mask_b = _entity_mask(branch_b.end_label, branch_b.rel_type)
     return (
-        f"Сделай аналитическое резюме для узла типа {anchor_label}: "
-        f"как сущности {mask_a} и {mask_b} совместно влияют на итоговый контекст? "
-        "Ответ должен объединять обе ветки и объяснять скрытые зависимости."
+        f"Provide an analytical summary for a node of type {anchor_label}: "
+        f"how do entities {mask_a} and {mask_b} jointly shape the overall context? "
+        "The answer should combine both branches and explain hidden dependencies."
     )
 
 

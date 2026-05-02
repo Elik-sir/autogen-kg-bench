@@ -35,6 +35,16 @@ def result_to_ground_truth(question, result_rows):
         if isinstance(first_value, (int, float)):
             return "Да, есть." if first_value > 0 else "Нет, не найдено."
         return "Да, есть."
+    if lowered_question.startswith(
+        ("is there ", "are there ", "does ", "do ", "did ", "was there ", "were there ")
+    ):
+        first_row = result_rows[0] if result_rows else {}
+        first_value = next(iter(first_row.values()), None)
+        if isinstance(first_value, bool):
+            return "Yes." if first_value else "No matching records."
+        if isinstance(first_value, (int, float)):
+            return "Yes." if first_value > 0 else "No matching records."
+        return "Yes."
 
     row_texts = []
     for row in result_rows:

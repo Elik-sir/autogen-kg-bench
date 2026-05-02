@@ -54,8 +54,8 @@ def _format_hop1(rows: list[dict[str, Any]]) -> str:
         props = _useful_props(row.get("node_props"))
         if not props and not labels:
             continue
-        lines.append(f"  — через {rt}: {list(labels)} {props}")
-    return "\n".join(lines) if lines else "  (нет соседей в выборке)"
+        lines.append(f"  — via {rt}: {list(labels)} {props}")
+    return "\n".join(lines) if lines else "  (no neighbors in sample)"
 
 
 def _shortest_path_hint(
@@ -77,7 +77,7 @@ def _shortest_path_hint(
     rts = rows[0].get("rel_types") or []
     if hops is None:
         return None
-    return f"{int(hops)} рёбер: {' → '.join(str(t) for t in rts)}"
+    return f"{int(hops)} hops: {' → '.join(str(t) for t in rts)}"
 
 
 def _pick_best_rows(

@@ -97,29 +97,28 @@ class BenchmarkGenerator:
         if not str(ground_truth or "").strip():
             return str(fallback or "").strip()
         system_prompt = (
-            "Ты аналитик и составитель эталонных ответов для бенчмарка GraphRAG. "
-            "Отвечай только по данному контексту, без выдумок и внешних знаний. "
-            "Если в контексте есть прямой ответ, ты обязан вернуть его и не имеешь права "
-            "отвечать, что данных недостаточно."
+            "You are an analyst who writes reference answers for a GraphRAG benchmark. "
+            "Answer only from the given context—no invention or outside knowledge. "
+            "If the context contains a direct answer, you must return it and must not claim insufficient data."
         )
         user_prompt = f"""
-Вопрос:
+Question:
 {question}
 
-Контекст (ground_truth):
+Context (ground_truth):
 {ground_truth}
 
-Сформируй краткий и точный эталонный ответ только по этому контексту.
+Produce a short, precise reference answer based only on this context.
 
-ОБЯЗАТЕЛЬНЫЕ ПРАВИЛА:
-1) Если в контексте есть прямой ответ — обязательно верни его.
-2) Запрещено писать "нет информации", "невозможно определить", "недостаточно данных" и аналоги,
-   если в контексте есть релевантные сущности.
-3) Ничего не выдумывай: используй только факты, явно присутствующие в контексте.
-4) Если вопрос типа "кто работает в какой компании", верни пары в формате:
-   "<сотрудник>, <компания>" (по одной паре на строку).
-5) Если данных действительно нет, ответь только: "Нет данных по запросу."
-6) Никаких пояснений и markdown — только финальный текст ответа.
+MANDATORY RULES:
+1) If the context contains a direct answer, you must return it.
+2) Do not write "no information", "cannot determine", "insufficient data", or similar hedges
+   when the context contains relevant entities.
+3) Do not invent facts: use only what is explicitly present in the context.
+4) For questions like "who works at which company", return pairs as "<employee>, <company>" (one pair per line).
+5) If there is truly no relevant data, reply only with: "No data for this query."
+6) No explanations or markdown—only the final answer text.
+7) Write the entire answer in English (keep proper names and literals as in the context).
 """
         response = self.llm.generate_response(system_prompt, user_prompt)
         if response is None:
