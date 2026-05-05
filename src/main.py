@@ -12,12 +12,12 @@ if __name__ == "__main__":
         target_size=5,
         sample_entities_per_type=10,
         per_type_targets={
-            "simple": 1,
-            "multi-hop-2": 2,
+            "simple": 0,
+            "multi-hop-2": 0,
             "multi-hop-3": 2,
             "multi-hop-4": 2,
-            "aggregation": 1,
-            "cross-branch": 1,
-            "subgraph-deep-analytics": 3,
+            "aggregation": 0,
+            "cross-branch": 0,
+            "subgraph-deep-analytics": 0,
         },
     )

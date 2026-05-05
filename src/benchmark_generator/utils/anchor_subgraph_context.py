@@ -287,6 +287,7 @@ def build_anchor_subgraph_context(
         "anchor_props": anchor.get("props") or {},
         "hop_count": hop_count,
         "paths_found": len(paths),
+        "paths": paths,
         "local_ontology": local_ontology,
     }
 

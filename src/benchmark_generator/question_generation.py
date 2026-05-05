@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from benchmark_generator.prompt_settings import ANCHORS_PER_LABEL_LIMIT, MAX_PATHS_PER_ANCHOR
@@ -31,6 +32,7 @@ class QuestionGenerationEngine:
         self._subgraph_ctx_cursor = 0
         self._anchor_order: list[dict[str, Any]] = []
         self._anchor_cursor = 0
+        self._multi_hop_path_cursor = 0
 
     def _generate_by_prompt_builder(
         self,
@@ -118,22 +120,28 @@ class QuestionGenerationEngine:
             )
             if not local_context:
                 continue
-
-            system_prompt, user_prompt = prompt_builder(
-                schema,
-                local_context,
-                1,
+            path = self._select_path_for_cypher(local_context)
+            if not path:
+                continue
+            deterministic = self._build_deterministic_multi_hop_cypher(path)
+            if not deterministic:
+                continue
+            cypher, params = deterministic
+            question = self._generate_question_for_fixed_path(
+                schema=schema,
+                local_context=local_context,
+                complexity=complexity,
+                hop_count=hop_count,
+                fixed_cypher=cypher,
                 existing_questions=existing_questions,
             )
-            response = self.llm.generate_response(system_prompt, user_prompt)
-            parsed = parse_qa_pairs_response(response)
-            if isinstance(parsed, dict):
-                parsed = [parsed]
-            if not parsed:
+            if not question:
                 continue
-            item = parsed[0]
-            if not isinstance(item, dict):
-                continue
+            item: dict[str, Any] = {
+                "question": question,
+                "cypher": cypher,
+                "params": params,
+            }
             item["complexity"] = complexity
             out.append(item)
 
@@ -143,6 +151,116 @@ class QuestionGenerationEngine:
                 f"после {attempts} попыток."
             )
         return out
+
+    def _select_path_for_cypher(self, local_context: dict[str, Any]) -> dict[str, Any] | None:
+        paths = local_context.get("paths") if isinstance(local_context, dict) else None
+        if not isinstance(paths, list) or not paths:
+            return None
+        idx = self._multi_hop_path_cursor % len(paths)
+        self._multi_hop_path_cursor += 1
+        path = paths[idx]
+        return path if isinstance(path, dict) else None
+
+    def _build_deterministic_multi_hop_cypher(
+        self, path: dict[str, Any]
+    ) -> tuple[str, dict[str, Any]] | None:
+        nodes = path.get("nodes") if isinstance(path, dict) else None
+        rels = path.get("relationships") if isinstance(path, dict) else None
+        if not isinstance(nodes, list) or not isinstance(rels, list) or not nodes or not rels:
+            return None
+        if len(nodes) != len(rels) + 1:
+            return None
+
+        def _safe_label(label: str) -> str:
+            return str(label).replace("`", "``")
+
+        def _safe_rel(rel_type: str) -> str:
+            return str(rel_type).replace("`", "``")
+
+        pattern_parts = ["(n0)"]
+        for idx, rel in enumerate(rels):
+            rel_type = str((rel or {}).get("type") or "").strip()
+            if not rel_type:
+                return None
+            next_node = nodes[idx + 1] if idx + 1 < len(nodes) else {}
+            labels = next_node.get("labels") if isinstance(next_node, dict) else None
+            label_hint = ""
+            if isinstance(labels, list) and labels:
+                label_hint = ":" + "`" + _safe_label(str(labels[0])) + "`"
+            pattern_parts.append(f"-[:`{_safe_rel(rel_type)}`]-")
+            pattern_parts.append(f"(n{idx + 1}{label_hint})")
+
+        anchor_eid = str((nodes[0] or {}).get("element_id") or "").strip()
+        target_eid = str((nodes[-1] or {}).get("element_id") or "").strip()
+        if not anchor_eid or not target_eid:
+            return None
+        hop_count = len(rels)
+        path_pattern = "".join(pattern_parts)
+        cypher = f"""
+MATCH p={path_pattern}
+WHERE elementId(n0) = $anchor_element_id
+  AND elementId(n{hop_count}) = $target_element_id
+RETURN
+  coalesce(n{hop_count}.name, n{hop_count}.title, n{hop_count}.ticker, elementId(n{hop_count})) AS target_value,
+  labels(n{hop_count}) AS target_labels
+LIMIT 10
+""".strip()
+        params = {
+            "anchor_element_id": anchor_eid,
+            "target_element_id": target_eid,
+        }
+        return cypher, params
+
+    def _generate_question_for_fixed_path(
+        self,
+        *,
+        schema,
+        local_context: dict[str, Any],
+        complexity: str,
+        hop_count: int,
+        fixed_cypher: str,
+        existing_questions=None,
+    ) -> str:
+        system_prompt, user_prompt = build_multi_hop_2_prompts(
+            schema,
+            local_context,
+            1,
+            existing_questions=existing_questions,
+        )
+        if hop_count == 3:
+            system_prompt, user_prompt = build_multi_hop_3_prompts(
+                schema, local_context, 1, existing_questions=existing_questions
+            )
+        elif hop_count == 4:
+            system_prompt, user_prompt = build_multi_hop_4_prompts(
+                schema, local_context, 1, existing_questions=existing_questions
+            )
+
+        guidance = f"""
+
+=== FIXED CYPHER (DO NOT CHANGE) ===
+{fixed_cypher}
+
+Return JSON array with exactly 1 object and use this exact cypher text in "cypher":
+[
+  {{
+    "complexity": "{complexity}",
+    "question": "English question requiring exactly {hop_count} hops",
+    "cypher": {json.dumps(fixed_cypher)}
+  }}
+]
+"""
+        response = self.llm.generate_response(system_prompt, user_prompt + guidance)
+        parsed = parse_qa_pairs_response(response)
+        if isinstance(parsed, dict):
+            parsed = [parsed]
+        if not parsed or not isinstance(parsed, list):
+            return ""
+        item = parsed[0] if parsed else {}
+        if not isinstance(item, dict):
+            return ""
+        question = str(item.get("question", "")).strip()
+        return question
 
     def generate_aggregation_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} aggregation-вопросов...")
