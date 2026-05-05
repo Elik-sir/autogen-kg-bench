@@ -14,6 +14,23 @@ from benchmark_generator.utils.benchmark_validation import (
 GROUND_TRUTH_ROW_LIMIT = max(1, int(os.getenv("BENCHMARK_GROUND_TRUTH_LIMIT", "10")))
 
 
+def _build_deterministic_answer_for_multi_hop(item: dict) -> str:
+    ground_truth = str(item.get("ground_truth", "")).strip()
+    if not ground_truth:
+        return ""
+    values = [part.strip() for part in ground_truth.split(";") if part.strip()]
+    deduped: list[str] = []
+    seen: set[str] = set()
+    for value in values:
+        if value in seen:
+            continue
+        seen.add(value)
+        deduped.append(value)
+    if not deduped:
+        return ""
+    return "; ".join(deduped)
+
+
 def validate_generated_items(
     *,
     db,
@@ -81,12 +98,17 @@ def validate_generated_items(
             # Если ground_truth уже подготовлен заранее, используем его.
             if not has_precomputed_context:
                 item["ground_truth"] = result_to_ground_truth(question, result)
-            item["answer"] = build_answer_from_context(
-                llm=llm,
-                question=question,
-                ground_truth=str(item.get("ground_truth", "")),
-                fallback=str(item.get("answer", "")),
-            )
+            complexity = str(item.get("complexity", "")).strip().lower()
+            if complexity.startswith("multi-hop-"):
+                deterministic_answer = _build_deterministic_answer_for_multi_hop(item)
+                item["answer"] = deterministic_answer or str(item.get("ground_truth", "")).strip()
+            else:
+                item["answer"] = build_answer_from_context(
+                    llm=llm,
+                    question=question,
+                    ground_truth=str(item.get("ground_truth", "")),
+                    fallback=str(item.get("answer", "")),
+                )
             benchmark_dataset.append(item)
             seen_exact_questions.add(normalized_question)
             seen_normalized_questions.append(normalized_question)

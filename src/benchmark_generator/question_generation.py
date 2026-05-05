@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import json
+import re
 from typing import Any
 
 from benchmark_generator.prompt_settings import ANCHORS_PER_LABEL_LIMIT, MAX_PATHS_PER_ANCHOR
@@ -99,8 +99,7 @@ class QuestionGenerationEngine:
             3: build_multi_hop_3_prompts,
             4: build_multi_hop_4_prompts,
         }
-        prompt_builder = prompt_builders.get(hop_count)
-        if prompt_builder is None:
+        if prompt_builders.get(hop_count) is None:
             print(f"[ПРОПУСК] Неизвестный hop_count={hop_count}")
             return []
 
@@ -127,12 +126,10 @@ class QuestionGenerationEngine:
             if not deterministic:
                 continue
             cypher, params = deterministic
-            question = self._generate_question_for_fixed_path(
-                schema=schema,
-                local_context=local_context,
-                complexity=complexity,
+            question = self._build_question_from_path(
+                path=path,
                 hop_count=hop_count,
-                fixed_cypher=cypher,
+                complexity=complexity,
                 existing_questions=existing_questions,
             )
             if not question:
@@ -201,7 +198,7 @@ MATCH p={path_pattern}
 WHERE elementId(n0) = $anchor_element_id
   AND elementId(n{hop_count}) = $target_element_id
 RETURN
-  coalesce(n{hop_count}.name, n{hop_count}.title, n{hop_count}.ticker, elementId(n{hop_count})) AS target_value,
+  DISTINCT coalesce(n{hop_count}.name, n{hop_count}.title, n{hop_count}.ticker, elementId(n{hop_count})) AS target_value,
   labels(n{hop_count}) AS target_labels
 LIMIT 10
 """.strip()
@@ -211,56 +208,110 @@ LIMIT 10
         }
         return cypher, params
 
-    def _generate_question_for_fixed_path(
+    def _build_question_from_path(
         self,
         *,
-        schema,
-        local_context: dict[str, Any],
-        complexity: str,
+        path: dict[str, Any],
         hop_count: int,
-        fixed_cypher: str,
+        complexity: str,
         existing_questions=None,
     ) -> str:
-        system_prompt, user_prompt = build_multi_hop_2_prompts(
-            schema,
-            local_context,
-            1,
-            existing_questions=existing_questions,
-        )
-        if hop_count == 3:
-            system_prompt, user_prompt = build_multi_hop_3_prompts(
-                schema, local_context, 1, existing_questions=existing_questions
-            )
-        elif hop_count == 4:
-            system_prompt, user_prompt = build_multi_hop_4_prompts(
-                schema, local_context, 1, existing_questions=existing_questions
-            )
+        nodes = path.get("nodes") if isinstance(path, dict) else None
+        rels = path.get("relationships") if isinstance(path, dict) else None
+        if not isinstance(nodes, list) or not isinstance(rels, list):
+            return ""
+        if len(nodes) != len(rels) + 1 or len(nodes) < 2:
+            return ""
 
-        guidance = f"""
+        def _node_label(node: dict[str, Any]) -> str:
+            labels = node.get("labels") if isinstance(node, dict) else None
+            if isinstance(labels, list) and labels:
+                return str(labels[0])
+            return "entity"
 
-=== FIXED CYPHER (DO NOT CHANGE) ===
-{fixed_cypher}
+        def _node_name(node: dict[str, Any]) -> str:
+            props = node.get("props") if isinstance(node, dict) else None
+            if not isinstance(props, dict):
+                return "the anchor entity"
+            for key in ("name", "title", "ticker", "id", "uuid"):
+                value = props.get(key)
+                if value not in (None, ""):
+                    return str(value)
+            return "the anchor entity"
 
-Return JSON array with exactly 1 object and use this exact cypher text in "cypher":
-[
-  {{
-    "complexity": "{complexity}",
-    "question": "English question requiring exactly {hop_count} hops",
-    "cypher": {json.dumps(fixed_cypher)}
-  }}
-]
+        def _rel_hint(rel_type: str) -> str:
+            mapping = {
+                "INVESTED_IN": "investment links",
+                "OWNS": "ownership ties",
+                "CEO_OF": "executive leadership ties",
+                "MENTIONED_IN": "news co-mention signals",
+                "OPERATES_IN_INDUSTRY": "industry affiliation",
+                "PRODUCES": "product portfolio relations",
+                "WORKS_AT": "employment links",
+                "SUPPLIES": "supply-chain links",
+                "PARTNERS_WITH": "partnership signals",
+            }
+            return mapping.get(rel_type, "indirect relationship signals")
+
+        def _clean_question(text: str) -> str:
+            q = str(text or "").strip()
+            q = re.sub(r"^['\"`]+|['\"`]+$", "", q).strip()
+            if "\n" in q:
+                q = q.splitlines()[0].strip()
+            if not q.endswith("?"):
+                q = q.rstrip(".") + "?"
+            return q
+
+        anchor = nodes[0]
+        target = nodes[-1]
+        anchor_name = _node_name(anchor)
+        target_label = _node_label(target)
+        rel_types = [str((r or {}).get("type") or "RELATED_TO") for r in rels]
+        rel_hints = []
+        seen_hints: set[str] = set()
+        for rel_type in rel_types:
+            hint = _rel_hint(rel_type)
+            if hint in seen_hints:
+                continue
+            seen_hints.add(hint)
+            rel_hints.append(hint)
+        hints_text = ", ".join(rel_hints[:3]) if rel_hints else "indirect graph signals"
+
+        existing_block = ""
+        existing_list = [str(q).strip() for q in (existing_questions or []) if str(q).strip()]
+        if existing_list:
+            existing_block = "\n".join(f"- {q}" for q in existing_list[-50:])
+
+        prompt = f"""
+Write exactly one natural-sounding English benchmark question.
+The question must be answerable by a graph query and must target a {target_label}.
+
+Facts you may use:
+- Anchor entity: {anchor_name}
+- Required reasoning depth: {hop_count} hops
+- Relevant evidence themes: {hints_text}
+
+Constraints:
+1) One sentence, English, business-analyst tone.
+2) Do NOT mention graph jargon: graph, node, edge, relationship, hop, cypher, chain.
+3) Do NOT reveal the final target value directly.
+4) Keep the intent aligned with complexity "{complexity}".
+5) Avoid very similar wording to existing questions.
+
+Existing questions to avoid:
+{existing_block if existing_block else "- (none)"}
 """
-        response = self.llm.generate_response(system_prompt, user_prompt + guidance)
-        parsed = parse_qa_pairs_response(response)
-        if isinstance(parsed, dict):
-            parsed = [parsed]
-        if not parsed or not isinstance(parsed, list):
-            return ""
-        item = parsed[0] if parsed else {}
-        if not isinstance(item, dict):
-            return ""
-        question = str(item.get("question", "")).strip()
-        return question
+        response = self.llm.generate_response(
+            "You create natural benchmark questions for enterprise graph QA.",
+            prompt,
+        )
+        question = _clean_question(response)
+        if question:
+            return question
+        return (
+            f"Which {target_label} is indirectly associated with {anchor_name} "
+            f"based on {hints_text}?"
+        )
 
     def generate_aggregation_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} aggregation-вопросов...")
