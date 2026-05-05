@@ -5,7 +5,8 @@ import os
 ENGLISH_BENCHMARK_TEXT_RULE = (
     "LANGUAGE (mandatory): All natural-language content you produce for the benchmark must be in English: "
     "especially the `question` field. For complexity `subgraph-deep-analytics`, also write `answer` and every "
-    "string in `analysis_focus` in English. Keep proper names, tickers, and literals exactly as they appear in the sample data."
+    "string in `graph_analysis`, `question_concept`, and `target_answer` in English. Keep proper names, tickers, "
+    "and literals exactly as they appear in the sample data."
 )
 
 BASE_SYSTEM_PROMPT = (
@@ -53,3 +54,4 @@ MAX_VALUE_CHARS = max(20, int(os.getenv("BENCHMARK_MAX_VALUE_CHARS", "180")))
 
 ANCHORS_PER_LABEL_LIMIT = max(1, int(os.getenv("BENCHMARK_ANCHORS_PER_LABEL_LIMIT", "10")))
 MAX_PATHS_PER_ANCHOR = max(1, int(os.getenv("BENCHMARK_MAX_PATHS_PER_ANCHOR", "20")))
+MAX_SUBGRAPH_NODES = max(10, int(os.getenv("BENCHMARK_MAX_SUBGRAPH_NODES", "40")))

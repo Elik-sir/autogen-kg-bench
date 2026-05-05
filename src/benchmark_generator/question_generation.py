@@ -13,7 +13,6 @@ from benchmark_generator.utils.company_subgraph_context import build_company_sub
 from benchmark_generator.utils.llm_response_parser import parse_qa_pairs_response
 from benchmark_generator.utils.prompt_builder import (
     build_aggregation_prompts,
-    build_cross_branch_prompts,
     build_multi_hop_2_prompts,
     build_multi_hop_3_prompts,
     build_multi_hop_4_prompts,
@@ -33,6 +32,7 @@ class QuestionGenerationEngine:
         self._anchor_order: list[dict[str, Any]] = []
         self._anchor_cursor = 0
         self._multi_hop_path_cursor = 0
+        self._cross_branch_pair_cursor = 0
 
     def _generate_by_prompt_builder(
         self,
@@ -157,6 +157,141 @@ class QuestionGenerationEngine:
         self._multi_hop_path_cursor += 1
         path = paths[idx]
         return path if isinstance(path, dict) else None
+
+    def _node_name(self, node: dict[str, Any], *, fallback: str = "entity") -> str:
+        props = node.get("props") if isinstance(node, dict) else None
+        if isinstance(props, dict):
+            for key in ("name", "title", "ticker", "id", "uuid", "symbol"):
+                value = props.get(key)
+                if value not in (None, ""):
+                    return str(value)
+        labels = node.get("labels") if isinstance(node, dict) else None
+        if isinstance(labels, list) and labels:
+            return str(labels[0])
+        return fallback
+
+    def _node_label(self, node: dict[str, Any], *, fallback: str = "entity") -> str:
+        labels = node.get("labels") if isinstance(node, dict) else None
+        if isinstance(labels, list) and labels:
+            return str(labels[0])
+        return fallback
+
+    def _select_cross_branch_case(self, local_context: dict[str, Any]) -> dict[str, Any] | None:
+        paths = local_context.get("paths") if isinstance(local_context, dict) else None
+        if not isinstance(paths, list) or len(paths) < 2:
+            return None
+        valid_paths: list[dict[str, Any]] = []
+        for path in paths:
+            nodes = path.get("nodes") if isinstance(path, dict) else None
+            rels = path.get("relationships") if isinstance(path, dict) else None
+            if not isinstance(nodes, list) or not isinstance(rels, list):
+                continue
+            if len(nodes) != 3 or len(rels) != 2:
+                continue
+            if not nodes[1].get("element_id") or not nodes[2].get("element_id"):
+                continue
+            valid_paths.append(path)
+        if len(valid_paths) < 2:
+            return None
+
+        cases: list[dict[str, Any]] = []
+        for i in range(len(valid_paths)):
+            for j in range(i + 1, len(valid_paths)):
+                left = valid_paths[i]
+                right = valid_paths[j]
+                left_nodes = left.get("nodes") or []
+                right_nodes = right.get("nodes") or []
+                left_mid = str((left_nodes[1] or {}).get("element_id") or "").strip()
+                right_mid = str((right_nodes[1] or {}).get("element_id") or "").strip()
+                left_target = str((left_nodes[2] or {}).get("element_id") or "").strip()
+                right_target = str((right_nodes[2] or {}).get("element_id") or "").strip()
+                if not left_mid or not right_mid or not left_target or not right_target:
+                    continue
+                if left_mid == right_mid:
+                    continue
+                if left_target == right_target:
+                    continue
+                cases.append({"left_path": left, "right_path": right})
+        if not cases:
+            return None
+        idx = self._cross_branch_pair_cursor % len(cases)
+        self._cross_branch_pair_cursor += 1
+        return cases[idx]
+
+    def _build_cross_branch_cypher(
+        self, *, anchor_element_id: str, left_path: dict[str, Any], right_path: dict[str, Any]
+    ) -> tuple[str, dict[str, Any]] | None:
+        left_nodes = left_path.get("nodes") if isinstance(left_path, dict) else None
+        right_nodes = right_path.get("nodes") if isinstance(right_path, dict) else None
+        left_rels = left_path.get("relationships") if isinstance(left_path, dict) else None
+        right_rels = right_path.get("relationships") if isinstance(right_path, dict) else None
+        if (
+            not isinstance(left_nodes, list)
+            or not isinstance(right_nodes, list)
+            or not isinstance(left_rels, list)
+            or not isinstance(right_rels, list)
+        ):
+            return None
+        if len(left_nodes) != 3 or len(right_nodes) != 3 or len(left_rels) != 2 or len(right_rels) != 2:
+            return None
+
+        def _safe_label(label: str) -> str:
+            return str(label).replace("`", "``")
+
+        def _safe_rel(rel_type: str) -> str:
+            return str(rel_type).replace("`", "``")
+
+        left_rel_1 = str((left_rels[0] or {}).get("type") or "").strip()
+        left_rel_2 = str((left_rels[1] or {}).get("type") or "").strip()
+        right_rel_1 = str((right_rels[0] or {}).get("type") or "").strip()
+        right_rel_2 = str((right_rels[1] or {}).get("type") or "").strip()
+        if not left_rel_1 or not left_rel_2 or not right_rel_1 or not right_rel_2:
+            return None
+
+        left_mid_label = self._node_label(left_nodes[1], fallback="entity")
+        left_target_label = self._node_label(left_nodes[2], fallback="entity")
+        right_mid_label = self._node_label(right_nodes[1], fallback="entity")
+        right_target_label = self._node_label(right_nodes[2], fallback="entity")
+
+        left_target_id = str((left_nodes[2] or {}).get("element_id") or "").strip()
+        right_target_id = str((right_nodes[2] or {}).get("element_id") or "").strip()
+        if not anchor_element_id or not left_target_id or not right_target_id:
+            return None
+
+        cypher = f"""
+MATCH (a)
+WHERE elementId(a) = $anchor_element_id
+MATCH (a)-[:`{_safe_rel(left_rel_1)}`]-(left_mid:`{_safe_label(left_mid_label)}`)
+      -[:`{_safe_rel(left_rel_2)}`]-(left_target:`{_safe_label(left_target_label)}`)
+MATCH (a)-[:`{_safe_rel(right_rel_1)}`]-(right_mid:`{_safe_label(right_mid_label)}`)
+      -[:`{_safe_rel(right_rel_2)}`]-(right_target:`{_safe_label(right_target_label)}`)
+WHERE elementId(left_target) = $left_target_element_id
+  AND elementId(right_target) = $right_target_element_id
+  AND elementId(left_mid) <> elementId(right_mid)
+RETURN DISTINCT coalesce(a.name, a.title, a.ticker, elementId(a)) AS anchor_value
+LIMIT 5
+""".strip()
+        params = {
+            "anchor_element_id": anchor_element_id,
+            "left_target_element_id": left_target_id,
+            "right_target_element_id": right_target_id,
+        }
+        return cypher, params
+
+    def _build_cross_branch_question(
+        self, *, anchor: dict[str, Any], left_path: dict[str, Any], right_path: dict[str, Any]
+    ) -> str:
+        left_nodes = left_path.get("nodes") if isinstance(left_path, dict) else []
+        right_nodes = right_path.get("nodes") if isinstance(right_path, dict) else []
+        if len(left_nodes) != 3 or len(right_nodes) != 3:
+            return ""
+        left_name = self._node_name(left_nodes[2], fallback="left endpoint")
+        right_name = self._node_name(right_nodes[2], fallback="right endpoint")
+        anchor_label = self._node_label(anchor, fallback="entity").lower()
+        return (
+            f"Which {anchor_label} sits at the center of two separate business chains, one leading to "
+            f"{left_name} and the other leading to {right_name}?"
+        )
 
     def _build_deterministic_multi_hop_cypher(
         self, path: dict[str, Any]
@@ -361,9 +496,55 @@ Existing questions to avoid:
 
     def generate_cross_branch_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} cross-branch-вопросов...")
-        return self._generate_by_prompt_builder(
-            build_cross_branch_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
-        )
+        out: list[dict[str, Any]] = []
+        max_attempts = max(num_questions * 8, 18)
+        attempts = 0
+        while len(out) < num_questions and attempts < max_attempts:
+            attempts += 1
+            anchor = self._next_anchor()
+            if not anchor:
+                break
+            local_context = build_anchor_subgraph_context(
+                self.db,
+                anchor=anchor,
+                hop_count=2,
+                max_paths_per_anchor=MAX_PATHS_PER_ANCHOR,
+            )
+            if not local_context:
+                continue
+            case = self._select_cross_branch_case(local_context)
+            if not case:
+                continue
+            anchor_element_id = str(local_context.get("anchor_element_id") or "").strip()
+            deterministic = self._build_cross_branch_cypher(
+                anchor_element_id=anchor_element_id,
+                left_path=case["left_path"],
+                right_path=case["right_path"],
+            )
+            if not deterministic:
+                continue
+            cypher, params = deterministic
+            question = self._build_cross_branch_question(
+                anchor=anchor,
+                left_path=case["left_path"],
+                right_path=case["right_path"],
+            )
+            if not question:
+                continue
+            out.append(
+                {
+                    "complexity": "cross-branch",
+                    "question": question,
+                    "cypher": cypher,
+                    "params": params,
+                }
+            )
+        if len(out) < num_questions:
+            print(
+                f"[ПРЕДУПРЕЖДЕНИЕ] cross-branch: получено {len(out)}/{num_questions} "
+                f"после {attempts} попыток."
+            )
+        return out
 
     def generate_same_type_common_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} same-type-common-вопросов...")
@@ -445,17 +626,26 @@ Existing questions to avoid:
             item = generated[0]
             if not isinstance(item, dict):
                 continue
+            question = str(item.get("question", "")).strip()
+            target_answer = str(item.get("target_answer", "")).strip()
+            if not question:
+                continue
 
             # Для этого типа `cypher` нужен только для debug-выгрузки подграфа.
-            # `answer` - эталонный ответ от LLM; `ground_truth` - тот же useful_context,
-            # что был в промпте (должен достаточен для проверки answer).
+            # `ground_truth` берется из target_answer, чтобы валидация и метрики
+            # опирались на аналитический эталон, а не на сырой контекст подграфа.
             item["complexity"] = "subgraph-deep-analytics"
+            item["question"] = question
             item["cypher"] = ctx.get("debug_cypher", "")
             item["params"] = ctx.get("debug_params", {})
             item["debug_only_cypher"] = True
-            item["answer"] = str(item.get("answer", "")).strip()
-            item["ground_truth"] = str(ctx.get("useful_context", "")).strip()
+            item["graph_analysis"] = str(item.get("graph_analysis", "")).strip()
+            item["question_concept"] = str(item.get("question_concept", "")).strip()
+            item["answer"] = target_answer or str(item.get("answer", "")).strip()
+            item["ground_truth"] = item["answer"] or str(ctx.get("useful_context", "")).strip()
             item["subgraph_context"] = ctx.get("subgraph_context", "")
+            item["useful_context"] = str(ctx.get("useful_context", "")).strip()
+            item["topology_metrics"] = ctx.get("topology_metrics", {})
             out.append(item)
 
         self._subgraph_ctx_cursor = cursor

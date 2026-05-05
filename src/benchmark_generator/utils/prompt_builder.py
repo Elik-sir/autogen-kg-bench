@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import random
 
 from benchmark_generator.prompt_settings import (
     BASE_SYSTEM_PROMPT,
@@ -378,82 +379,77 @@ Requirements:
 
 def build_subgraph_deep_analytics_prompts(schema, subgraph_contexts, count, existing_questions=None):
     system_prompt = (
-        "You are an analyst. From the business context, formulate difficult questions "
-        "that test the ability to spot hidden dependencies. "
-        "Do not mention graphs, nodes, edges, relationships, hops, Cypher, or schema. "
+        "You are Senior Graph Data Analyst specializing in GraphRAG global-search evaluation. "
+        "Your goal is to generate a hard analytical question that cannot be solved by simple fact lookup. "
+        "The question must require understanding of subgraph structure, dense connections, and multi-entity synthesis. "
         + ENGLISH_BENCHMARK_TEXT_RULE
     )
 
-    def _is_useful_key(key: str) -> bool:
-        lowered = key.lower()
-        if "embedding" in lowered:
-            return False
-        if lowered in {"vector", "vectors"}:
-            return False
-        return lowered in USEFUL_ENTITY_KEYS
-
-    def _pick_useful_props(props):
-        if not isinstance(props, dict):
-            return {}
-        out = {}
-        for k, v in props.items():
-            if not _is_useful_key(str(k)):
-                continue
-            if isinstance(v, (str, int, float)) and v not in ("", None):
-                out[k] = v
-        return out
-
-    contexts_text = ""
+    categories = [
+        "Structural Hubs & Bottlenecks",
+        "Pattern Recognition & Commonalities",
+        "Impact/Cascading Analysis",
+        "Holistic Summarization",
+    ]
+    contexts_text_parts: list[str] = []
     for idx, ctx in enumerate(subgraph_contexts, 1):
-        useful_lines = []
+        category = random.choice(categories)
         if isinstance(ctx, dict):
-            anchor = _pick_useful_props(ctx.get("anchor_props", {}))
-            if anchor:
-                useful_lines.append(f"anchor: {anchor}")
-            if ctx.get("useful_context"):
-                useful_lines.append(str(ctx.get("useful_context")))
+            anchor = ctx.get("anchor_props") or {}
+            useful = str(ctx.get("useful_context") or "").strip()
+            topology = str(ctx.get("subgraph_context") or "").strip()
+            topology_metrics = ctx.get("topology_metrics") if isinstance(ctx.get("topology_metrics"), dict) else {}
+            metrics_json = _truncate_text(json.dumps(topology_metrics, ensure_ascii=False), 2000)
+            block = (
+                f"CONTEXT {idx}:\n"
+                f"- chosen_category: {category}\n"
+                f"- anchor_props: {_truncate_text(json.dumps(anchor, ensure_ascii=False), 1200)}\n"
+                f"- topology_metrics: {metrics_json}\n"
+                f"- analytics_brief:\n{_truncate_text(useful, 7000)}\n"
+                f"- subgraph_details:\n{_truncate_text(topology, 10000)}"
+            )
+            contexts_text_parts.append(block)
         else:
-            useful_lines.append(str(ctx))
-        contexts_text += f"\nCONTEXT {idx}:\n" + "\n".join(useful_lines) + "\n"
-
-    single_block = len(subgraph_contexts) == 1 and count == 1
-    if single_block:
-        intro = """Below is one business-context fragment about a company.
-Generate exactly one pair: a complex analytical question and a reference answer.
-The question and answer must rely only on this fragment: every fact in the answer must follow from the signals shown (no outside knowledge).
-All of the question, answer, and analysis_focus strings must be in English."""
-    else:
-        intro = f"""Below are business-context fragments about companies.
-Generate {count} pairs: each pair is a complex analytical question and a reference answer.
-Critical for indexing: pair i in the JSON array must use ONLY CONTEXT i-do not mix facts across companies or move signals between blocks.
-All questions, answers, and analysis_focus strings must be in English."""
+            contexts_text_parts.append(
+                f"CONTEXT {idx}:\n- chosen_category: {category}\n- analytics_brief: {_truncate_text(str(ctx), 9000)}"
+            )
+    contexts_text = "\n\n".join(contexts_text_parts).strip()
 
     user_prompt = f"""
-{intro}
-The question should be useful to an analyst and may summarize facts from news or articles.
-You may mentally omit some nodes or links from the provided context so the question targets finding a specific node or relationship.
-Critical:
-1) Questions should read like strategy / risk / market / operations inquiries.
-2) Questions must require synthesizing several signals, not a single fact.
-3) Do not use data-structure jargon (graph, node, edge, relationship, path, hop, Cypher).
-4) A question may be open-ended but must be verifiable against this context.
-5) The answer must be short, precise, and grounded only in this context (no fabrication).
-6) Use only useful entity attributes (e.g. name, title, description); ignore technical fields like embeddings/vectors.
-7) Do not repeat or closely paraphrase questions already generated.
+You must generate {count} item(s) for complexity "subgraph-deep-analytics".
 
-ALREADY GENERATED QUESTIONS (DO NOT REPEAT):
+GOAL:
+- Create advanced benchmark questions for GraphRAG-style global search and topology-aware reasoning.
+- Every question must require aggregation across at least 5-10 nodes from its subgraph context.
+
+MANDATORY STYLE:
+1) Persona: Senior Graph Data Analyst.
+2) Use the assigned category per context (`chosen_category`) as the primary question style.
+3) The question must be analytical and difficult.
+4) Strictly avoid trivial lookup questions like "Who is connected to X?".
+5) The question must be answerable only from the provided context (no outside knowledge).
+6) Keep output in English.
+
+ALLOWED ANALYTICAL CATEGORIES:
+- Structural Hubs & Bottlenecks: identify central nodes, chokepoints, bridge-like entities.
+- Pattern Recognition & Commonalities: infer shared non-obvious traits among related entities.
+- Impact/Cascading Analysis: "what-if" failure/removal propagation in the dense subgraph.
+- Holistic Summarization: synthesize fragmented signals into one strategic conclusion.
+
+ALREADY GENERATED QUESTIONS (DO NOT REPEAT OR PARAPHRASE):
 {chr(10).join(f"- {q}" for q in (existing_questions or [])[-200:]) if existing_questions else "- (none yet)"}
 
 CONTEXTS:
-{contexts_text}
+{contexts_text or "(empty)"}
 
-Return only a JSON array of exactly {count} objects:
+Return only a valid JSON array with exactly {count} object(s):
 [
   {{
     "complexity": "subgraph-deep-analytics",
-    "question": "Complex analytical question in English",
-    "answer": "Short reference answer in English",
-    "analysis_focus": ["signal 1", "signal 2", "signal 3"]
+    "graph_analysis": "Brief structural analysis of the provided subgraph (hubs, clusters, bridge patterns).",
+    "question_concept": "Rationale for the chosen analytical question design.",
+    "question": "A difficult analytical question in natural language.",
+    "target_answer": "Detailed ground-truth answer with explicit nodes/patterns used in reasoning."
   }}
 ]
 """

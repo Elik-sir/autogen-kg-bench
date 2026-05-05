@@ -1,20 +1,59 @@
 from __future__ import annotations
 
+from collections import Counter, defaultdict
 from typing import Any
+
+from benchmark_generator.prompt_settings import MAX_SUBGRAPH_NODES
+
+_MAX_PROP_VALUE_CHARS = 140
+_MAX_PROPS_PER_NODE = 5
+_MAX_EDGE_EXAMPLES_PER_REL = 8
+_MAX_EDGES = 260
+_DROP_PROP_KEYS = {"vector", "vectors", "embedding", "embeddings"}
+_PREFERRED_PROP_KEYS = (
+    "name",
+    "title",
+    "ticker",
+    "symbol",
+    "id",
+    "uuid",
+    "headline",
+    "description",
+    "summary",
+    "sector",
+    "industry",
+    "country",
+    "region",
+    "year",
+    "date",
+    "risk",
+    "impact",
+    "score",
+    "category",
+)
 
 
 def _safe_label(label: str) -> str:
-    return label.replace("`", "``")
+    return str(label).replace("`", "``")
+
+
+def _truncate_text(value: Any, max_chars: int = _MAX_PROP_VALUE_CHARS) -> str:
+    text = str(value or "")
+    if len(text) <= max_chars:
+        return text
+    keep_head = max_chars // 2
+    keep_tail = max_chars - keep_head
+    return f"{text[:keep_head]}...[{len(text) - max_chars} chars omitted]...{text[-keep_tail:]}"
 
 
 def _choose_company_label(schema: dict[str, Any]) -> str | None:
     labels = [
         label
         for label, entry in schema.items()
-        if isinstance(entry, dict) and entry.get("type") == "node"
+        if isinstance(entry, dict) and str(entry.get("type", "")).lower() == "node"
     ]
     for label in labels:
-        if "company" in label.lower():
+        if "company" in str(label).lower():
             return label
     return labels[0] if labels else None
 
@@ -23,10 +62,8 @@ def _pick_anchor_candidates(db_manager, company_label: str, limit: int) -> list[
     query = f"""
     MATCH (c:`{_safe_label(company_label)}`)
     OPTIONAL MATCH (c)-[r]-()
-    WITH
-      c,
-      count(r) AS degree,
-      count(DISTINCT type(r)) AS rel_type_variety
+    WITH c, count(r) AS degree, count(DISTINCT type(r)) AS rel_type_variety
+    WHERE degree > 0
     ORDER BY degree DESC, rel_type_variety DESC
     RETURN
       elementId(c) AS anchor_id,
@@ -35,391 +72,310 @@ def _pick_anchor_candidates(db_manager, company_label: str, limit: int) -> list[
       rel_type_variety
     LIMIT $limit
     """
-    return db_manager.run_query(query, {"limit": limit})
+    rows = db_manager.run_query(query, {"limit": max(1, int(limit))})
+    return rows if isinstance(rows, list) else []
 
 
-def _get_subgraph_snapshot(
-    db_manager,
-    anchor_id: str,
-    hop1_limit: int = 64,
-    hop2_limit: int = 96,
-) -> dict[str, Any]:
-    # Берем локальный подграф вокруг anchor в 1 и 2 hops, но ограничиваем
-    # объем, чтобы контекст оставался пригодным для промпта.
-    query = """
-    MATCH (c)
-    WHERE elementId(c) = $anchor_id
-    OPTIONAL MATCH (c)-[r1]-(n1)
-    WITH c, collect(DISTINCT {
-      rel_type: type(r1),
-      node_labels: labels(n1),
-      node_props: properties(n1)
-    })[..$hop1_limit] AS hop1
-    OPTIONAL MATCH (c)-[r_a]-(mid)-[r_b]-(n2)
-    WITH c, hop1, collect(DISTINCT {
-      rel_type_1: type(r_a),
-      mid_labels: labels(mid),
-      mid_props: properties(mid),
-      rel_type_2: type(r_b),
-      node2_labels: labels(n2),
-      node2_props: properties(n2)
-    })[..$hop2_limit] AS hop2
-    RETURN properties(c) AS anchor_props, labels(c) AS anchor_labels, hop1, hop2
-    """
-    rows = db_manager.run_query(
-        query,
-        {"anchor_id": anchor_id, "hop1_limit": hop1_limit, "hop2_limit": hop2_limit},
-    )
-    if not rows:
-        return {}
-    return _sanitize_snapshot(rows[0])
-
-
-def _anchor_search_needles(anchor_props: dict[str, Any]) -> list[str]:
-    """Подстроки для проверки, что текст новости/статьи относится к якорной компании."""
-    if not isinstance(anchor_props, dict):
-        return []
-    out: list[str] = []
-
-    def _push_name_variant(raw: str) -> None:
-        n = raw.strip()
-        if len(n) < 4:
-            return
-        low = n.lower()
-        out.append(low)
-        first = n.split(",")[0].strip()
-        if len(first) >= 4 and first.lower() != low:
-            out.append(first.lower())
-        t = low
-        for suf in (
-            " incorporated",
-            " corporation",
-            " corp.",
-            " corp",
-            " plc",
-            " ltd.",
-            " ltd",
-            ", inc.",
-            " inc.",
-            " inc",
-            ", inc",
-        ):
-            if t.endswith(suf):
-                t = t[: -len(suf)].strip()
-                break
-        if len(t) >= 4 and t not in out:
-            out.append(t)
-
-    name = anchor_props.get("name")
-    if isinstance(name, str):
-        _push_name_variant(name)
-    ticker = anchor_props.get("ticker")
-    if isinstance(ticker, str):
-        t = ticker.strip().lstrip("$").lower()
-        if len(t) >= 2:
-            out.append(t)
-            out.append(f"${t}")
-    seen: set[str] = set()
-    uniq: list[str] = []
-    for x in out:
-        if x and x not in seen:
-            seen.add(x)
-            uniq.append(x)
-    return uniq
-
-
-def _text_blob_from_props(props: dict[str, Any]) -> str:
-    if not isinstance(props, dict):
-        return ""
-    parts: list[str] = []
-    for v in props.values():
-        if isinstance(v, str):
-            parts.append(v.lower())
-        elif isinstance(v, (int, float)):
-            parts.append(str(v).lower())
-    return " ".join(parts)
-
-
-def _props_match_company(needles: list[str], props: dict[str, Any]) -> bool:
-    if not needles:
-        return True
-    blob = _text_blob_from_props(props)
-    if not blob.strip():
-        return False
-    return any(n in blob for n in needles)
-
-
-def _is_news_like_node(labels: Any, rel_type: str | None) -> bool:
-    lab = " ".join(labels or []).lower() if labels else ""
-    rt = (rel_type or "").lower()
-    return "news" in lab or "article" in lab or "press" in lab or "news" in rt
-
-
-def _filter_hop1_relevant(anchor_props: dict[str, Any], hop1: list[Any]) -> list[dict[str, Any]]:
-    needles = _anchor_search_needles(anchor_props)
-    kept: list[dict[str, Any]] = []
-    for item in hop1:
-        if not isinstance(item, dict) or not item.get("rel_type"):
-            continue
-        labels = item.get("node_labels")
-        rel_type = item.get("rel_type")
-        props = item.get("node_props") or {}
-        if _is_news_like_node(labels, str(rel_type) if rel_type else None):
-            if not needles or not _props_match_company(needles, props):
-                continue
-        kept.append(item)
-
-    def _sort_key(row: dict[str, Any]) -> tuple[str, str]:
-        p = row.get("node_props") or {}
-        h = p.get("headline") or p.get("title") or ""
-        return (str(row.get("rel_type") or ""), str(h))
-
-    kept.sort(key=_sort_key)
-    return kept
-
-
-def _filter_hop2_relevant(anchor_props: dict[str, Any], hop2: list[Any]) -> list[dict[str, Any]]:
-    needles = _anchor_search_needles(anchor_props)
-    kept: list[dict[str, Any]] = []
-    for item in hop2:
-        if not isinstance(item, dict):
-            continue
-        r1 = item.get("rel_type_1")
-        r2 = item.get("rel_type_2")
-        mid_labels = item.get("mid_labels")
-        mid_props = item.get("mid_props") or {}
-        n2_labels = item.get("node2_labels")
-        n2_props = item.get("node2_props") or {}
-        if _is_news_like_node(mid_labels, str(r1) if r1 else None):
-            if not needles or not _props_match_company(needles, mid_props):
-                continue
-        if _is_news_like_node(n2_labels, str(r2) if r2 else None):
-            if not needles or not _props_match_company(needles, n2_props):
-                continue
-        if not item.get("rel_type_1") or not item.get("rel_type_2"):
-            continue
-        kept.append(item)
-
-    def _sort_key2(row: dict[str, Any]) -> tuple[str, str, str]:
-        p2 = row.get("node2_props") or {}
-        h = p2.get("headline") or p2.get("title") or ""
-        return (str(row.get("rel_type_1") or ""), str(row.get("rel_type_2") or ""), str(h))
-
-    kept.sort(key=_sort_key2)
-    return kept
-
-
-def _prune_snapshot_to_anchor_relevant(snapshot: dict[str, Any]) -> dict[str, Any]:
-    """
-    Убирает из снапшота новости/статьи, в тексте которых нет имени или тикера якоря
-    (типичный шум при широком матчинге NEWS_ABOUT_COMPANY). Остальные соседи сохраняются.
-    """
-    anchor_props = snapshot.get("anchor_props") or {}
-    hop1_raw = snapshot.get("hop1") or []
-    hop2_raw = snapshot.get("hop2") or []
-    hop1 = _filter_hop1_relevant(anchor_props, hop1_raw)[:20]
-    hop2 = _filter_hop2_relevant(anchor_props, hop2_raw)[:30]
-    out = dict(snapshot)
-    out["hop1"] = hop1
-    out["hop2"] = hop2
-    return out
-
-
-def _should_drop_key(key: str) -> bool:
-    lowered = key.lower()
-    if "embedding" in lowered:
-        return True
-    return lowered in {"vector", "vectors", "embedding", "embeddings"}
-
-
-def _sanitize_value(value: Any) -> Any:
-    if isinstance(value, dict):
-        cleaned: dict[str, Any] = {}
-        for k, v in value.items():
-            if _should_drop_key(str(k)):
-                continue
-            cleaned[k] = _sanitize_value(v)
-        return cleaned
-    if isinstance(value, list):
-        return [_sanitize_value(v) for v in value]
-    return value
-
-
-def _sanitize_snapshot(snapshot: dict[str, Any]) -> dict[str, Any]:
-    return _sanitize_value(snapshot)
-
-
-def _props_preview(props: dict[str, Any], max_items: int = 4) -> str:
-    if not isinstance(props, dict) or not props:
-        return "{}"
-    pairs = []
-    for idx, (k, v) in enumerate(props.items()):
-        if idx >= max_items:
-            break
-        pairs.append(f"{k}={v!r}")
-    return "{ " + ", ".join(pairs) + " }"
-
-
-def _snapshot_to_text(snapshot: dict[str, Any]) -> str:
-    anchor_labels = snapshot.get("anchor_labels") or []
-    anchor_props = snapshot.get("anchor_props") or {}
-    hop1 = snapshot.get("hop1") or []
-    hop2 = snapshot.get("hop2") or []
-
-    lines = [
-        "ANCHOR:",
-        f"- labels: {anchor_labels}",
-        f"- props: {_props_preview(anchor_props)}",
-        "",
-        "HOP1 RELATIONS:",
-    ]
-
-    for item in hop1[:20]:
-        if not item or not item.get("rel_type"):
-            continue
-        lines.append(
-            f"- ({anchor_labels}) -[:{item.get('rel_type')}]- "
-            f"({item.get('node_labels')}) {_props_preview(item.get('node_props') or {})}"
-        )
-
-    lines.append("")
-    lines.append("HOP2 RELATIONS:")
-    for item in hop2[:30]:
-        if not item:
-            continue
-        if not item.get("rel_type_1") or not item.get("rel_type_2"):
-            continue
-        lines.append(
-            f"- ({anchor_labels}) -[:{item.get('rel_type_1')}]- "
-            f"({item.get('mid_labels')}) -[:{item.get('rel_type_2')}]- "
-            f"({item.get('node2_labels')})"
-        )
-
-    return "\n".join(lines).strip()
-
-
-def _build_debug_subgraph_cypher() -> str:
+def _dense_subgraph_query() -> str:
     return """
-MATCH (c)
-WHERE elementId(c) = $anchor_id
-OPTIONAL MATCH (c)-[r1]-(n1)
-WITH c, collect(DISTINCT {
-  rel_type: type(r1),
-  node_labels: labels(n1),
-  node_props: properties(n1)
-})[..20] AS hop1
-OPTIONAL MATCH (c)-[r_a]-(mid)-[r_b]-(n2)
-WITH c, hop1, collect(DISTINCT {
-  rel_type_1: type(r_a),
-  mid_labels: labels(mid),
-  mid_props: properties(mid),
-  rel_type_2: type(r_b),
-  node2_labels: labels(n2),
-  node2_props: properties(n2)
-})[..30] AS hop2
-RETURN properties(c) AS anchor_props, labels(c) AS anchor_labels, hop1, hop2
+MATCH (anchor)
+WHERE elementId(anchor) = $anchor_id
+MATCH (anchor)-[*1..2]-(n)
+WITH anchor, collect(DISTINCT n) AS near_nodes
+WITH [anchor] + near_nodes[..$max_neighbors] AS subgraph_nodes
+UNWIND subgraph_nodes AS n
+WITH
+  subgraph_nodes,
+  collect(DISTINCT {
+    id: elementId(n),
+    labels: labels(n),
+    props: properties(n)
+  }) AS nodes
+UNWIND subgraph_nodes AS n1
+MATCH (n1)-[r]-(n2)
+WHERE n2 IN subgraph_nodes
+WITH
+  nodes,
+  collect(DISTINCT {
+    source: elementId(startNode(r)),
+    type: type(r),
+    target: elementId(endNode(r))
+  })[..$max_edges] AS edges
+RETURN nodes, edges
+LIMIT 1
 """.strip()
 
 
-def _extract_useful_context(snapshot: dict[str, Any], max_lines: int = 16) -> str:
-    """
-    Оставляем только сигналы, полезные для ответа:
-    сущности, события, метрики, тональность/риск, временные и гео-признаки.
-    """
-    anchor_props = snapshot.get("anchor_props") or {}
-    hop1 = snapshot.get("hop1") or []
-    hop2 = snapshot.get("hop2") or []
+def _sanitize_props(raw_props: dict[str, Any] | None) -> dict[str, Any]:
+    if not isinstance(raw_props, dict):
+        return {}
+    chosen: dict[str, Any] = {}
+    for key in _PREFERRED_PROP_KEYS:
+        if key not in raw_props:
+            continue
+        value = raw_props.get(key)
+        if value in (None, ""):
+            continue
+        if isinstance(value, (str, int, float, bool)):
+            chosen[key] = _truncate_text(value) if isinstance(value, str) else value
+        if len(chosen) >= _MAX_PROPS_PER_NODE:
+            return chosen
+    for raw_key, raw_value in raw_props.items():
+        key = str(raw_key)
+        lowered = key.lower()
+        if lowered in _DROP_PROP_KEYS or "embedding" in lowered:
+            continue
+        if raw_value in (None, ""):
+            continue
+        if isinstance(raw_value, (str, int, float, bool)):
+            chosen[key] = _truncate_text(raw_value) if isinstance(raw_value, str) else raw_value
+        elif isinstance(raw_value, list):
+            normalized = [
+                _truncate_text(v) if isinstance(v, str) else v
+                for v in raw_value[:3]
+                if isinstance(v, (str, int, float, bool))
+            ]
+            if normalized:
+                chosen[key] = normalized
+        if len(chosen) >= _MAX_PROPS_PER_NODE:
+            break
+    return chosen
 
-    focus_keys = {
-        "name",
-        "title",
-        "headline",
-        "description",
-        "summary",
-        "text",
-        "content",
-        "body",
-        "article_text",
-        "snippet",
-        "ticker",
-        "sector",
-        "industry",
-        "country",
-        "region",
-        "date",
-        "year",
-        "amount",
-        "value",
-        "revenue",
-        "profit",
-        "risk",
-        "sentiment",
-        "score",
-        "impact",
-        "category",
-        "status",
+
+def _sanitize_nodes(nodes: list[Any]) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    for node in nodes:
+        if not isinstance(node, dict):
+            continue
+        node_id = str(node.get("id") or "").strip()
+        if not node_id or node_id in seen_ids:
+            continue
+        seen_ids.add(node_id)
+        labels = node.get("labels")
+        out.append(
+            {
+                "id": node_id,
+                "labels": labels if isinstance(labels, list) else [],
+                "props": _sanitize_props(node.get("props")),
+            }
+        )
+    return out
+
+
+def _sanitize_edges(edges: list[Any], valid_node_ids: set[str]) -> list[dict[str, str]]:
+    out: list[dict[str, str]] = []
+    seen: set[tuple[str, str, str]] = set()
+    for edge in edges:
+        if not isinstance(edge, dict):
+            continue
+        source = str(edge.get("source") or "").strip()
+        target = str(edge.get("target") or "").strip()
+        rel_type = str(edge.get("type") or "").strip()
+        if not source or not target or not rel_type:
+            continue
+        if source not in valid_node_ids or target not in valid_node_ids:
+            continue
+        key = (source, rel_type, target)
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"source": source, "type": rel_type, "target": target})
+        if len(out) >= _MAX_EDGES:
+            break
+    return out
+
+
+def _dense_subgraph_snapshot(db_manager, anchor_id: str) -> dict[str, Any]:
+    rows = db_manager.run_query(
+        _dense_subgraph_query(),
+        {
+            "anchor_id": anchor_id,
+            "max_neighbors": max(1, MAX_SUBGRAPH_NODES - 1),
+            "max_edges": _MAX_EDGES,
+        },
+    )
+    if not isinstance(rows, list) or not rows:
+        return {}
+    row = rows[0] if isinstance(rows[0], dict) else {}
+    nodes = _sanitize_nodes(row.get("nodes") if isinstance(row, dict) else [])
+    if not nodes:
+        return {}
+    valid_ids = {str(n.get("id")) for n in nodes if n.get("id")}
+    edges = _sanitize_edges(row.get("edges") if isinstance(row, dict) else [], valid_ids)
+    return {"nodes": nodes, "edges": edges}
+
+
+def _node_primary_label(node: dict[str, Any]) -> str:
+    labels = node.get("labels")
+    if isinstance(labels, list) and labels:
+        return str(labels[0])
+    return "Entity"
+
+
+def _node_key(node: dict[str, Any]) -> str:
+    props = node.get("props") if isinstance(node.get("props"), dict) else {}
+    for key in ("name", "title", "ticker", "symbol", "id", "uuid"):
+        value = props.get(key)
+        if value not in (None, ""):
+            return str(value)
+    return str(node.get("id") or "unknown")
+
+
+def _compute_topology_metrics(nodes: list[dict[str, Any]], edges: list[dict[str, str]]) -> dict[str, Any]:
+    node_ids = {str(node.get("id")) for node in nodes if node.get("id")}
+    adjacency: dict[str, set[str]] = {node_id: set() for node_id in node_ids}
+    rel_counter: Counter[str] = Counter()
+    undirected_edges: set[tuple[str, str]] = set()
+    for edge in edges:
+        source = edge["source"]
+        target = edge["target"]
+        rel_counter[edge["type"]] += 1
+        if source in adjacency and target in adjacency:
+            adjacency[source].add(target)
+            adjacency[target].add(source)
+            if source != target:
+                pair = tuple(sorted((source, target)))
+                undirected_edges.add(pair)
+
+    hubs: list[dict[str, Any]] = []
+    node_by_id = {str(node.get("id")): node for node in nodes if node.get("id")}
+    for node_id, neighbors in adjacency.items():
+        node = node_by_id.get(node_id) or {}
+        hubs.append(
+            {
+                "id": node_id,
+                "label": _node_primary_label(node),
+                "key": _node_key(node),
+                "degree": len(neighbors),
+            }
+        )
+    hubs.sort(key=lambda item: (-int(item["degree"]), str(item["label"]), str(item["key"])))
+
+    node_count = len(node_ids)
+    edge_count = len(undirected_edges)
+    max_undirected_edges = (node_count * (node_count - 1)) / 2 if node_count > 1 else 0
+    density = (edge_count / max_undirected_edges) if max_undirected_edges else 0.0
+
+    return {
+        "node_count": node_count,
+        "directed_edge_count": len(edges),
+        "undirected_edge_count": edge_count,
+        "density": round(density, 4),
+        "relationship_type_distribution": dict(rel_counter.most_common(8)),
+        "top_hubs": hubs[:3],
     }
-    banned_keys = {"embedding", "embeddings", "vector", "vectors"}
 
-    def pick_props(props: dict[str, Any]) -> dict[str, Any]:
-        if not isinstance(props, dict):
-            return {}
-        out: dict[str, Any] = {}
-        for k, v in props.items():
-            lk = str(k).lower()
-            if lk in banned_keys or "embedding" in lk:
-                continue
-            key_is_focus = lk in focus_keys or any(
-                token in lk for token in ("headline", "title", "description", "summary", "text", "content")
-            )
-            if key_is_focus and v not in (None, ""):
-                out[k] = v
-        if not out:
-            for k, v in props.items():
-                lk = str(k).lower()
-                if lk in banned_keys or "embedding" in lk:
-                    continue
-                if isinstance(v, (str, int, float)) and v not in (None, ""):
-                    out[k] = v
-                if len(out) >= 3:
-                    break
-        return out
 
-    lines = ["KEY CONTEXT SIGNALS:"]
-    anchor_focus = pick_props(anchor_props)
-    if anchor_focus:
-        lines.append(f"- anchor: {anchor_focus}")
+def _props_preview(props: dict[str, Any]) -> str:
+    if not isinstance(props, dict) or not props:
+        return "{}"
+    parts = [f"{k}={v!r}" for k, v in props.items()]
+    return "{ " + ", ".join(parts) + " }"
 
-    seen_signal_keys: set[str] = set()
-    for item in hop1:
+
+def _nodes_block(nodes: list[dict[str, Any]]) -> str:
+    lines: list[str] = []
+    for node in nodes:
+        node_id = str(node.get("id") or "")
+        label = _node_primary_label(node)
+        props = node.get("props") if isinstance(node.get("props"), dict) else {}
+        lines.append(f"- {node_id} | {label} | {_props_preview(props)}")
+    return "\n".join(lines)
+
+
+def _edges_by_type_block(edges: list[dict[str, str]], node_by_id: dict[str, dict[str, Any]]) -> str:
+    grouped: dict[str, list[tuple[str, str]]] = defaultdict(list)
+    for edge in edges:
+        grouped[str(edge["type"])].append((edge["source"], edge["target"]))
+    lines: list[str] = []
+    for rel_type in sorted(grouped.keys()):
+        pairs = grouped[rel_type]
+        examples: list[str] = []
+        for source, target in pairs[:_MAX_EDGE_EXAMPLES_PER_REL]:
+            source_name = _node_key(node_by_id.get(source, {"id": source}))
+            target_name = _node_key(node_by_id.get(target, {"id": target}))
+            examples.append(f"{source_name} -> {target_name}")
+        lines.append(f"- {rel_type} ({len(pairs)}): " + "; ".join(examples))
+    return "\n".join(lines)
+
+
+def _format_subgraph_context(
+    *,
+    anchor_id: str,
+    snapshot: dict[str, Any],
+    metrics: dict[str, Any],
+) -> str:
+    nodes = snapshot.get("nodes") if isinstance(snapshot.get("nodes"), list) else []
+    edges = snapshot.get("edges") if isinstance(snapshot.get("edges"), list) else []
+    node_by_id = {str(node.get("id")): node for node in nodes if node.get("id")}
+    anchor_node = node_by_id.get(anchor_id, {})
+    anchor_key = _node_key(anchor_node)
+    anchor_label = _node_primary_label(anchor_node)
+
+    top_hubs = metrics.get("top_hubs") if isinstance(metrics.get("top_hubs"), list) else []
+    hub_lines = [
+        f"- {hub.get('key')} ({hub.get('label')}): degree={hub.get('degree')}" for hub in top_hubs[:3]
+    ]
+    rel_distribution = metrics.get("relationship_type_distribution") or {}
+    rel_summary = ", ".join(f"{k}:{v}" for k, v in rel_distribution.items()) or "none"
+
+    return (
+        "SUBGRAPH ANALYTICS CONTEXT\n"
+        f"Anchor: {anchor_key} [{anchor_label}] id={anchor_id}\n"
+        f"Node count: {metrics.get('node_count', 0)}\n"
+        f"Edge count (directed): {metrics.get('directed_edge_count', 0)}\n"
+        f"Density (undirected): {metrics.get('density', 0)}\n"
+        f"Relationship mix: {rel_summary}\n"
+        "\nTOP HUBS:\n"
+        + ("\n".join(hub_lines) if hub_lines else "- none")
+        + "\n\nNODES:\n"
+        + _nodes_block(nodes)
+        + "\n\nTOPOLOGY (EDGES GROUPED BY TYPE):\n"
+        + _edges_by_type_block(edges, node_by_id)
+    ).strip()
+
+
+def _format_useful_context(
+    *,
+    anchor_id: str,
+    snapshot: dict[str, Any],
+    metrics: dict[str, Any],
+    max_lines: int = 26,
+) -> str:
+    nodes = snapshot.get("nodes") if isinstance(snapshot.get("nodes"), list) else []
+    edges = snapshot.get("edges") if isinstance(snapshot.get("edges"), list) else []
+    node_by_id = {str(node.get("id")): node for node in nodes if node.get("id")}
+    anchor_node = node_by_id.get(anchor_id, {})
+    lines = [
+        "ANALYTICS BRIEF:",
+        f"- anchor: {_node_key(anchor_node)} ({_node_primary_label(anchor_node)})",
+        f"- scope: {metrics.get('node_count', 0)} nodes, {metrics.get('directed_edge_count', 0)} edges, density={metrics.get('density', 0)}",
+    ]
+    for idx, hub in enumerate(metrics.get("top_hubs") or []):
+        if idx >= 3:
+            break
+        lines.append(
+            f"- hub_{idx + 1}: {hub.get('key')} ({hub.get('label')}), degree={hub.get('degree')}"
+        )
+
+    grouped: dict[str, int] = defaultdict(int)
+    for edge in edges:
+        grouped[str(edge["type"])] += 1
+    for rel_type, count in sorted(grouped.items(), key=lambda item: (-item[1], item[0]))[:8]:
+        lines.append(f"- rel_mix: {rel_type}={count}")
+
+    seen_nodes: set[str] = set()
+    for node in nodes:
+        node_id = str(node.get("id") or "")
+        if not node_id or node_id == anchor_id or node_id in seen_nodes:
+            continue
+        seen_nodes.add(node_id)
+        lines.append(
+            f"- entity: {_node_key(node)} ({_node_primary_label(node)}) {_props_preview(node.get('props') or {})}"
+        )
         if len(lines) >= max_lines:
             break
-        if not item or not item.get("rel_type"):
-            continue
-        rel_type = item.get("rel_type")
-        props = pick_props(item.get("node_props") or {})
-        if props:
-            signal_key = f"{rel_type}|{props}"
-            if signal_key in seen_signal_keys:
-                continue
-            seen_signal_keys.add(signal_key)
-            lines.append(f"- signal: {rel_type} -> {props}")
-
-    for item in hop2:
-        if len(lines) >= max_lines:
-            break
-        if not item:
-            continue
-        rel1 = item.get("rel_type_1")
-        rel2 = item.get("rel_type_2")
-        node2_props = pick_props(item.get("node2_props") or {})
-        if rel1 and rel2 and node2_props:
-            signal_key = f"{rel1}->{rel2}|{node2_props}"
-            if signal_key in seen_signal_keys:
-                continue
-            seen_signal_keys.add(signal_key)
-            lines.append(f"- chain: {rel1} -> {rel2} -> {node2_props}")
-
     return "\n".join(lines).strip()
 
 
@@ -428,16 +384,6 @@ def build_company_subgraph_contexts(
     schema: dict[str, Any],
     anchors_limit: int = 3,
 ) -> list[dict[str, Any]]:
-    """
-    Возвращает набор контекстов подграфа компаний для deep-analytics вопросов:
-      [
-        {
-          "anchor_id": "...",
-          "anchor_props": {...},
-          "subgraph_context": "text block"
-        }
-      ]
-    """
     company_label = _choose_company_label(schema)
     if not company_label:
         return []
@@ -445,25 +391,45 @@ def build_company_subgraph_contexts(
     anchors = _pick_anchor_candidates(db_manager, company_label, anchors_limit)
     out: list[dict[str, Any]] = []
     for anchor in anchors:
-        anchor_id = anchor.get("anchor_id")
+        anchor_id = str(anchor.get("anchor_id") or "").strip()
         if not anchor_id:
             continue
-        snapshot = _get_subgraph_snapshot(db_manager, anchor_id)
+        snapshot = _dense_subgraph_snapshot(db_manager, anchor_id)
         if not snapshot:
             continue
-        snapshot = _prune_snapshot_to_anchor_relevant(snapshot)
-        context_text = _snapshot_to_text(snapshot)
-        if not context_text:
+        nodes = snapshot.get("nodes") if isinstance(snapshot.get("nodes"), list) else []
+        edges = snapshot.get("edges") if isinstance(snapshot.get("edges"), list) else []
+        if len(nodes) < 6 or len(edges) < 6:
             continue
+        metrics = _compute_topology_metrics(nodes, edges)
+        subgraph_context = _format_subgraph_context(
+            anchor_id=anchor_id,
+            snapshot=snapshot,
+            metrics=metrics,
+        )
+        useful_context = _format_useful_context(
+            anchor_id=anchor_id,
+            snapshot=snapshot,
+            metrics=metrics,
+        )
+        node_by_id = {str(node.get("id")): node for node in nodes if node.get("id")}
+        anchor_props = node_by_id.get(anchor_id, {}).get("props") or {}
         out.append(
             {
                 "company_label": company_label,
                 "anchor_id": anchor_id,
-                "anchor_props": snapshot.get("anchor_props") or {},
-                "subgraph_context": context_text,
-                "useful_context": _extract_useful_context(snapshot),
-                "debug_cypher": _build_debug_subgraph_cypher(),
-                "debug_params": {"anchor_id": anchor_id},
+                "anchor_props": anchor_props,
+                "subgraph_context": subgraph_context,
+                "useful_context": useful_context,
+                "topology_metrics": metrics,
+                "subgraph_nodes": nodes,
+                "subgraph_edges": edges,
+                "debug_cypher": _dense_subgraph_query(),
+                "debug_params": {
+                    "anchor_id": anchor_id,
+                    "max_neighbors": max(1, MAX_SUBGRAPH_NODES - 1),
+                    "max_edges": _MAX_EDGES,
+                },
             }
         )
     return out
