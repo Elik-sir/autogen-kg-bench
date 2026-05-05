@@ -1,8 +1,64 @@
 from __future__ import annotations
 
+import concurrent.futures
 import json
 
+from benchmark_generator.dedup import is_near_duplicate_question, normalize_question_text
 from benchmark_generator.utils.schema_context import get_samples, get_schema
+
+
+def _run_type_generation_worker(
+    *,
+    type_name,
+    generator_fn,
+    validate_fn,
+    output_file,
+    target_for_type,
+    batch_size,
+):
+    collected_for_type = 0
+    attempts = 0
+    max_attempts = max(target_for_type * 8, 20)
+    local_benchmark = []
+    local_seen_exact = set()
+    local_seen_normalized = []
+
+    print(f"\n=== Этап: {type_name} (цель {target_for_type}) ===")
+    while collected_for_type < target_for_type and attempts < max_attempts:
+        attempts += 1
+        remaining = target_for_type - collected_for_type
+        request_n = min(batch_size, remaining)
+        existing_questions = [
+            str(item.get("question", "")).strip()
+            for item in local_benchmark
+            if item.get("complexity") == type_name and str(item.get("question", "")).strip()
+        ]
+        generated_items = generator_fn(request_n, existing_questions=existing_questions)
+        if isinstance(generated_items, dict):
+            generated_items = [generated_items]
+
+        valid_items = validate_fn(
+            generated_items=generated_items or [],
+            seen_exact_questions=local_seen_exact,
+            seen_normalized_questions=local_seen_normalized,
+            output_file=None,
+            existing_benchmark=local_benchmark,
+        )
+        local_benchmark.extend(valid_items)
+        added_for_type = sum(1 for item in valid_items if item.get("complexity") == type_name)
+        collected_for_type += added_for_type
+        print(
+            f"[ПРОГРЕСС] {type_name}: +{added_for_type}, "
+            f"итого {collected_for_type}/{target_for_type} (попытка {attempts}/{max_attempts})"
+        )
+
+    if collected_for_type < target_for_type:
+        print(
+            f"[ПРЕДУПРЕЖДЕНИЕ] Тип {type_name}: собрано {collected_for_type}/{target_for_type}. "
+            "Лимит попыток исчерпан."
+        )
+
+    return type_name, local_benchmark
 
 
 def run_generation_pipeline(
@@ -19,8 +75,6 @@ def run_generation_pipeline(
     schema = get_schema(db)
     data_samples = get_samples(db, per_label_limit=sample_entities_per_type)
     final_benchmark = []
-    seen_exact_questions = set()
-    seen_normalized_questions = []
 
     generation_plan = [
         (
@@ -99,51 +153,49 @@ def run_generation_pipeline(
     for type_name, _, _ in generation_plan:
         print(f"- {type_name}: {per_type_targets[type_name]}")
 
+    jobs = []
     for type_name, generator_fn, batch_size in generation_plan:
         target_for_type = per_type_targets[type_name]
         if target_for_type <= 0:
             continue
+        jobs.append((type_name, generator_fn, batch_size, target_for_type))
 
-        print(f"\n=== Этап: {type_name} (цель {target_for_type}) ===")
-        collected_for_type = 0
-        attempts = 0
-        max_attempts = max(target_for_type * 8, 20)
-
-        while collected_for_type < target_for_type and attempts < max_attempts:
-            attempts += 1
-            remaining = target_for_type - collected_for_type
-            request_n = min(batch_size, remaining)
-            existing_questions = [
-                str(item.get("question", "")).strip()
-                for item in final_benchmark
-                if item.get("complexity") == type_name and str(item.get("question", "")).strip()
-            ]
-            generated_items = generator_fn(request_n, existing_questions=existing_questions)
-            if isinstance(generated_items, dict):
-                generated_items = [generated_items]
-
-            valid_items = validate_fn(
-                generated_items=generated_items or [],
-                seen_exact_questions=seen_exact_questions,
-                seen_normalized_questions=seen_normalized_questions,
+    # Каждый тип вопросов генерируется и валидируется в отдельном потоке.
+    # После этого результаты объединяются с глобальной дедупликацией.
+    type_results: dict[str, list] = {}
+    max_workers = max(1, min(len(jobs), 8))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [
+            executor.submit(
+                _run_type_generation_worker,
+                type_name=type_name,
+                generator_fn=generator_fn,
+                validate_fn=validate_fn,
                 output_file=output_file,
-                existing_benchmark=final_benchmark,
+                target_for_type=target_for_type,
+                batch_size=batch_size,
             )
-            final_benchmark.extend(valid_items)
-            added_for_type = sum(
-                1 for item in valid_items if item.get("complexity") == type_name
-            )
-            collected_for_type += added_for_type
-            print(
-                f"[ПРОГРЕСС] {type_name}: +{added_for_type}, "
-                f"итого {collected_for_type}/{target_for_type} (попытка {attempts}/{max_attempts})"
-            )
+            for type_name, generator_fn, batch_size, target_for_type in jobs
+        ]
+        for future in concurrent.futures.as_completed(futures):
+            type_name, collected_items = future.result()
+            type_results[type_name] = collected_items
 
-        if collected_for_type < target_for_type:
-            print(
-                f"[ПРЕДУПРЕЖДЕНИЕ] Тип {type_name}: собрано {collected_for_type}/{target_for_type}. "
-                "Лимит попыток исчерпан."
-            )
+    seen_exact_questions = set()
+    seen_normalized_questions = []
+    for type_name, _, _ in generation_plan:
+        for item in type_results.get(type_name, []):
+            question = str(item.get("question", "")).strip()
+            normalized = normalize_question_text(question)
+            if not normalized:
+                continue
+            if normalized in seen_exact_questions:
+                continue
+            if is_near_duplicate_question(question, seen_normalized_questions):
+                continue
+            seen_exact_questions.add(normalized)
+            seen_normalized_questions.append(normalized)
+            final_benchmark.append(item)
 
     # Сохраняем в файл
     with open(output_file, "w", encoding="utf-8") as f:
