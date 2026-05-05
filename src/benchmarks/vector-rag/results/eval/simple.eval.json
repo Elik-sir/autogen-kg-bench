@@ -1,0 +1,3423 @@
+{
+  "source_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\simple.jsonl",
+  "n": 283,
+  "mean_metrics": {
+    "context_recall": 0.3516,
+    "context_relevance": 0.1728,
+    "faithfulness": 0.2049,
+    "answer_relevancy": 0.0831,
+    "evidence_coverage": 0.2375
+  },
+  "source_summary": {
+    "kind": "summary",
+    "settings": "settings.py",
+    "backend": "vector-rag-langchain-faiss",
+    "corpus": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\light-rag\\corpus.txt",
+    "benchmark_mode": "multi",
+    "question_type": "simple",
+    "benchmark": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\benchmark_questions_by_type\\simple.json",
+    "chunk_size": 600,
+    "chunk_overlap": 100,
+    "retrieval_k": 5,
+    "n": 283,
+    "mean_recall_on_ground_truth_tokens": 0.166
+  },
+  "items": [
+    {
+      "index": 1,
+      "complexity": "simple",
+      "question": "What is the stock ticker for Ameriprise Financial, Inc.?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2622,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 2,
+      "complexity": "simple",
+      "question": "Which company does Mr. John C. Griffith work for, and what is his job title?",
+      "metrics": {
+        "context_recall": 0.375,
+        "context_relevance": 0.1296,
+        "faithfulness": 0.3684,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.25
+      }
+    },
+    {
+      "index": 3,
+      "complexity": "simple",
+      "question": "In which industry does Mondelez International, Inc. operate?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2132,
+        "faithfulness": 0.6667,
+        "answer_relevancy": 0.3158,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 4,
+      "complexity": "simple",
+      "question": "What are the headlines of news articles published about Quest Diagnostics Incorporated?",
+      "metrics": {
+        "context_recall": 0.1045,
+        "context_relevance": 0.2288,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 5,
+      "complexity": "simple",
+      "question": "What percentage of a company does Temasek Holdings (Private) Ltd own, and which company is it?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1218,
+        "faithfulness": 0.2941,
+        "answer_relevancy": 0.2963,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 6,
+      "complexity": "simple",
+      "question": "In which country is the city of Dublin located?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.3968,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 7,
+      "complexity": "simple",
+      "question": "Which company produces Data center facilities?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.165,
+        "faithfulness": 0.6667,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 8,
+      "complexity": "simple",
+      "question": "What resources are required by Ameriprise Financial, Inc.?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.2447,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 9,
+      "complexity": "simple",
+      "question": "To which sector does the Water Utilities industry belong?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1513,
+        "faithfulness": 0.2857,
+        "answer_relevancy": 0.2857,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 10,
+      "complexity": "simple",
+      "question": "Which company does Ms. Sue  Sabo work for?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.1071,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 11,
+      "complexity": "simple",
+      "question": "In which industry does Quest Diagnostics Incorporated operate?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2783,
+        "faithfulness": 0.6923,
+        "answer_relevancy": 0.4,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 12,
+      "complexity": "simple",
+      "question": "Which company does Canada Pension Plan Investment Board own a stake in, and what is the ownership percentage?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.0964,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 13,
+      "complexity": "simple",
+      "question": "In which state is the city of Santa Clara located?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.5,
+        "faithfulness": 0.25,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 14,
+      "complexity": "simple",
+      "question": "To which sector does the Cargo Ground Transportation industry belong?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.252,
+        "faithfulness": 0.375,
+        "answer_relevancy": 0.375,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 15,
+      "complexity": "simple",
+      "question": "What products are produced by Ameriprise Financial, Inc.?",
+      "metrics": {
+        "context_recall": 0.3864,
+        "context_relevance": 0.2466,
+        "faithfulness": 0.0769,
+        "answer_relevancy": 0.1333,
+        "evidence_coverage": 0.125
+      }
+    },
+    {
+      "index": 16,
+      "complexity": "simple",
+      "question": "Which company employs Ms. Janene I. Asgeirsson J.D.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1404,
+        "faithfulness": 0.3939,
+        "answer_relevancy": 0.2439,
+        "evidence_coverage": 0.1667
+      }
+    },
+    {
+      "index": 17,
+      "complexity": "simple",
+      "question": "Which company is owned by Aristotle Capital Management, LLC?",
+      "metrics": {
+        "context_recall": 0.1111,
+        "context_relevance": 0.2613,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 18,
+      "complexity": "simple",
+      "question": "What resources does Mondelez International, Inc. require?",
+      "metrics": {
+        "context_recall": 0.76,
+        "context_relevance": 0.2132,
+        "faithfulness": 0.1034,
+        "answer_relevancy": 0.1667,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 19,
+      "complexity": "simple",
+      "question": "In which country is the state of NJ located?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.3206,
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.4,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 20,
+      "complexity": "simple",
+      "question": "What is the description of Quest Diagnostics Incorporated?",
+      "metrics": {
+        "context_recall": 0.9778,
+        "context_relevance": 0.2743,
+        "faithfulness": 0.1176,
+        "answer_relevancy": 0.1071,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 21,
+      "complexity": "simple",
+      "question": "In which state is the city of Marlborough located?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2857,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.6154,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 22,
+      "complexity": "simple",
+      "question": "What is the wiki summary for Ameriprise Financial, Inc.?",
+      "metrics": {
+        "context_recall": 0.6849,
+        "context_relevance": 0.2112,
+        "faithfulness": 0.2222,
+        "answer_relevancy": 0.087,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 23,
+      "complexity": "simple",
+      "question": "What is the domain associated with the news headline AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1085,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 24,
+      "complexity": "simple",
+      "question": "On what date was the news article Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG )  published?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2807,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 25,
+      "complexity": "simple",
+      "question": "To which sector does the Electronic Components industry belong?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1462,
+        "faithfulness": 0.25,
+        "answer_relevancy": 0.1176,
+        "evidence_coverage": 0.25
+      }
+    },
+    {
+      "index": 26,
+      "complexity": "simple",
+      "question": "Which city is Ameriprise Financial, Inc. located in?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2344,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 27,
+      "complexity": "simple",
+      "question": "What is the source country for the news article titled PBM proposed transparency rule supported by public comment?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0278,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 28,
+      "complexity": "simple",
+      "question": "Which product does Quest Diagnostics Incorporated produce?",
+      "metrics": {
+        "context_recall": 0.9412,
+        "context_relevance": 0.2493,
+        "faithfulness": 0.1429,
+        "answer_relevancy": 0.2143,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 29,
+      "complexity": "simple",
+      "question": "What is the name of the fund that owns a stake in the company with ticker DGX?",
+      "metrics": {
+        "context_recall": 0.3571,
+        "context_relevance": 0.0351,
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 30,
+      "complexity": "simple",
+      "question": "What is the language of the news article titled \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1313,
+        "faithfulness": 0.0952,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 31,
+      "complexity": "simple",
+      "question": "Which industry does the company with ticker AMP operate in?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.131,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.4615,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 32,
+      "complexity": "simple",
+      "question": "What is the URL of the news article comparing Principal Financial Group and Hamilton Insurance Group?",
+      "metrics": {
+        "context_recall": 0.1667,
+        "context_relevance": 0.255,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 33,
+      "complexity": "simple",
+      "question": "What is the wiki summary for Quest Diagnostics Incorporated?",
+      "metrics": {
+        "context_recall": 0.537,
+        "context_relevance": 0.2612,
+        "faithfulness": 0.7869,
+        "answer_relevancy": 0.1493,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 34,
+      "complexity": "simple",
+      "question": "Which product does Mondelez International, Inc. produce?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2132,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.1463,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 35,
+      "complexity": "simple",
+      "question": "What is the seendate for the news article \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1526,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 36,
+      "complexity": "simple",
+      "question": "What is the domain of the news article \"PBM proposed transparency rule supported by public comment\"?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0303,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 37,
+      "complexity": "simple",
+      "question": "Which resource does Quest Diagnostics Incorporated require?",
+      "metrics": {
+        "context_recall": 0.95,
+        "context_relevance": 0.2493,
+        "faithfulness": 0.9412,
+        "answer_relevancy": 0.25,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 38,
+      "complexity": "simple",
+      "question": "In which state is the city of Dublin located?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.3968,
+        "faithfulness": 0.4,
+        "answer_relevancy": 0.32,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 39,
+      "complexity": "simple",
+      "question": "What is the business description for Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2231,
+        "faithfulness": 0.1972,
+        "answer_relevancy": 0.0779,
+        "evidence_coverage": 0.375
+      }
+    },
+    {
+      "index": 40,
+      "complexity": "simple",
+      "question": "What is the raw text of the news article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "metrics": {
+        "context_recall": 0.4545,
+        "context_relevance": 0.2459,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 41,
+      "complexity": "simple",
+      "question": "When was the record for Ameriprise Financial, Inc. last updated?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2538,
+        "faithfulness": 0.25,
+        "answer_relevancy": 0.2222,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 42,
+      "complexity": "simple",
+      "question": "What search query was used to collect the news article 'PBM proposed transparency rule supported by public comment'?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.0479,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 43,
+      "complexity": "simple",
+      "question": "What ownership percentage does Aristotle Capital Management, LLC hold in its portfolio company?",
+      "metrics": {
+        "context_recall": 0.6667,
+        "context_relevance": 0.2217,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 44,
+      "complexity": "simple",
+      "question": "Which city is located in the state of IL?",
+      "metrics": {
+        "context_recall": 0.3846,
+        "context_relevance": 0.419,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 45,
+      "complexity": "simple",
+      "question": "At what UTC timestamp was the news article 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley' collected?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1277,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 46,
+      "complexity": "simple",
+      "question": "What is the stock ticker symbol for Quest Diagnostics Incorporated?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2493,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 47,
+      "complexity": "simple",
+      "question": "What is the source country for the news article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.269,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 48,
+      "complexity": "simple",
+      "question": "What is the stock ticker of the company owned by Temasek Holdings (Private) Ltd?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1251,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 49,
+      "complexity": "simple",
+      "question": "What entity type is recorded on the relationship linking the news article 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley' to a company?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1256,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.5455,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 50,
+      "complexity": "simple",
+      "question": "Which fund is mentioned in the news article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2459,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 51,
+      "complexity": "simple",
+      "question": "What is the source country for the news headline 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1173,
+        "faithfulness": 0.3846,
+        "answer_relevancy": 0.88,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 52,
+      "complexity": "simple",
+      "question": "Which company requires the resource named 'residual fuel oil'?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1725,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 53,
+      "complexity": "simple",
+      "question": "In which city is Quest Diagnostics Incorporated headquartered?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.309,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 54,
+      "complexity": "simple",
+      "question": "Which fund holds an ownership stake in the company with ticker AMP?",
+      "metrics": {
+        "context_recall": 0.2667,
+        "context_relevance": 0.0873,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 55,
+      "complexity": "simple",
+      "question": "On what date was the news article 'PBM proposed transparency rule supported by public comment' published?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0612,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 56,
+      "complexity": "simple",
+      "question": "What is the stock ticker of the company that requires the resource named 'third-party financial institutions'?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.058,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 57,
+      "complexity": "simple",
+      "question": "Which city is situated in the state of NJ?",
+      "metrics": {
+        "context_recall": 0.1538,
+        "context_relevance": 0.4286,
+        "faithfulness": 0.4444,
+        "answer_relevancy": 0.2609,
+        "evidence_coverage": 0.2
+      }
+    },
+    {
+      "index": 58,
+      "complexity": "simple",
+      "question": "What is the headline of the news article that references the sector 'Consumer Discretionary'?",
+      "metrics": {
+        "context_recall": 0.033,
+        "context_relevance": 0.207,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 59,
+      "complexity": "simple",
+      "question": "What ownership percentage does Canada Pension Plan Investment Board hold in the company it invests in?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.0836,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.4167,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 60,
+      "complexity": "simple",
+      "question": "What is the last_updated date for the company with ticker DGX?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0659,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 61,
+      "complexity": "simple",
+      "question": "What is the title of the position held by Ms. Sue  Sabo at her employer?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1765,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 62,
+      "complexity": "simple",
+      "question": "What is the headline of the news article that mentions the location Dublin?",
+      "metrics": {
+        "context_recall": 0.0093,
+        "context_relevance": 0.1029,
+        "faithfulness": 0.0588,
+        "answer_relevancy": 0.3333,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 63,
+      "complexity": "simple",
+      "question": "On what date was the news article 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley' published?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1978,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 64,
+      "complexity": "simple",
+      "question": "What search query was used to collect the news article 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.2384,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 65,
+      "complexity": "simple",
+      "question": "At what UTC timestamp was the news article 'PBM proposed transparency rule supported by public comment' collected?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0278,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 66,
+      "complexity": "simple",
+      "question": "What is the job title held by Mr. John C. Griffith at his employer?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1615,
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 67,
+      "complexity": "simple",
+      "question": "When was the record for Mondelez International, Inc. last updated?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2132,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 68,
+      "complexity": "simple",
+      "question": "What is the stock ticker of the company that employs Ms. Sue  Sabo?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1598,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 69,
+      "complexity": "simple",
+      "question": "What is the business description provided for Ameriprise Financial, Inc.?",
+      "metrics": {
+        "context_recall": 0.9756,
+        "context_relevance": 0.2032,
+        "faithfulness": 0.2826,
+        "answer_relevancy": 0.1132,
+        "evidence_coverage": 0.4
+      }
+    },
+    {
+      "index": 70,
+      "complexity": "simple",
+      "question": "Which city is located in the country of Bermuda?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2497,
+        "faithfulness": 0.25,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 71,
+      "complexity": "simple",
+      "question": "Which company requires the resource named module testing?",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.0833,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 72,
+      "complexity": "simple",
+      "question": "What is the stock ticker of the company invested in by Canada Pension Plan Investment Board?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1304,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 73,
+      "complexity": "simple",
+      "question": "Who is the person listed as working for Ameriprise Financial, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2375,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 74,
+      "complexity": "simple",
+      "question": "What language is the news article Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG )  written in?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2601,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 75,
+      "complexity": "simple",
+      "question": "What is the wiki summary provided for Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 0.6333,
+        "context_relevance": 0.2132,
+        "faithfulness": 0.2353,
+        "answer_relevancy": 0.08,
+        "evidence_coverage": 0.4444
+      }
+    },
+    {
+      "index": 76,
+      "complexity": "simple",
+      "question": "What is the web domain associated with the news headline Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) ?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2459,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 77,
+      "complexity": "simple",
+      "question": "What is the stock ticker for Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2231,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 78,
+      "complexity": "simple",
+      "question": "What search query was used to collect the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+      "metrics": {
+        "context_recall": 0.2857,
+        "context_relevance": 0.1309,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 79,
+      "complexity": "simple",
+      "question": "What is the language of the news article titled 'PBM proposed transparency rule supported by public comment'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.029,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.3333,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 80,
+      "complexity": "simple",
+      "question": "What is the stock ticker of the company owned by Aristotle Capital Management, LLC?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2439,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 81,
+      "complexity": "simple",
+      "question": "What is the last_updated timestamp for the company with ticker MDLZ?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1094,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 82,
+      "complexity": "simple",
+      "question": "What is the official job title held by Ms. Janene I. Asgeirsson J.D.?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.179,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 83,
+      "complexity": "simple",
+      "question": "Which company produces the product named 'cash management'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1106,
+        "faithfulness": 0.3571,
+        "answer_relevancy": 0.1905,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 84,
+      "complexity": "simple",
+      "question": "What is the wiki summary provided for the company with ticker MDLZ?",
+      "metrics": {
+        "context_recall": 0.2333,
+        "context_relevance": 0.0822,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 85,
+      "complexity": "simple",
+      "question": "What is the full name of the company owned by Temasek Holdings (Private) Ltd?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1429,
+        "faithfulness": 0.2,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 86,
+      "complexity": "simple",
+      "question": "What is the business description of the company that employs Ms. Sue  Sabo?",
+      "metrics": {
+        "context_recall": 0.0189,
+        "context_relevance": 0.1613,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 87,
+      "complexity": "simple",
+      "question": "What is the import identifier for the state containing the city of Dublin?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.3452,
+        "faithfulness": 0.1379,
+        "answer_relevancy": 0.2222,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 88,
+      "complexity": "simple",
+      "question": "Which industry falls under the Energy sector?",
+      "metrics": {
+        "context_recall": 0.6364,
+        "context_relevance": 0.1204,
+        "faithfulness": 0.6875,
+        "answer_relevancy": 0.1818,
+        "evidence_coverage": 0.6
+      }
+    },
+    {
+      "index": 89,
+      "complexity": "simple",
+      "question": "Which company is the subject of the news article titled \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1051,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.1176,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 90,
+      "complexity": "simple",
+      "question": "What is the business description of the company that requires module testing?",
+      "metrics": {
+        "context_recall": 0.1964,
+        "context_relevance": 0.1172,
+        "faithfulness": 0.1463,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 91,
+      "complexity": "simple",
+      "question": "What is the stock ticker for the producer of Data center facilities?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1326,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 92,
+      "complexity": "simple",
+      "question": "What is the import ID of the industry for Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2132,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 93,
+      "complexity": "simple",
+      "question": "What is the name of the fund that owns a stake in Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 0.2143,
+        "context_relevance": 0.2193,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 94,
+      "complexity": "simple",
+      "question": "What is the name of the person who works for Quest Diagnostics Incorporated?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2386,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 95,
+      "complexity": "simple",
+      "question": "What is the name of the industry that the company with ticker DGX operates in?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.037,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 96,
+      "complexity": "simple",
+      "question": "What is the date of the news article that mentions the sector \"Industrials\"?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1155,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 97,
+      "complexity": "simple",
+      "question": "What is the name of the product produced by the company with ticker MDLZ?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.0744,
+        "faithfulness": 0.3939,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 98,
+      "complexity": "simple",
+      "question": "What is the source country of the news article that mentions the fund \"Canada Pension Plan Investment Board\"?",
+      "metrics": {
+        "context_recall": 0.1667,
+        "context_relevance": 0.1189,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 99,
+      "complexity": "simple",
+      "question": "What is the URL associated with the news headline \"PBM proposed transparency rule supported by public comment\"?",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.029,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 100,
+      "complexity": "simple",
+      "question": "What is the raw text content of the news article titled \"PBM proposed transparency rule supported by public comment\"?",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.0654,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 101,
+      "complexity": "simple",
+      "question": "What is the UTC collection timestamp for the news headline \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2246,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 102,
+      "complexity": "simple",
+      "question": "What is the import identifier for the company named Ameriprise Financial, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2477,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 103,
+      "complexity": "simple",
+      "question": "What is the import identifier assigned to the city of Santa Clara?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.3529,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 104,
+      "complexity": "simple",
+      "question": "What is the import identifier for the state abbreviated as IA?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1365,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 105,
+      "complexity": "simple",
+      "question": "What is the import identifier for the country named Netherlands?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1722,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.2222,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 106,
+      "complexity": "simple",
+      "question": "What is the import identifier for the industry named Cargo Ground Transportation?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.252,
+        "faithfulness": 0.6364,
+        "answer_relevancy": 0.6316,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 107,
+      "complexity": "simple",
+      "question": "What is the import identifier for the sector named Consumer Discretionary?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2315,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 108,
+      "complexity": "simple",
+      "question": "What is the import identifier for the sector that encompasses the Water Utilities industry?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1464,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 109,
+      "complexity": "simple",
+      "question": "On what date was the news article published that discusses Temasek Holdings (Private) Ltd?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1782,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 110,
+      "complexity": "simple",
+      "question": "What is the import identifier for the country that contains the state IL?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.3676,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 111,
+      "complexity": "simple",
+      "question": "What is the import identifier for the resource that Ameriprise Financial, Inc. requires?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2434,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 112,
+      "complexity": "simple",
+      "question": "What is the business description of the company that operates in the Cargo Ground Transportation industry?",
+      "metrics": {
+        "context_recall": 0.2981,
+        "context_relevance": 0.2406,
+        "faithfulness": 0.2308,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.2
+      }
+    },
+    {
+      "index": 113,
+      "complexity": "simple",
+      "question": "What is the import identifier for the city that serves as the headquarters for Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1838,
+        "faithfulness": 0.5556,
+        "answer_relevancy": 0.8889,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 114,
+      "complexity": "simple",
+      "question": "What is the import identifier for the resource that Mondelez International, Inc. requires?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2042,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 115,
+      "complexity": "simple",
+      "question": "What is the import identifier for the fund named Aristotle Capital Management, LLC?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2067,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 116,
+      "complexity": "simple",
+      "question": "What is the import identifier for the product named cash management?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0711,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 117,
+      "complexity": "simple",
+      "question": "What is the import identifier for the resource named module testing?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 118,
+      "complexity": "simple",
+      "question": "Which city is located in the country of Ireland?",
+      "metrics": {
+        "context_recall": 0.4,
+        "context_relevance": 0.3571,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 119,
+      "complexity": "simple",
+      "question": "Which resource is discussed in the news article titled PBM proposed transparency rule supported by public comment?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0389,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 120,
+      "complexity": "simple",
+      "question": "What is the import identifier for the person named Ms. Sue  Sabo?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0873,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 121,
+      "complexity": "simple",
+      "question": "What is the stock ticker for the searchable entity named Ameriprise Financial, Inc.?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.2313,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 122,
+      "complexity": "simple",
+      "question": "Which country contains the state abbreviated as IA?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.273,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 123,
+      "complexity": "simple",
+      "question": "What is the import identifier for the industry named Electronic Components?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1035,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 124,
+      "complexity": "simple",
+      "question": "What is the official name of the company with the stock ticker MDLZ?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.0977,
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 125,
+      "complexity": "simple",
+      "question": "What is the headline of the news article that mentions the fund 'Temasek Holdings (Private) Ltd'?",
+      "metrics": {
+        "context_recall": 0.1733,
+        "context_relevance": 0.1091,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 126,
+      "complexity": "simple",
+      "question": "What news headline discusses the Water Utilities industry?",
+      "metrics": {
+        "context_recall": 0.0612,
+        "context_relevance": 0.1175,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 127,
+      "complexity": "simple",
+      "question": "What is the stock ticker of the company that employs Ms. Janene I. Asgeirsson J.D.?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1179,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 128,
+      "complexity": "simple",
+      "question": "In which city is Mondelez International, Inc. headquartered?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2389,
+        "faithfulness": 0.7143,
+        "answer_relevancy": 0.6154,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 129,
+      "complexity": "simple",
+      "question": "What news headline discusses the resource 'residual fuel oil'?",
+      "metrics": {
+        "context_recall": 0.1279,
+        "context_relevance": 0.0979,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 130,
+      "complexity": "simple",
+      "question": "What is the import identifier for the industry named Water Utilities?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1574,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 131,
+      "complexity": "simple",
+      "question": "What is the stock ticker of the company that requires the resource named 'module testing'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0667,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 132,
+      "complexity": "simple",
+      "question": "What is the name of the company that manufactures the product named 'parts for equipment'?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.1732,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.3636,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 133,
+      "complexity": "simple",
+      "question": "On what date was the news article published that discusses the resource 'third-party financial institutions'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.029,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 134,
+      "complexity": "simple",
+      "question": "What is the stock ticker of the company that employs Mr. John C. Griffith?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1128,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 135,
+      "complexity": "simple",
+      "question": "What is the import identifier for the state that contains the city of Santa Clara?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.4444,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 136,
+      "complexity": "simple",
+      "question": "What is the wiki summary for the company that Temasek Holdings (Private) Ltd has an ownership stake in?",
+      "metrics": {
+        "context_recall": 0.1023,
+        "context_relevance": 0.1152,
+        "faithfulness": 0.7407,
+        "answer_relevancy": 0.3077,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 137,
+      "complexity": "simple",
+      "question": "What is the web domain associated with the news article that discusses Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1884,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 138,
+      "complexity": "simple",
+      "question": "What is the import identifier for the product manufactured by Quest Diagnostics Incorporated?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2386,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 139,
+      "complexity": "simple",
+      "question": "What is the import identifier assigned to the sector named 'Industrials'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1113,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 140,
+      "complexity": "simple",
+      "question": "What is the import identifier for the product named 'parts for equipment'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1319,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 141,
+      "complexity": "simple",
+      "question": "What is the import identifier for the resource named 'third-party financial institutions'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1021,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 142,
+      "complexity": "simple",
+      "question": "At what UTC timestamp was the news article 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) ' collected?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2538,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 143,
+      "complexity": "simple",
+      "question": "What is the import identifier for the fund named 'Canada Pension Plan Investment Board'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.029,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 144,
+      "complexity": "simple",
+      "question": "What is the import identifier for the country named 'Bermuda'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1333,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 145,
+      "complexity": "simple",
+      "question": "What is the import identifier for the resource named 'residual fuel oil'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0984,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 146,
+      "complexity": "simple",
+      "question": "What is the business description of the company owned by Temasek Holdings (Private) Ltd?",
+      "metrics": {
+        "context_recall": 0.0566,
+        "context_relevance": 0.1446,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 147,
+      "complexity": "simple",
+      "question": "What is the stock ticker of the company that requires the resource named 'residual fuel oil'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1293,
+        "faithfulness": 0.1333,
+        "answer_relevancy": 0.15,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 148,
+      "complexity": "simple",
+      "question": "What is the wiki summary for the company owned by Canada Pension Plan Investment Board?",
+      "metrics": {
+        "context_recall": 0.075,
+        "context_relevance": 0.1648,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 149,
+      "complexity": "simple",
+      "question": "What is the business description of the company that employs Mr. John C. Griffith?",
+      "metrics": {
+        "context_recall": 0.0196,
+        "context_relevance": 0.1,
+        "faithfulness": 0.3684,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 150,
+      "complexity": "simple",
+      "question": "What is the import identifier for the sector that encompasses the Cargo Ground Transportation industry?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2406,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 151,
+      "complexity": "simple",
+      "question": "What is the import identifier for the industry that Quest Diagnostics Incorporated operates in?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.283,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 152,
+      "complexity": "simple",
+      "question": "What is the entity label recorded for the company mentioned in the news article titled \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1024,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.1,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 153,
+      "complexity": "simple",
+      "question": "Which company has an ownership stake held by Canada Pension Plan Investment Board?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1062,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 154,
+      "complexity": "simple",
+      "question": "What is the import identifier for the state that contains the city of Marlborough?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.25,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 155,
+      "complexity": "simple",
+      "question": "What is the import identifier for the product produced by Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2042,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 156,
+      "complexity": "simple",
+      "question": "What is the entity name linked to the news headline \"PBM proposed transparency rule supported by public comment\" via a resource relationship?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0386,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 157,
+      "complexity": "simple",
+      "question": "What is the name of the country that the state IL belongs to?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.3917,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 158,
+      "complexity": "simple",
+      "question": "What is the import identifier for the resource required by Quest Diagnostics Incorporated?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2386,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 159,
+      "complexity": "simple",
+      "question": "What is the import identifier for the sector that the Electronic Components industry is part of?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1386,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 160,
+      "complexity": "simple",
+      "question": "What entity type is recorded for the fund mentioned in the news article titled \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2254,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 161,
+      "complexity": "simple",
+      "question": "What is the import identifier for the person named Mr. John C. Griffith?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0997,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 162,
+      "complexity": "simple",
+      "question": "What is the import identifier for the person named Ms. Janene I. Asgeirsson J.D.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1142,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 163,
+      "complexity": "simple",
+      "question": "What is the import identifier for the city of Dublin?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.246,
+        "faithfulness": 0.24,
+        "answer_relevancy": 0.0667,
+        "evidence_coverage": 0.6667
+      }
+    },
+    {
+      "index": 164,
+      "complexity": "simple",
+      "question": "What is the import identifier for the city of Marlborough?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1429,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 165,
+      "complexity": "simple",
+      "question": "What is the import identifier for the sector named Energy?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1278,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 166,
+      "complexity": "simple",
+      "question": "What is the import identifier for the product named Data center facilities?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0836,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 167,
+      "complexity": "simple",
+      "question": "What is the import identifier for the company named Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2193,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 168,
+      "complexity": "simple",
+      "question": "What is the import identifier assigned to Quest Diagnostics Incorporated?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2493,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 169,
+      "complexity": "simple",
+      "question": "What is the import identifier for the fund named 'Temasek Holdings (Private) Ltd'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0606,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 170,
+      "complexity": "simple",
+      "question": "What is the seendate recorded for the news headline \"PBM proposed transparency rule supported by public comment\"?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.029,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 171,
+      "complexity": "simple",
+      "question": "What is the web domain associated with the news article titled \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1354,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 172,
+      "complexity": "simple",
+      "question": "What entity type is recorded for the resource mentioned in the news headline \"PBM proposed transparency rule supported by public comment\"?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0256,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 173,
+      "complexity": "simple",
+      "question": "What is the entity name recorded on the NEWS_ABOUT_COMPANY relationship for the news headline 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1172,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.1053,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 174,
+      "complexity": "simple",
+      "question": "What is the entity label stored on the NEWS_ABOUT_FUND relationship for the article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2382,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 175,
+      "complexity": "simple",
+      "question": "What is the entity type associated with the NEWS_ABOUT_RESOURCE relationship for the news headline 'PBM proposed transparency rule supported by public comment'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.04,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 176,
+      "complexity": "simple",
+      "question": "What is the exact publication date for the news article with the headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2645,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 177,
+      "complexity": "simple",
+      "question": "What is the web domain associated with the news article titled 'PBM proposed transparency rule supported by public comment'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0267,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 178,
+      "complexity": "simple",
+      "question": "What is the raw text content of the news article 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+      "metrics": {
+        "context_recall": 0.375,
+        "context_relevance": 0.1262,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 179,
+      "complexity": "simple",
+      "question": "What is the entity label recorded on the industry relationship for the news headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2313,
+        "faithfulness": 0.125,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 180,
+      "complexity": "simple",
+      "question": "What entity type is associated with the sector relationship in the news headline 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1309,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 181,
+      "complexity": "simple",
+      "question": "What is the name of the industry classified under the Consumer Discretionary sector?",
+      "metrics": {
+        "context_recall": 0.3,
+        "context_relevance": 0.1908,
+        "faithfulness": 0.625,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 182,
+      "complexity": "simple",
+      "question": "What is the web address for the news headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "metrics": {
+        "context_recall": 0.1667,
+        "context_relevance": 0.2539,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 183,
+      "complexity": "simple",
+      "question": "What is the wiki summary text for the company with ticker AMP?",
+      "metrics": {
+        "context_recall": 0.1644,
+        "context_relevance": 0.111,
+        "faithfulness": 0.5789,
+        "answer_relevancy": 0.2308,
+        "evidence_coverage": 0.4
+      }
+    },
+    {
+      "index": 184,
+      "complexity": "simple",
+      "question": "Which state encompasses the city of Dublin?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.3968,
+        "faithfulness": 0.1429,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 185,
+      "complexity": "simple",
+      "question": "Identify the fund that owns a stake in the company with ticker MDLZ.",
+      "metrics": {
+        "context_recall": 0.2857,
+        "context_relevance": 0.079,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 186,
+      "complexity": "simple",
+      "question": "What is the official title held by Ms. Janene I. Asgeirsson J.D. at her workplace?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1737,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 187,
+      "complexity": "simple",
+      "question": "Return the seendate property for the news article AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0646,
+        "faithfulness": 0.0286,
+        "answer_relevancy": 0.2128,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 188,
+      "complexity": "simple",
+      "question": "What product does Ameriprise Financial, Inc. manufacture?",
+      "metrics": {
+        "context_recall": 0.3864,
+        "context_relevance": 0.2032,
+        "faithfulness": 0.1304,
+        "answer_relevancy": 0.2,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 189,
+      "complexity": "simple",
+      "question": "From which country does the news article Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG )  originate?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2626,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 190,
+      "complexity": "simple",
+      "question": "What is the neo4jImportId for the sector Consumer Discretionary?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0444,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 191,
+      "complexity": "simple",
+      "question": "What is the query string used to fetch the news headline PBM proposed transparency rule supported by public comment?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0822,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 192,
+      "complexity": "simple",
+      "question": "What is the import identifier for the city where Ameriprise Financial, Inc. is headquartered?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.194,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 193,
+      "complexity": "simple",
+      "question": "What is the wiki summary for the company that Canada Pension Plan Investment Board holds a stake in?",
+      "metrics": {
+        "context_recall": 0.05,
+        "context_relevance": 0.1299,
+        "faithfulness": 0.1389,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 194,
+      "complexity": "simple",
+      "question": "From which country does the news article PBM proposed transparency rule supported by public comment originate?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.0884,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 195,
+      "complexity": "simple",
+      "question": "Which sector encompasses the Electronic Components industry?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1547,
+        "faithfulness": 0.25,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 196,
+      "complexity": "simple",
+      "question": "What is the business description of the manufacturer of parts for equipment?",
+      "metrics": {
+        "context_recall": 0.1667,
+        "context_relevance": 0.0622,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 197,
+      "complexity": "simple",
+      "question": "When was the record for the company requiring third-party financial institutions last updated?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0957,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 198,
+      "complexity": "simple",
+      "question": "In which country is the state IL located?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.419,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 199,
+      "complexity": "simple",
+      "question": "What entity type is recorded for the company mentioned in the news headline AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1057,
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 200,
+      "complexity": "simple",
+      "question": "Retrieve the exact ticker symbol for the company node named 'Mondelez International, Inc.'.",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.17,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 201,
+      "complexity": "simple",
+      "question": "What is the wiki_summary text associated with the Company record for 'Quest Diagnostics Incorporated'?",
+      "metrics": {
+        "context_recall": 0.537,
+        "context_relevance": 0.245,
+        "faithfulness": 0.8621,
+        "answer_relevancy": 0.4211,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 202,
+      "complexity": "simple",
+      "question": "Identify the last_updated timestamp for the Company entity named 'Ameriprise Financial, Inc.'.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2338,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 203,
+      "complexity": "simple",
+      "question": "Return the domain property from the News node with the headline 'PBM proposed transparency rule supported by public comment'.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.058,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 204,
+      "complexity": "simple",
+      "question": "What is the language field value for the News article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2626,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 205,
+      "complexity": "simple",
+      "question": "Fetch the sourcecountry attribute for the News entry with the headline 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'.",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.075,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 206,
+      "complexity": "simple",
+      "question": "What is the name of the Industry node that 'Mondelez International, Inc.' operates in?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2193,
+        "faithfulness": 0.4,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 207,
+      "complexity": "simple",
+      "question": "Identify the name of the Sector that encompasses the 'Water Utilities' industry.",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1334,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.2,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 208,
+      "complexity": "simple",
+      "question": "Return the name of the Product manufactured by 'Ameriprise Financial, Inc.'.",
+      "metrics": {
+        "context_recall": 0.1136,
+        "context_relevance": 0.2159,
+        "faithfulness": 0.5714,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 209,
+      "complexity": "simple",
+      "question": "What is the name of the Resource required by 'Quest Diagnostics Incorporated'?",
+      "metrics": {
+        "context_recall": 0.35,
+        "context_relevance": 0.2493,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 210,
+      "complexity": "simple",
+      "question": "Which state contains the city of Marlborough?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2857,
+        "faithfulness": 0.6667,
+        "answer_relevancy": 0.7273,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 211,
+      "complexity": "simple",
+      "question": "To which country does the state NJ belong?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.3,
+        "faithfulness": 0.7143,
+        "answer_relevancy": 0.3077,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 212,
+      "complexity": "simple",
+      "question": "What industry does Ameriprise Financial, Inc. operate within?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1957,
+        "faithfulness": 0.6923,
+        "answer_relevancy": 0.4762,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 213,
+      "complexity": "simple",
+      "question": "Which resource does Ameriprise Financial, Inc. require for its operations?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.2361,
+        "faithfulness": 0.8824,
+        "answer_relevancy": 0.3077,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 214,
+      "complexity": "simple",
+      "question": "Under which sector is the Cargo Ground Transportation industry classified?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.252,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.75,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 215,
+      "complexity": "simple",
+      "question": "What ownership percentage does Temasek Holdings (Private) Ltd hold in its portfolio company?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1364,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 216,
+      "complexity": "simple",
+      "question": "What is the full legal name of the company with ticker DGX?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.037,
+        "faithfulness": 0.4444,
+        "answer_relevancy": 0.75,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 217,
+      "complexity": "simple",
+      "question": "What is the official name of the state that contains the city of Marlborough?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.25,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 218,
+      "complexity": "simple",
+      "question": "Which company operates within the Electronic Components industry?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.1813,
+        "faithfulness": 0.625,
+        "answer_relevancy": 0.5333,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 219,
+      "complexity": "simple",
+      "question": "When was the record last updated for the company that requires residual fuel oil?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1059,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 220,
+      "complexity": "simple",
+      "question": "What is the wiki summary for the manufacturer of parts for equipment?",
+      "metrics": {
+        "context_recall": 0.119,
+        "context_relevance": 0.0841,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 221,
+      "complexity": "simple",
+      "question": "What is the import identifier for the fund that owns a stake in Ameriprise Financial, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2338,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 222,
+      "complexity": "simple",
+      "question": "What is the official job title held by the person working for Quest Diagnostics Incorporated?",
+      "metrics": {
+        "context_recall": 0.4615,
+        "context_relevance": 0.2198,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 223,
+      "complexity": "simple",
+      "question": "What is the web address for the news article titled 'PBM proposed transparency rule supported by public comment'?",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.0278,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 224,
+      "complexity": "simple",
+      "question": "What is the import identifier for the industry that Ameriprise Financial, Inc. operates in?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2207,
+        "faithfulness": 0.6667,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 225,
+      "complexity": "simple",
+      "question": "What is the name of the resource required by Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 0.76,
+        "context_relevance": 0.2287,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 226,
+      "complexity": "simple",
+      "question": "What is the web address for the news article with the headline 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+      "metrics": {
+        "context_recall": 0.1667,
+        "context_relevance": 0.1262,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 227,
+      "complexity": "simple",
+      "question": "What is the official name of the company owned by Aristotle Capital Management, LLC?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.2394,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 228,
+      "complexity": "simple",
+      "question": "In which city is Ameriprise Financial, Inc. headquartered?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2567,
+        "faithfulness": 0.4167,
+        "answer_relevancy": 0.4444,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 229,
+      "complexity": "simple",
+      "question": "Which sector is mentioned in the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1041,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 230,
+      "complexity": "simple",
+      "question": "What is the business description of the company that employs Ms. Janene I. Asgeirsson J.D.?",
+      "metrics": {
+        "context_recall": 0.102,
+        "context_relevance": 0.1608,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 231,
+      "complexity": "simple",
+      "question": "Which product is discussed in the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+      "metrics": {
+        "context_recall": 0.75,
+        "context_relevance": 0.1041,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 232,
+      "complexity": "simple",
+      "question": "What is the name of the state that contains the city of Santa Clara?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.4706,
+        "faithfulness": 0.25,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 233,
+      "complexity": "simple",
+      "question": "What is the full name of the company that employs Ms. Sue  Sabo?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1577,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 234,
+      "complexity": "simple",
+      "question": "In which language is the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley' written?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1041,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 235,
+      "complexity": "simple",
+      "question": "What is the wiki summary for the company that requires the resource named 'module testing'?",
+      "metrics": {
+        "context_recall": 0.0556,
+        "context_relevance": 0.0957,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 236,
+      "complexity": "simple",
+      "question": "What is the import identifier for the industry classified under the Energy sector?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1096,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 237,
+      "complexity": "simple",
+      "question": "What is the last_updated timestamp for the company that produces 'Data center facilities'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1578,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 238,
+      "complexity": "simple",
+      "question": "What is the entity name linked to the NEWS_ABOUT_LOCATION relationship for the news headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "metrics": {
+        "context_recall": 0.6667,
+        "context_relevance": 0.2382,
+        "faithfulness": 0.8182,
+        "answer_relevancy": 0.2069,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 239,
+      "complexity": "simple",
+      "question": "What ownership percentage does Aristotle Capital Management, LLC hold in its invested company?",
+      "metrics": {
+        "context_recall": 0.6667,
+        "context_relevance": 0.2217,
+        "faithfulness": 0.1875,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0909
+      }
+    },
+    {
+      "index": 240,
+      "complexity": "simple",
+      "question": "What product is manufactured by Quest Diagnostics Incorporated?",
+      "metrics": {
+        "context_recall": 0.9412,
+        "context_relevance": 0.2612,
+        "faithfulness": 0.1429,
+        "answer_relevancy": 0.2222,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 241,
+      "complexity": "simple",
+      "question": "What is the full name of the company that employs Ms. Janene I. Asgeirsson J.D.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1627,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 242,
+      "complexity": "simple",
+      "question": "What is the name of the city located in the state of IA?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.273,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 243,
+      "complexity": "simple",
+      "question": "What is the stock ticker of the company discussed in the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1341,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.1111,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 244,
+      "complexity": "simple",
+      "question": "What is the import identifier for the industry in which Mondelez International, Inc. operates?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2,
+        "faithfulness": 0.1667,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 245,
+      "complexity": "simple",
+      "question": "What is the import identifier for the company that employs Ms. Sue  Sabo?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.14,
+        "faithfulness": 0.1053,
+        "answer_relevancy": 0.4444,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 246,
+      "complexity": "simple",
+      "question": "What is the stock ticker assigned to the company named 'Quest Diagnostics Incorporated'?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.245,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 247,
+      "complexity": "simple",
+      "question": "Provide the full raw text content for the news article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '.",
+      "metrics": {
+        "context_recall": 0.4545,
+        "context_relevance": 0.2313,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 248,
+      "complexity": "simple",
+      "question": "Identify the name of the investment fund that holds a stake in 'Quest Diagnostics Incorporated'.",
+      "metrics": {
+        "context_recall": 0.2143,
+        "context_relevance": 0.2288,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.3077,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 249,
+      "complexity": "simple",
+      "question": "Who is the individual listed as working for 'Mondelez International, Inc.'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2132,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 250,
+      "complexity": "simple",
+      "question": "What is the official business description provided for 'Quest Diagnostics Incorporated'?",
+      "metrics": {
+        "context_recall": 0.9778,
+        "context_relevance": 0.2386,
+        "faithfulness": 0.1404,
+        "answer_relevancy": 0.0923,
+        "evidence_coverage": 0.2
+      }
+    },
+    {
+      "index": 251,
+      "complexity": "simple",
+      "question": "Which country officially contains the state abbreviated as 'NJ'?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2819,
+        "faithfulness": 0.25,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 252,
+      "complexity": "simple",
+      "question": "What sector classification does the 'Water Utilities' industry fall under?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1347,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 253,
+      "complexity": "simple",
+      "question": "Which specific resource does 'Ameriprise Financial, Inc.' require for its daily operations?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.2077,
+        "faithfulness": 0.2381,
+        "answer_relevancy": 0.5,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 254,
+      "complexity": "simple",
+      "question": "What product is manufactured by the company 'Mondelez International, Inc.'?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.2287,
+        "faithfulness": 0.1667,
+        "answer_relevancy": 0.24,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 255,
+      "complexity": "simple",
+      "question": "Retrieve the web domain associated with the news headline 'PBM proposed transparency rule supported by public comment'.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0278,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 256,
+      "complexity": "simple",
+      "question": "What is the import identifier of the company where Mr. John C. Griffith works?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0751,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 257,
+      "complexity": "simple",
+      "question": "What is the import identifier for the company in which Canada Pension Plan Investment Board holds an ownership stake?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0819,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 258,
+      "complexity": "simple",
+      "question": "Which industry is classified under the Industrials sector?",
+      "metrics": {
+        "context_recall": 0.4348,
+        "context_relevance": 0.116,
+        "faithfulness": 0.7059,
+        "answer_relevancy": 0.1739,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 259,
+      "complexity": "simple",
+      "question": "What is the import identifier of the resource discussed in the news article titled 'PBM proposed transparency rule supported by public comment'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0256,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 260,
+      "complexity": "simple",
+      "question": "What is the full name of the company that manufactures Data center facilities?",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.1549,
+        "faithfulness": 0.7273,
+        "answer_relevancy": 0.7368,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 261,
+      "complexity": "simple",
+      "question": "What is the import identifier for the fund mentioned in the news headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.245,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.4444,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 262,
+      "complexity": "simple",
+      "question": "What is the import identifier of the company that relies on third-party financial institutions?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0635,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 263,
+      "complexity": "simple",
+      "question": "Which city is situated within the state of IL?",
+      "metrics": {
+        "context_recall": 0.3846,
+        "context_relevance": 0.3917,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 264,
+      "complexity": "simple",
+      "question": "What is the business description of the company mentioned in the news headline 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1023,
+        "faithfulness": 0.0625,
+        "answer_relevancy": 0.0435,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 265,
+      "complexity": "simple",
+      "question": "When was the record last updated for the company that employs Ms. Sue  Sabo?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1001,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 266,
+      "complexity": "simple",
+      "question": "What is the wiki summary for the company that relies on third-party financial institutions?",
+      "metrics": {
+        "context_recall": 0.0548,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 267,
+      "complexity": "simple",
+      "question": "What is the stock ticker of the company that produces cash management?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0997,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 268,
+      "complexity": "simple",
+      "question": "What is the wiki summary for the company that employs Mr. John C. Griffith?",
+      "metrics": {
+        "context_recall": 0.0385,
+        "context_relevance": 0.1256,
+        "faithfulness": 0.1818,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 269,
+      "complexity": "simple",
+      "question": "In which language is the news article titled \"PBM proposed transparency rule supported by public comment\" written?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0278,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 270,
+      "complexity": "simple",
+      "question": "What is the official job title held by Mr. John C. Griffith?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1368,
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 271,
+      "complexity": "simple",
+      "question": "What ownership percentage does Canada Pension Plan Investment Board hold in its portfolio company?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.0819,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.4,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 272,
+      "complexity": "simple",
+      "question": "What is the last_updated timestamp for Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2231,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 273,
+      "complexity": "simple",
+      "question": "What entity type is recorded on the NEWS_ABOUT_PRODUCT relationship for the news headline \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2313,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 274,
+      "complexity": "simple",
+      "question": "What is the name of the product manufactured by the company with ticker AMP?",
+      "metrics": {
+        "context_recall": 0.0909,
+        "context_relevance": 0.0333,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 275,
+      "complexity": "simple",
+      "question": "What is the search query string used to fetch the news article titled \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+      "metrics": {
+        "context_recall": 0.2857,
+        "context_relevance": 0.1131,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 276,
+      "complexity": "simple",
+      "question": "What is the import identifier of the city where Quest Diagnostics Incorporated is headquartered?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2717,
+        "faithfulness": 0.6667,
+        "answer_relevancy": 0.8889,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 277,
+      "complexity": "simple",
+      "question": "What is the stock ticker of the company in which Aristotle Capital Management, LLC holds an ownership stake?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2217,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 278,
+      "complexity": "simple",
+      "question": "What is the import identifier for the sector mentioned in the news article titled AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0965,
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 279,
+      "complexity": "simple",
+      "question": "What is the wiki summary for the company that employs Ms. Janene I. Asgeirsson J.D.?",
+      "metrics": {
+        "context_recall": 0.0625,
+        "context_relevance": 0.1151,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 280,
+      "complexity": "simple",
+      "question": "What is the official name of the company that produces cash management?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0997,
+        "faithfulness": 0.6667,
+        "answer_relevancy": 0.6316,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 281,
+      "complexity": "simple",
+      "question": "What is the business description of the company in which Canada Pension Plan Investment Board holds an ownership stake?",
+      "metrics": {
+        "context_recall": 0.0189,
+        "context_relevance": 0.1211,
+        "faithfulness": 0.1852,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 282,
+      "complexity": "simple",
+      "question": "What is the exact search query string used to fetch the news article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.2198,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 283,
+      "complexity": "simple",
+      "question": "What is the UTC collection timestamp for the news headline 'PBM proposed transparency rule supported by public comment'?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0278,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    }
+  ]
+}

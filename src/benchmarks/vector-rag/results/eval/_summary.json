@@ -1,0 +1,39 @@
+{
+  "results_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results",
+  "reports_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\eval",
+  "n_files": 2,
+  "n_items": 581,
+  "mean_metrics": {
+    "context_recall": 0.2625,
+    "context_relevance": 0.1379,
+    "faithfulness": 0.1467,
+    "answer_relevancy": 0.0585,
+    "evidence_coverage": 0.1545
+  },
+  "files": [
+    {
+      "source_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\aggregation.jsonl",
+      "report_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\eval\\aggregation.eval.json",
+      "n": 298,
+      "mean_metrics": {
+        "context_recall": 0.1779,
+        "context_relevance": 0.1048,
+        "faithfulness": 0.0913,
+        "answer_relevancy": 0.0351,
+        "evidence_coverage": 0.0758
+      }
+    },
+    {
+      "source_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\simple.jsonl",
+      "report_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\eval\\simple.eval.json",
+      "n": 283,
+      "mean_metrics": {
+        "context_recall": 0.3516,
+        "context_relevance": 0.1728,
+        "faithfulness": 0.2049,
+        "answer_relevancy": 0.0831,
+        "evidence_coverage": 0.2375
+      }
+    }
+  ]
+}

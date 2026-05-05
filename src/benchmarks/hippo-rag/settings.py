@@ -14,19 +14,10 @@ _HIPPO = Path(__file__).resolve().parent
 load_dotenv(_HIPPO / ".env", override=False)
 
 OPENAI_API_BASE: str = "https://openrouter.ai/api/v1"
-LLM_MODEL: str = "qwen/qwen3-235b-a22b-2507"
-# HippoRAG выбирает бэкенд эмбеддингов по подстроке в имени: для OpenAI-совместимого
-# API (OpenRouter и т.п.) в имени должно быть "text-embedding", иначе AssertionError.
-# Переопределение: HIPPORAG_EMBEDDING_MODEL
-EMBEDDING_MODEL: str = (
-    os.getenv("HIPPORAG_EMBEDDING_MODEL", "").strip()
-    or "openai/text-embedding-3-small"
-)
-OPENAI_API_KEY: str = ""
-if not (OPENAI_API_KEY and OPENAI_API_KEY.strip()):
-    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "") or os.environ.get(
-        "OPENROUTER_API_KEY", ""
-    )
+LLM_MODEL: str =  os.environ.get("LLM_MODEL", "")
+EMBEDDING_MODEL: str =  os.environ.get("EMBEDDING_MODEL", "")
+
+OPENROUTER_API_KEY: str = os.environ.get("OPENROUTER_API_KEY", "")
 # OpenRouter рекомендует Referer; пустой иногда даёт проблемы с HTTP-клиентом.
 OPENROUTER_HTTP_REFERER: str = os.getenv(
     "OPENROUTER_HTTP_REFERER", "https://localhost"

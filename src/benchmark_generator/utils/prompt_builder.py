@@ -169,12 +169,14 @@ Return only a valid JSON array:
 
 
 def build_simple_prompts(schema, data_samples, count, existing_questions=None):
+    """LLM-only шаблон (legacy). В пайплайне simple строится через QuestionGenerationEngine.generate_simple_pairs (1 ребро или свойство узла)."""
     user_prompt = (
         _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
         + f"""
-=== TASK TYPE: SIMPLE ===
+=== TASK TYPE: SIMPLE (multi-hop-1 scope) ===
 Generate {count} questions of type "simple":
-- read attributes of one node or its direct neighbors (1 hop),
+- read one scalar attribute of a concrete entity, OR
+- one relationship hop from anchor to neighbor (A–B only),
 - at least one concrete entity filter.
 """
         + _output_format_prompt("simple")

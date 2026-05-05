@@ -1,45 +1,262 @@
 [
   {
     "complexity": "simple",
-    "question": "What is the stock ticker for AT&T Inc.?",
-    "cypher": "MATCH (c:Company {name: \"AT&T Inc.\"}) RETURN c.ticker LIMIT 10",
-    "ground_truth": "T",
-    "answer": "T"
+    "question": "What is the stock ticker for Ameriprise Financial, Inc.?",
+    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'}) RETURN c.ticker LIMIT 10",
+    "ground_truth": "AMP",
+    "answer": "AMP"
   },
   {
     "complexity": "simple",
-    "question": "What is the business description of Ameriprise Financial, Inc.?",
-    "cypher": "MATCH (c:Company {name: \"Ameriprise Financial, Inc.\"}) RETURN c.description LIMIT 10",
-    "ground_truth": "Ameriprise Financial, Inc., together with its subsidiaries, operates as a diversified financial services company in the United States and internationally. The company offers financial planning and advice services to individual and institutional clients. It operates through Advice & Wealth Management, Asset Management, and Retirement & Protection Solutions segments. The Advice & Wealth Management segment provides financial planning and advice; brokerage products and services for retail and institutional clients; discretionary and non-discretionary investment advisory accounts; mutual funds; ins",
-    "answer": "Ameriprise Financial, Inc., together with its subsidiaries, operates as a diversified financial services company in the United States and internationally. The company offers financial planning and advice services to individual and institutional clients. It operates through Advice & Wealth Management, Asset Management, and Retirement & Protection Solutions segments."
+    "question": "Which company does Mr. John C. Griffith work for, and what is his job title?",
+    "cypher": "MATCH (p:Person {name: 'Mr. John C. Griffith'})-[r:WORKS_FOR]->(c:Company) RETURN c.name, r.title LIMIT 10",
+    "ground_truth": "American Water Works Company, I, CEO, President & Director",
+    "answer": "American Water Works Company, CEO, President & Director"
   },
   {
     "complexity": "simple",
-    "question": "What are the headlines of news articles about AT&T Inc.?",
-    "cypher": "MATCH (c:Company {name: \"AT&T Inc.\"})<-[:NEWS_ABOUT_COMPANY]-(n:News) RETURN n.headline LIMIT 10",
-    "ground_truth": "What Going On With AT & T Stock Thursday ? - AT & T ( NYSE : T ) ; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Hazleton Standard Speaker; Amazon - Globalstar deal is poised to boost Apple satellite ambitions; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Boulder Daily Camera; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Akron News - Reporter; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Colorado Hometown Weekly; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – The Mercury; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Sentinel and Enterprise; Morgan Stanley Begins Coverage on AT & T ( NYSE : T ) ; AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley",
-    "answer": "What Going On With AT & T Stock Thursday ?\nMorgan Stanley Begins Coverage on AT & T ( NYSE : T )\nAT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley"
+    "question": "In which industry does Mondelez International, Inc. operate?",
+    "cypher": "MATCH (c:Company {ticker: 'MDLZ'})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.name LIMIT 10",
+    "ground_truth": "Packaged Foods & Meats",
+    "answer": "Packaged Foods & Meats"
   },
   {
     "complexity": "simple",
-    "question": "Which company does Mr. John C. Griffith work for?",
-    "cypher": "MATCH (p:Person {name: \"Mr. John C. Griffith\"})-[:WORKS_FOR]->(c:Company) RETURN c.name LIMIT 10",
-    "ground_truth": "American Water Works Company, I",
-    "answer": "American Water Works Company, I"
+    "question": "What are the headlines of news articles published about Quest Diagnostics Incorporated?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_COMPANY]->(c:Company {name: 'Quest Diagnostics Incorporated'}) RETURN n.headline LIMIT 10",
+    "ground_truth": "Head to Head Contrast : The Pennant Group ( NASDAQ : PNTG ) vs . Quest Diagnostics ( NYSE : DGX ) ; Quest Diagnostics Incorporated $DGX Shares Acquired by Willis Investment Counsel; Quest Diagnostics ( NYSE : DGX ) Hits New 52 - Week High on Earnings Beat; Quest Diagnostics ( DGX ) Earnings Call Transcript; Why Is Quest Diagnostics Stock Soaring Tuesday ? - Quest Diagnostics ( NYSE : DGX ) ; Analysts Set Quest Diagnostics Incorporated ( NYSE : DGX ) Price Target at $210 . 29; Research Analysts Offer Predictions for DGX Q1 Earnings; Insider Selling : Quest Diagnostics ( NYSE : DGX ) SVP Sells 3 , 878 Shares of Stock; Jefferies Financial Group Inc . Sells 4 , 024 Shares of Quest Diagnostics Incorporated $DGX; Global Diagnostic Labs Market to Grow at a CAGR of 6 . 66 %, Reaching USD 223 Billion by 2032 , Reports Vyansa Intelligence",
+    "answer": "Head to Head Contrast : The Pennant Group ( NASDAQ : PNTG ) vs . Quest Diagnostics ( NYSE : DGX )\nQuest Diagnostics Incorporated $DGX Shares Acquired by Willis Investment Counsel\nQuest Diagnostics ( NYSE : DGX ) Hits New 52 - Week High on Earnings Beat\nQuest Diagnostics ( DGX ) Earnings Call Transcript\nWhy Is Quest Diagnostics Stock Soaring Tuesday ? - Quest Diagnostics ( NYSE : DGX )\nAnalysts Set Quest Diagnostics Incorporated ( NYSE : DGX ) Price Target at $210 . 29\nResearch Analysts Offer Predictions for DGX Q1 Earnings\nInsider Selling : Quest Diagnostics ( NYSE : DGX ) SVP Sells 3 , 878 Shares of Stock\nJefferies Financial Group Inc . Sells 4 , 024 Shares of Quest Diagnostics Incorporated $DGX\nGlobal Diagnostic Labs Market to Grow at a CAGR of 6 . 66 %, Reaching USD 223 Billion by 2032 , Reports Vyansa Intelligence"
   },
   {
     "complexity": "simple",
-    "question": "In which industry does West Pharmaceutical Services, I operate?",
-    "cypher": "MATCH (c:Company {name: \"West Pharmaceutical Services, I\"})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.name LIMIT 10",
-    "ground_truth": "Health Care Supplies",
-    "answer": "Health Care Supplies"
+    "question": "What percentage of a company does Temasek Holdings (Private) Ltd own, and which company is it?",
+    "cypher": "MATCH (f:Fund {name: 'Temasek Holdings (Private) Ltd'})-[r:OWNS]->(c:Company) RETURN c.name, r.pct LIMIT 10",
+    "ground_truth": "BlackRock, Inc., 0.0328",
+    "answer": "BlackRock, Inc., 0.0328"
   },
   {
     "complexity": "simple",
-    "question": "On what dates were news articles published about Aristotle Capital Management, LLC?",
-    "cypher": "MATCH (f:Fund {name: \"Aristotle Capital Management, LLC\"})<-[:NEWS_ABOUT_FUND]-(n:News) RETURN n.date LIMIT 10",
-    "ground_truth": "2026-02-04; 2026-02-04; 2026-03-15; 2026-03-16; 2026-04-03",
-    "answer": "2026-02-04; 2026-02-04; 2026-03-15; 2026-03-16; 2026-04-03"
+    "question": "In which country is the city of Dublin located?",
+    "cypher": "MATCH (ci:City {name: 'Dublin'})-[:IN_COUNTRY]->(co:Country) RETURN co.name LIMIT 10",
+    "ground_truth": "Ireland",
+    "answer": "Ireland"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company produces Data center facilities?",
+    "cypher": "MATCH (c:Company)-[:PRODUCES]->(p:Product {name: 'Data center facilities'}) RETURN c.name LIMIT 10",
+    "ground_truth": "American Tower Corporation (REI",
+    "answer": "American Tower Corporation"
+  },
+  {
+    "complexity": "simple",
+    "question": "What resources are required by Ameriprise Financial, Inc.?",
+    "cypher": "MATCH (c:Company {ticker: 'AMP'})-[:REQUIRES]->(r:Resource) RETURN r.name LIMIT 10",
+    "ground_truth": "raw materials and technologies needed for investment management and advisory services; third-party financial institutions; Columbia Threadneedle Investments brand name; advisor networks; institutional sales force",
+    "answer": "raw materials and technologies needed for investment management and advisory services; third-party financial institutions; Columbia Threadneedle Investments brand name; advisor networks; institutional sales force"
+  },
+  {
+    "complexity": "simple",
+    "question": "To which sector does the Water Utilities industry belong?",
+    "cypher": "MATCH (i:Industry {name: 'Water Utilities'})-[:PART_OF]->(s:Sector) RETURN s.name LIMIT 10",
+    "ground_truth": "Utilities",
+    "answer": "Utilities"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company does Ms. Sue  Sabo work for?",
+    "cypher": "MATCH (p:Person {name: \"Ms. Sue  Sabo\"})-[:WORKS_FOR]->(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "Masco Corporation",
+    "answer": "Ms. Sue Sabo, Masco Corporation"
+  },
+  {
+    "complexity": "simple",
+    "question": "In which industry does Quest Diagnostics Incorporated operate?",
+    "cypher": "MATCH (c:Company {name: \"Quest Diagnostics Incorporated\"})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.name LIMIT 10",
+    "ground_truth": "Health Care Services",
+    "answer": "Health Care Services"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company does Canada Pension Plan Investment Board own a stake in, and what is the ownership percentage?",
+    "cypher": "MATCH (f:Fund {name: \"Canada Pension Plan Investment Board\"})-[o:OWNS]->(c:Company) RETURN c.name, o.pct LIMIT 10",
+    "ground_truth": "Bunge Limited, 0.1357",
+    "answer": "Bunge Limited, 0.1357"
+  },
+  {
+    "complexity": "simple",
+    "question": "In which state is the city of Santa Clara located?",
+    "cypher": "MATCH (city:City {name: \"Santa Clara\"})-[:IN_STATE]->(s:State) RETURN s.name LIMIT 10",
+    "ground_truth": "CA",
+    "answer": "CA"
+  },
+  {
+    "complexity": "simple",
+    "question": "To which sector does the Cargo Ground Transportation industry belong?",
+    "cypher": "MATCH (i:Industry {name: \"Cargo Ground Transportation\"})-[:PART_OF]->(sec:Sector) RETURN sec.name LIMIT 10",
+    "ground_truth": "Industrials",
+    "answer": "Industrials"
+  },
+  {
+    "complexity": "simple",
+    "question": "What products are produced by Ameriprise Financial, Inc.?",
+    "cypher": "MATCH (c:Company {name: \"Ameriprise Financial, Inc.\"})-[:PRODUCES]->(p:Product) RETURN p.name LIMIT 10",
+    "ground_truth": "face-amount certificates; discretionary and non-discretionary investment advisory accounts; brokerage products and services for retail and institutional clients; mutual funds; U.S. mutual funds and their non-U.S. equivalents, exchange-traded funds, variable product funds underlying insurance, and annuity separate accounts; institutional asset management products, such as traditional asset classes, separately managed accounts, individually managed accounts, collateralized loan obligations, hedge funds, collective funds, and property and infrastructure funds; insurance and annuities products; cash management and banking products; variable annuity products",
+    "answer": "face-amount certificates; discretionary and non-discretionary investment advisory accounts; brokerage products and services for retail and institutional clients; mutual funds; U.S. mutual funds and their non-U.S. equivalents, exchange-traded funds, variable product funds underlying insurance, and annuity separate accounts; institutional asset management products, such as traditional asset classes, separately managed accounts, individually managed accounts, collateralized loan obligations, hedge funds, collective funds, and property and infrastructure funds; insurance and annuities products; cash management and banking products; variable annuity products"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company employs Ms. Janene I. Asgeirsson J.D.?",
+    "cypher": "MATCH (p:Person {name: \"Ms. Janene I. Asgeirsson J.D.\"})-[:WORKS_FOR]->(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "Analog Devices, Inc.",
+    "answer": "Ms. Janene I. Asgeirsson J.D., Analog Devices, Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company is owned by Aristotle Capital Management, LLC?",
+    "cypher": "MATCH (f:Fund {name: \"Aristotle Capital Management, LLC\"})-[:OWNS]->(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "American Water Works Company, I; Williams-Sonoma, Inc.; Coterra Energy Inc.",
+    "answer": "American Water Works Company, I\nWilliams-Sonoma, Inc.\nCoterra Energy Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "What resources does Mondelez International, Inc. require?",
+    "cypher": "MATCH (c:Company {name: \"Mondelez International, Inc.\"})-[:REQUIRES]->(r:Resource) RETURN r.name LIMIT 10",
+    "ground_truth": "retailer digital platforms; logistics and distribution services; direct-to-consumer websites and social media platforms; packaging materials; raw materials for cheese and grocery products; raw materials for biscuits and baked snacks; raw materials for chocolates; raw materials for gums and candies; raw materials for powdered beverage products; e-retail platforms",
+    "answer": "retailer digital platforms, logistics and distribution services, direct-to-consumer websites and social media platforms, packaging materials, raw materials for cheese and grocery products, raw materials for biscuits and baked snacks, raw materials for chocolates, raw materials for gums and candies, raw materials for powdered beverage products, e-retail platforms"
+  },
+  {
+    "complexity": "simple",
+    "question": "In which country is the state of NJ located?",
+    "cypher": "MATCH (s:State {name: \"NJ\"})-[:IN_COUNTRY]->(c:Country) RETURN c.name LIMIT 10",
+    "ground_truth": "United States",
+    "answer": "United States"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the description of Quest Diagnostics Incorporated?",
+    "cypher": "MATCH (c:Company {name: 'Quest Diagnostics Incorporated'}) RETURN c.description LIMIT 10",
+    "ground_truth": "Quest Diagnostics Incorporated provides diagnostic testing and services in the United States and internationally. The company develops and delivers diagnostic information services, such as routine, non-routine and advanced clinical testing, anatomic pathology testing, and other diagnostic information services. It also provides diagnostic information services primarily under the Quest Diagnostics brand, as well as under the AmeriPath, Dermpath Diagnostics, ExamOne, and Quanum brands to physicians, hospitals, patients and consumers, health plans, government agencies, employers, emerging retail h",
+    "answer": "Quest Diagnostics Incorporated provides diagnostic testing and services in the United States and internationally. The company develops and delivers diagnostic information services, such as routine, non-routine and advanced clinical testing, anatomic pathology testing, and other diagnostic information services. It also provides diagnostic information services primarily under the Quest Diagnostics brand, as well as under the AmeriPath, Dermpath Diagnostics, ExamOne, and Quanum brands to physicians, hospitals, patients and consumers, health plans, government agencies, employers, emerging retail h"
+  },
+  {
+    "complexity": "simple",
+    "question": "In which state is the city of Marlborough located?",
+    "cypher": "MATCH (c:City {name: 'Marlborough'})-[:IN_STATE]->(s:State) RETURN s.name LIMIT 10",
+    "ground_truth": "MA",
+    "answer": "MA"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary for Ameriprise Financial, Inc.?",
+    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'}) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "Ameriprise Financial, Inc. is an American diversified financial services company and bank holding company based in Minneapolis, Minnesota. It provides financial planning products and services, including wealth management, asset management, insurance, annuities, and estate planning.\nAs of April 2022, more than 80% of the company's revenue came from wealth management.\nAmeriprise was formerly a division of American Express, which completed the corporate spin-off of the company in September 2005.\nThe company is ranked 254th on the Fortune 500. It is on the list of largest banks in the United States and was ranked the 9th largest independent broker-dealer based on assets under management. It is one of the largest financial planning companies in the United States and ranks among the 25 largest asset managers globally. It is ranked 8th in long-term mutual fund assets in the U.S., fourth in retail funds in the U.K., and 27th in global assets under management.",
+    "answer": "Ameriprise Financial, Inc. is an American diversified financial services company and bank holding company based in Minneapolis, Minnesota. It provides financial planning products and services, including wealth management, asset management, insurance, annuities, and estate planning. As of April 2022, more than 80% of the company's revenue came from wealth management. Ameriprise was formerly a division of American Express, which completed the corporate spin-off of the company in September 2005. The company is ranked 254th on the Fortune 500. It is on the list of largest banks in the United States and was ranked the 9th largest independent broker-dealer based on assets under management. It is one of the largest financial planning companies in the United States and ranks among the 25 largest asset managers globally. It is ranked 8th in long-term mutual fund assets in the U.S., fourth in retail funds in the U.K., and 27th in global assets under management."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the domain associated with the news headline AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley?",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'}) RETURN n.domain LIMIT 10",
+    "ground_truth": "themarketsdaily.com",
+    "answer": "themarketsdaily.com"
+  },
+  {
+    "complexity": "simple",
+    "question": "On what date was the news article Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG )  published?",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '}) RETURN n.date LIMIT 10",
+    "ground_truth": "2026-04-19",
+    "answer": "2026-04-19"
+  },
+  {
+    "complexity": "simple",
+    "question": "To which sector does the Electronic Components industry belong?",
+    "cypher": "MATCH (i:Industry {name: 'Electronic Components'})-[:PART_OF]->(s:Sector) RETURN s.name LIMIT 10",
+    "ground_truth": "Information Technology",
+    "answer": "Information Technology"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which city is Ameriprise Financial, Inc. located in?",
+    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'})-[:LOCATED_IN]->(city:City) RETURN city.name LIMIT 10",
+    "ground_truth": "Minneapolis",
+    "answer": "Minneapolis"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the source country for the news article titled PBM proposed transparency rule supported by public comment?",
+    "cypher": "MATCH (n:News {headline: 'PBM proposed transparency rule supported by public comment'}) RETURN n.sourcecountry LIMIT 10",
+    "ground_truth": "United States",
+    "answer": "United States"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which product does Quest Diagnostics Incorporated produce?",
+    "cypher": "MATCH (c:Company {name: 'Quest Diagnostics Incorporated'})-[:PRODUCES]->(p:Product) RETURN p.name LIMIT 10",
+    "ground_truth": "risk assessment services for the life insurance industry; anatomic pathology testing; diagnostic information services; routine, non-routine and advanced clinical testing; information technology solutions",
+    "answer": "risk assessment services for the life insurance industry; anatomic pathology testing; diagnostic information services; routine, non-routine and advanced clinical testing; information technology solutions"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the fund that owns a stake in the company with ticker DGX?",
+    "cypher": "MATCH (f:Fund)-[:OWNS]->(c:Company {ticker: 'DGX'}) RETURN f.name LIMIT 10",
+    "ground_truth": "Vanguard Group Inc; State Street Corporation; JPMORGAN CHASE & CO; Blackrock Inc.; Price (T.Rowe) Associates Inc",
+    "answer": "Vanguard Group Inc, State Street Corporation, JPMORGAN CHASE & CO, Blackrock Inc., Price (T.Rowe) Associates Inc"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the language of the news article titled \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"}) RETURN n.language LIMIT 10",
+    "ground_truth": "English",
+    "answer": "English"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which industry does the company with ticker AMP operate in?",
+    "cypher": "MATCH (c:Company {ticker: \"AMP\"})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.name LIMIT 10",
+    "ground_truth": "Asset Management & Custody Banks",
+    "answer": "Asset Management & Custody Banks"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the URL of the news article comparing Principal Financial Group and Hamilton Insurance Group?",
+    "cypher": "MATCH (n:News {headline: \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"}) RETURN n.url LIMIT 10",
+    "ground_truth": "https://www.themarketsdaily.com/2026/04/19/comparing-principal-financial-group-nasdaqpfg-hamilton-insurance-group-nysehg.html",
+    "answer": "https://www.themarketsdaily.com/2026/04/19/comparing-principal-financial-group-nasdaqpfg-hamilton-insurance-group-nysehg.html"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary for Quest Diagnostics Incorporated?",
+    "cypher": "MATCH (c:Company {name: \"Quest Diagnostics Incorporated\"}) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "Quest Diagnostics Incorporated is an American clinical laboratory. A Fortune 500 company, Quest operates in the United States, Puerto Rico, Mexico, and Brazil. Quest also maintains collaborative agreements with various hospitals and clinics across the globe.\nAs of 2020, the company had approximately 48,000 employees, and it generated more than $7.7 billion in revenue in 2019. The company offers access to diagnostic testing services for cancer, cardiovascular disease, infectious disease, neurological disorders, COVID-19, and employment and court-ordered drug testing.",
+    "answer": "Quest Diagnostics Incorporated is an American clinical laboratory. A Fortune 500 company, Quest operates in the United States, Puerto Rico, Mexico, and Brazil. Quest also maintains collaborative agreements with various hospitals and clinics across the globe. As of 2020, the company had approximately 48,000 employees, and it generated more than $7.7 billion in revenue in 2019. The company offers access to diagnostic testing services for cancer, cardiovascular disease, infectious disease, neurological disorders, COVID-19, and employment and court-ordered drug testing."
+  },
+  {
+    "complexity": "simple",
+    "question": "Which product does Mondelez International, Inc. produce?",
+    "cypher": "MATCH (c:Company {name: \"Mondelez International, Inc.\"})-[:PRODUCES]->(p:Product) RETURN p.name LIMIT 10",
+    "ground_truth": "gums and candies; Cadbury Dairy Milk; Milka; Ritz; Toblerone chocolate; powdered beverage products; Oreo; various cheese and grocery products; CLIF Bar; LU",
+    "answer": "gums and candies; Cadbury Dairy Milk; Milka; Ritz; Toblerone chocolate; powdered beverage products; Oreo; various cheese and grocery products; CLIF Bar; LU"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the seendate for the news article \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"}) RETURN n.seendate LIMIT 10",
+    "ground_truth": "20260419T073000Z",
+    "answer": "20260419T073000Z"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the domain of the news article \"PBM proposed transparency rule supported by public comment\"?",
+    "cypher": "MATCH (n:News {headline: \"PBM proposed transparency rule supported by public comment\"}) RETURN n.domain LIMIT 10",
+    "ground_truth": "healthcarefinancenews.com",
+    "answer": "healthcarefinancenews.com"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which resource does Quest Diagnostics Incorporated require?",
+    "cypher": "MATCH (c:Company {name: \"Quest Diagnostics Incorporated\"})-[:REQUIRES]->(r:Resource) RETURN r.name LIMIT 10",
+    "ground_truth": "call centers and mobile phlebotomists; phlebotomists in physician offices; collaborative agreements with various hospitals and clinics; nurses and other health and wellness professionals; network of laboratories; patient service centers",
+    "answer": "call centers and mobile phlebotomists; phlebotomists in physician offices; collaborative agreements with various hospitals and clinics; nurses and other health and wellness professionals; network of laboratories; patient service centers"
   },
   {
     "complexity": "simple",
@@ -50,163 +267,1717 @@
   },
   {
     "complexity": "simple",
-    "question": "What products does AT&T Inc. produce?",
-    "cypher": "MATCH (c:Company {name: \"AT&T Inc.\"})-[:PRODUCES]->(p:Product) RETURN p.name LIMIT 10",
-    "ground_truth": "handsets; wireless computing devices; wireless voice and data communications services; carrying cases/protective covers; wireless data cards; wireless chargers; AT&T Dedicated Internet; hosted and managed professional services; fiber ethernet and broadband; fixed wireless",
-    "answer": "handsets; wireless computing devices; wireless voice and data communications services; carrying cases/protective covers; wireless data cards; wireless chargers; AT&T Dedicated Internet; hosted and managed professional services; fiber ethernet and broadband; fixed wireless"
+    "question": "What is the business description for Mondelez International, Inc.?",
+    "cypher": "MATCH (c:Company {name: 'Mondelez International, Inc.'}) RETURN c.description LIMIT 10",
+    "ground_truth": "Mondelez International, Inc., through its subsidiaries, manufactures, markets, and sells snack food and beverage products in the Latin America, North America, Asia, the Middle East, Africa, and Europe. It provides biscuits and baked snacks, including cookies, crackers, salted snacks, snack bars, and cakes and pastries; chocolates; and gums and candies, as well as various cheese and grocery, and powdered beverage products. The company's brand portfolio includes Oreo, Ritz, LU, CLIF Bar, and Tate's Bake Shop biscuits and baked snacks, as well as Cadbury Dairy Milk, Milka, and Toblerone chocolate",
+    "answer": "Mondelez International, Inc., through its subsidiaries, manufactures, markets, and sells snack food and beverage products in the Latin America, North America, Asia, the Middle East, Africa, and Europe. It provides biscuits and baked snacks, including cookies, crackers, salted snacks, snack bars, and cakes and pastries; chocolates; and gums and candies, as well as various cheese and grocery, and powdered beverage products."
   },
   {
     "complexity": "simple",
-    "question": "To which sector does the Water Utilities industry belong?",
-    "cypher": "MATCH (i:Industry {name: \"Water Utilities\"})-[:PART_OF]->(s:Sector) RETURN s.name LIMIT 10",
-    "ground_truth": "Utilities",
-    "answer": "Utilities"
+    "question": "What is the raw text of the news article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '}) RETURN n.raw_text LIMIT 10",
+    "ground_truth": "Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG )  nan",
+    "answer": "nan"
   },
   {
     "complexity": "simple",
-    "question": "What is the domain of the news article titled \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"?",
+    "question": "When was the record for Ameriprise Financial, Inc. last updated?",
+    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'}) RETURN c.last_updated LIMIT 10",
+    "ground_truth": "2026-03-23",
+    "answer": "2026-03-23"
+  },
+  {
+    "complexity": "simple",
+    "question": "What search query was used to collect the news article 'PBM proposed transparency rule supported by public comment'?",
+    "cypher": "MATCH (n:News {headline: 'PBM proposed transparency rule supported by public comment'}) RETURN n.query LIMIT 10",
+    "ground_truth": "\"third-party administrators\" AND (commodity OR supply OR price OR production)",
+    "answer": "\"third-party administrators\" AND (commodity OR supply OR price OR production)"
+  },
+  {
+    "complexity": "simple",
+    "question": "What ownership percentage does Aristotle Capital Management, LLC hold in its portfolio company?",
+    "cypher": "MATCH (f:Fund {name: 'Aristotle Capital Management, LLC'})-[r:OWNS]->(c:Company) RETURN r.pct LIMIT 10",
+    "ground_truth": "0.0323; 0.0765; 0.040799998",
+    "answer": "0.0323; 0.0765; 0.040799998"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which city is located in the state of IL?",
+    "cypher": "MATCH (s:State {name: 'IL'})<-[:IN_STATE]-(c:City) RETURN c.name LIMIT 10",
+    "ground_truth": "Deerfield; Rolling Meadows; Chicago; Northbrook; North Chicago; Lincolnshire; Bolingbrook; Lake Forest; Glenview; Downers Grove",
+    "answer": "Deerfield, Rolling Meadows, Chicago, Northbrook, North Chicago, Lincolnshire, Bolingbrook, Lake Forest, Glenview, Downers Grove"
+  },
+  {
+    "complexity": "simple",
+    "question": "At what UTC timestamp was the news article 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley' collected?",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'}) RETURN n.collected_at_utc LIMIT 10",
+    "ground_truth": "2026-04-21T22:15:29+00:00",
+    "answer": "2026-04-21T22:15:29+00:00"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker symbol for Quest Diagnostics Incorporated?",
+    "cypher": "MATCH (c:Company {name: 'Quest Diagnostics Incorporated'}) RETURN c.ticker LIMIT 10",
+    "ground_truth": "DGX",
+    "answer": "DGX"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the source country for the news article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '}) RETURN n.sourcecountry LIMIT 10",
+    "ground_truth": "United States",
+    "answer": "United States"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker of the company owned by Temasek Holdings (Private) Ltd?",
+    "cypher": "MATCH (f:Fund {name: 'Temasek Holdings (Private) Ltd'})-[:OWNS]->(c:Company) RETURN c.ticker LIMIT 10",
+    "ground_truth": "BLK",
+    "answer": "BLK"
+  },
+  {
+    "complexity": "simple",
+    "question": "What entity type is recorded on the relationship linking the news article 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley' to a company?",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'})-[r:NEWS_ABOUT_COMPANY]->(c:Company) RETURN r.entity_type LIMIT 10",
+    "ground_truth": "Company",
+    "answer": "Company"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which fund is mentioned in the news article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '})-[:NEWS_ABOUT_FUND]->(f:Fund) RETURN f.name LIMIT 10",
+    "ground_truth": "Principal Financial Group, Inc.",
+    "answer": "Principal Financial Group, Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the source country for the news headline 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'}) RETURN n.sourcecountry LIMIT 10",
+    "ground_truth": "United States",
+    "answer": "United States"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company requires the resource named 'residual fuel oil'?",
+    "cypher": "MATCH (r:Resource {name: 'residual fuel oil'})<-[:REQUIRES]-(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "Valero Energy Corporation",
+    "answer": "Valero Energy Corporation"
+  },
+  {
+    "complexity": "simple",
+    "question": "In which city is Quest Diagnostics Incorporated headquartered?",
+    "cypher": "MATCH (c:Company {name: 'Quest Diagnostics Incorporated'})-[:LOCATED_IN]->(city:City) RETURN city.name LIMIT 10",
+    "ground_truth": "Secaucus",
+    "answer": "Secaucus"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which fund holds an ownership stake in the company with ticker AMP?",
+    "cypher": "MATCH (f:Fund)-[:OWNS]->(c:Company {ticker: 'AMP'}) RETURN f.name LIMIT 10",
+    "ground_truth": "Geode Capital Management, LLC; JPMORGAN CHASE & CO; State Street Corporation; Blackrock Inc.; Vanguard Group Inc",
+    "answer": "Geode Capital Management, LLC\nJPMORGAN CHASE & CO\nState Street Corporation\nBlackrock Inc.\nVanguard Group Inc"
+  },
+  {
+    "complexity": "simple",
+    "question": "On what date was the news article 'PBM proposed transparency rule supported by public comment' published?",
+    "cypher": "MATCH (n:News {headline: 'PBM proposed transparency rule supported by public comment'}) RETURN n.date LIMIT 10",
+    "ground_truth": "2026-04-21",
+    "answer": "2026-04-21"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker of the company that requires the resource named 'third-party financial institutions'?",
+    "cypher": "MATCH (c:Company)-[:REQUIRES]->(r:Resource {name: 'third-party financial institutions'}) RETURN c.ticker LIMIT 10",
+    "ground_truth": "AMP",
+    "answer": "AMP"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which city is situated in the state of NJ?",
+    "cypher": "MATCH (c:City)-[:IN_STATE]->(s:State {name: 'NJ'}) RETURN c.name LIMIT 10",
+    "ground_truth": "Franklin Lakes; Roseland; Camden; Parsippany; Jersey City; Morris Plains; Secaucus; Newark; Rahway; Summit",
+    "answer": "Franklin Lakes; Roseland; Camden; Parsippany; Jersey City; Morris Plains; Secaucus; Newark; Rahway; Summit"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the headline of the news article that references the sector 'Consumer Discretionary'?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_SECTOR]->(sec:Sector {name: 'Consumer Discretionary'}) RETURN n.headline LIMIT 10",
+    "ground_truth": "Canterbury Park ( NASDAQ : CPHC ) & Chilco River ( OTCMKTS : CRVH ) Financial Survey; Financial Survey : Gaxos . ai ( NASDAQ : GXAI ) & Allied Gaming & Entertainment ( NASDAQ : AGAE ) ; Head to Head Survey : HWH International ( NASDAQ : HWH ) vs . Royal Caribbean Cruises ( NYSE : RCL ) ; Head to Head Survey : Wynn Resorts ( NASDAQ : WYNN ) & Melco International Development ( OTCMKTS : MDEVF ) ; India Consumer Discretionary Sector Poised for Remarkable Growth in Q4 FY26 , ETRetail; Growlife ( OTCMKTS : PHOT ) & Foxx Development ( NASDAQ : FOXX ) Head to Head Contrast; Elevated Capital Advisors LLC Acquires 34 , 785 Shares of Simplify Barrier Income ETF $SBAR; Peloton Stock Is Rallying , But Can It Deliver Another 70 % Upside ? ; Japan Historic Pivot - The Bank of Japan Finally Ends the Era of Negative Interest Rates . ; Should You Buy the Vanguard S & P 500 ETF With the Stock Market At a Fresh Record High ? The Answer Might Surprise You . ",
+    "answer": "India Consumer Discretionary Sector Poised for Remarkable Growth in Q4 FY26 , ETRetail"
+  },
+  {
+    "complexity": "simple",
+    "question": "What ownership percentage does Canada Pension Plan Investment Board hold in the company it invests in?",
+    "cypher": "MATCH (f:Fund {name: 'Canada Pension Plan Investment Board'})-[o:OWNS]->(c:Company) RETURN o.pct LIMIT 10",
+    "ground_truth": "0.1357",
+    "answer": "0.1357"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the last_updated date for the company with ticker DGX?",
+    "cypher": "MATCH (c:Company {ticker: 'DGX'}) RETURN c.last_updated LIMIT 10",
+    "ground_truth": "2026-03-23",
+    "answer": "2026-03-23"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the title of the position held by Ms. Sue  Sabo at her employer?",
+    "cypher": "MATCH (p:Person {name: 'Ms. Sue  Sabo'})-[w:WORKS_FOR]->(c:Company) RETURN w.title LIMIT 10",
+    "ground_truth": "Director of Corporate Communications",
+    "answer": "Director of Corporate Communications"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the headline of the news article that mentions the location Dublin?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_LOCATION]->(loc:City {name: 'Dublin'}) RETURN n.headline LIMIT 10",
+    "ground_truth": "The Strokes close Coachella set with politically charged montage calling out CIA and US government; Mr Patsy McConnell Railway Recollections; Travel chaos as Aer Lingus cancels over 500 flights from Dublin , Shannon and Cork airports this summer; Britons to face more misery as another airline cancels hundreds of flights for  maintenance  amid jet fuel crisis; OPINION with Michael McNamara : The people are angry . Where has all the money gone ? ; Leitrim mother evicted from home ,  the week before it was a family  ; Hero Garda officer who hunted Daniel Kinahan dies before  crime boss  Dubai arrest; Funky Taurus Media - Music Photo Agency & Products; Up to four in a room in Dublin 2 house as landlord says it a hard time  to make money  ; Would sir like anything from the wuffet ? A Madra D , a barkcuterie board and a pawparazzi - ready flower wall - inside Dublin latest dog - friendly bar and restaurant",
+    "answer": "Travel chaos as Aer Lingus cancels over 500 flights from Dublin , Shannon and Cork airports this summer\nUp to four in a room in Dublin 2 house as landlord says it a hard time  to make money\nWould sir like anything from the wuffet ? A Madra D , a barkcuterie board and a pawparazzi - ready flower wall - inside Dublin latest dog - friendly bar and restaurant"
+  },
+  {
+    "complexity": "simple",
+    "question": "On what date was the news article 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley' published?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"}) RETURN n.date LIMIT 10",
+    "ground_truth": "2026-04-19",
+    "answer": "2026-04-19"
+  },
+  {
+    "complexity": "simple",
+    "question": "What search query was used to collect the news article 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"}) RETURN n.query LIMIT 10",
+    "ground_truth": "\"insurance solutions\" AND (commodity OR supply OR price OR production)",
+    "answer": "\"insurance solutions\" AND (commodity OR supply OR price OR production)"
+  },
+  {
+    "complexity": "simple",
+    "question": "At what UTC timestamp was the news article 'PBM proposed transparency rule supported by public comment' collected?",
+    "cypher": "MATCH (n:News {headline: \"PBM proposed transparency rule supported by public comment\"}) RETURN n.collected_at_utc LIMIT 10",
+    "ground_truth": "2026-04-22T07:00:57+00:00",
+    "answer": "2026-04-22T07:00:57+00:00"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the job title held by Mr. John C. Griffith at his employer?",
+    "cypher": "MATCH (p:Person {name: \"Mr. John C. Griffith\"})-[r:WORKS_FOR]->(c:Company) RETURN r.title LIMIT 10",
+    "ground_truth": "CEO, President & Director",
+    "answer": "CEO, President & Director"
+  },
+  {
+    "complexity": "simple",
+    "question": "When was the record for Mondelez International, Inc. last updated?",
+    "cypher": "MATCH (c:Company {name: \"Mondelez International, Inc.\"}) RETURN c.last_updated LIMIT 10",
+    "ground_truth": "2026-03-23",
+    "answer": "2026-03-23"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker of the company that employs Ms. Sue  Sabo?",
+    "cypher": "MATCH (p:Person {name: \"Ms. Sue  Sabo\"})-[:WORKS_FOR]->(c:Company) RETURN c.ticker LIMIT 10",
+    "ground_truth": "MAS",
+    "answer": "MAS"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the business description provided for Ameriprise Financial, Inc.?",
+    "cypher": "MATCH (c:Company {name: \"Ameriprise Financial, Inc.\"}) RETURN c.description LIMIT 10",
+    "ground_truth": "Ameriprise Financial, Inc., together with its subsidiaries, operates as a diversified financial services company in the United States and internationally. The company offers financial planning and advice services to individual and institutional clients. It operates through Advice & Wealth Management, Asset Management, and Retirement & Protection Solutions segments. The Advice & Wealth Management segment provides financial planning and advice; brokerage products and services for retail and institutional clients; discretionary and non-discretionary investment advisory accounts; mutual funds; ins",
+    "answer": "Ameriprise Financial, Inc., together with its subsidiaries, operates as a diversified financial services company in the United States and internationally. The company offers financial planning and advice services to individual and institutional clients. It operates through Advice & Wealth Management, Asset Management, and Retirement & Protection Solutions segments."
+  },
+  {
+    "complexity": "simple",
+    "question": "Which city is located in the country of Bermuda?",
+    "cypher": "MATCH (c:City)-[:IN_COUNTRY]->(co:Country {name: \"Bermuda\"}) RETURN c.name LIMIT 10",
+    "ground_truth": "Pembroke; Hamilton",
+    "answer": "Pembroke, Hamilton"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company requires the resource named module testing?",
+    "cypher": "MATCH (r:Resource {name: \"module testing\"})<-[:REQUIRES]-(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "O'Reilly Automotive, Inc.",
+    "answer": "O'Reilly Automotive, Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker of the company invested in by Canada Pension Plan Investment Board?",
+    "cypher": "MATCH (f:Fund {name: \"Canada Pension Plan Investment Board\"})-[:OWNS]->(c:Company) RETURN c.ticker LIMIT 10",
+    "ground_truth": "BG",
+    "answer": "BG"
+  },
+  {
+    "complexity": "simple",
+    "question": "Who is the person listed as working for Ameriprise Financial, Inc.?",
+    "cypher": "MATCH (p:Person)-[:WORKS_FOR]->(c:Company {name: \"Ameriprise Financial, Inc.\"}) RETURN p.name LIMIT 10",
+    "ground_truth": "Mr. Walter S. Berman; Mr. William F. Truscott; Ms. Heather J. Melloh; Ms. Deirdre D. Davey McGraw; Mr. William  Davies; Mr. Joseph Edward Sweeney; Stephanie M. Rabe; Mr. Gerard P. Smyth; Ms. Dawn M. Brockman; Mr. James M. Cracchiolo CPA",
+    "answer": "Mr. Walter S. Berman, Ameriprise Financial, Inc.\nMr. William F. Truscott, Ameriprise Financial, Inc.\nMs. Heather J. Melloh, Ameriprise Financial, Inc.\nMs. Deirdre D. Davey McGraw, Ameriprise Financial, Inc.\nMr. William  Davies, Ameriprise Financial, Inc.\nMr. Joseph Edward Sweeney, Ameriprise Financial, Inc.\nStephanie M. Rabe, Ameriprise Financial, Inc.\nMr. Gerard P. Smyth, Ameriprise Financial, Inc.\nMs. Dawn M. Brockman, Ameriprise Financial, Inc.\nMr. James M. Cracchiolo CPA, Ameriprise Financial, Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "What language is the news article Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG )  written in?",
+    "cypher": "MATCH (n:News {headline: \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"}) RETURN n.language LIMIT 10",
+    "ground_truth": "English",
+    "answer": "English"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary provided for Mondelez International, Inc.?",
+    "cypher": "MATCH (c:Company {name: \"Mondelez International, Inc.\"}) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "Mondelez International, Inc. (stylised as Mondelēz;  MON-də-LEEZ) is an American multinational confectionery, food, holding, beverage and snack food company based in Chicago. Mondelez has an annual revenue of about $26.5 billion and operates in approximately 160 countries. It ranked No. 108 in the 2021 Fortune 500 list of the largest United States corporations by total revenue.\nThe company has its origins as Kraft Foods Inc., which was founded in Chicago in 1923. The present enterprise has operated since 2012 when Kraft Foods Inc. was renamed Mondelez and retained its snack food business, while its North American grocery business was spun off to a new company called Kraft Foods Group, which 3 years later merged with Heinz to form Kraft Heinz. The name Mondelez is derived from the Latin word mundus (\"world\") and delez, a derivative of the word \"delicious\".\nMondelez manufactures chocolate, cookies, biscuits, gum, confectionery, and powdered beverages. Mondelez International's portfolio i",
+    "answer": "Mondelez International, Inc. (stylised as Mondelēz; MON-də-LEEZ) is an American multinational confectionery, food, holding, beverage and snack food company based in Chicago. Mondelez has an annual revenue of about $26.5 billion and operates in approximately 160 countries. It ranked No. 108 in the 2021 Fortune 500 list of the largest United States corporations by total revenue. The company has its origins as Kraft Foods Inc., which was founded in Chicago in 1923. The present enterprise has operated since 2012 when Kraft Foods Inc. was renamed Mondelez and retained its snack food business, while its North American grocery business was spun off to a new company called Kraft Foods Group, which 3 years later merged with Heinz to form Kraft Heinz. The name Mondelez is derived from the Latin word mundus (\"world\") and delez, a derivative of the word \"delicious\". Mondelez manufactures chocolate, cookies, biscuits, gum, confectionery, and powdered beverages."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the web domain associated with the news headline Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) ?",
     "cypher": "MATCH (n:News {headline: \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"}) RETURN n.domain LIMIT 10",
     "ground_truth": "themarketsdaily.com",
     "answer": "themarketsdaily.com"
   },
   {
     "complexity": "simple",
-    "question": "What is the job title of Mr. John C. Griffith at his employer?",
-    "cypher": "MATCH (p:Person {name: 'Mr. John C. Griffith'})-[r:WORKS_FOR]->(c:Company) RETURN r.title LIMIT 10",
-    "ground_truth": "CEO, President & Director",
-    "answer": "CEO, President & Director"
+    "question": "What is the stock ticker for Mondelez International, Inc.?",
+    "cypher": "MATCH (c:Company {name: \"Mondelez International, Inc.\"}) RETURN c.ticker LIMIT 10",
+    "ground_truth": "MDLZ",
+    "answer": "MDLZ"
   },
   {
     "complexity": "simple",
-    "question": "What is the source country of the news article titled '4 banks cutting mortgage rates in boost for buyers - full list'?",
-    "cypher": "MATCH (n:News {headline: '4 banks cutting mortgage rates in boost for buyers - full list'}) RETURN n.sourcecountry LIMIT 10",
-    "ground_truth": "United Kingdom",
-    "answer": "United Kingdom"
+    "question": "What search query was used to collect the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"}) RETURN n.query LIMIT 10",
+    "ground_truth": "\"investment advisory services\" AND (commodity OR supply OR price OR production)",
+    "answer": "\"investment advisory services\" AND (commodity OR supply OR price OR production)"
   },
   {
     "complexity": "simple",
-    "question": "Which sector does the Personal Care Products industry belong to?",
-    "cypher": "MATCH (i:Industry {name: 'Personal Care Products'})-[:PART_OF]->(s:Sector) RETURN s.name LIMIT 10",
-    "ground_truth": "Consumer Staples",
-    "answer": "Consumer Staples"
+    "question": "What is the language of the news article titled 'PBM proposed transparency rule supported by public comment'?",
+    "cypher": "MATCH (n:News {headline: \"PBM proposed transparency rule supported by public comment\"}) RETURN n.language LIMIT 10",
+    "ground_truth": "English",
+    "answer": "English"
   },
   {
     "complexity": "simple",
-    "question": "In which industry does Ameriprise Financial, Inc. operate?",
-    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.name LIMIT 10",
-    "ground_truth": "Asset Management & Custody Banks",
-    "answer": "Asset Management & Custody Banks"
+    "question": "What is the stock ticker of the company owned by Aristotle Capital Management, LLC?",
+    "cypher": "MATCH (f:Fund {name: \"Aristotle Capital Management, LLC\"})-[:OWNS]->(c:Company) RETURN c.ticker LIMIT 10",
+    "ground_truth": "AWK; WSM; CTRA",
+    "answer": "AWK; WSM; CTRA"
   },
   {
     "complexity": "simple",
-    "question": "What is the domain of the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
-    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'}) RETURN n.domain LIMIT 10",
+    "question": "What is the last_updated timestamp for the company with ticker MDLZ?",
+    "cypher": "MATCH (c:Company {ticker: \"MDLZ\"}) RETURN c.last_updated LIMIT 10",
+    "ground_truth": "2026-03-23",
+    "answer": "2026-03-23"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the official job title held by Ms. Janene I. Asgeirsson J.D.?",
+    "cypher": "MATCH (p:Person {name: \"Ms. Janene I. Asgeirsson J.D.\"})-[r:WORKS_FOR]->() RETURN r.title LIMIT 10",
+    "ground_truth": "Chief Legal Officer & Corporate Secretary",
+    "answer": "Chief Legal Officer & Corporate Secretary"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company produces the product named 'cash management'?",
+    "cypher": "MATCH (c:Company)-[:PRODUCES]->(p:Product {name: \"cash management\"}) RETURN c.name LIMIT 10",
+    "ground_truth": "KeyCorp",
+    "answer": "KeyCorp"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary provided for the company with ticker MDLZ?",
+    "cypher": "MATCH (c:Company {ticker: \"MDLZ\"}) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "Mondelez International, Inc. (stylised as Mondelēz;  MON-də-LEEZ) is an American multinational confectionery, food, holding, beverage and snack food company based in Chicago. Mondelez has an annual revenue of about $26.5 billion and operates in approximately 160 countries. It ranked No. 108 in the 2021 Fortune 500 list of the largest United States corporations by total revenue.\nThe company has its origins as Kraft Foods Inc., which was founded in Chicago in 1923. The present enterprise has operated since 2012 when Kraft Foods Inc. was renamed Mondelez and retained its snack food business, while its North American grocery business was spun off to a new company called Kraft Foods Group, which 3 years later merged with Heinz to form Kraft Heinz. The name Mondelez is derived from the Latin word mundus (\"world\") and delez, a derivative of the word \"delicious\".\nMondelez manufactures chocolate, cookies, biscuits, gum, confectionery, and powdered beverages. Mondelez International's portfolio i",
+    "answer": "Mondelez International, Inc. (stylised as Mondelēz; MON-də-LEEZ) is an American multinational confectionery, food, holding, beverage and snack food company based in Chicago. Mondelez has an annual revenue of about $26.5 billion and operates in approximately 160 countries. It ranked No. 108 in the 2021 Fortune 500 list of the largest United States corporations by total revenue."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the full name of the company owned by Temasek Holdings (Private) Ltd?",
+    "cypher": "MATCH (f:Fund {name: \"Temasek Holdings (Private) Ltd\"})-[:OWNS]->(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "BlackRock, Inc.",
+    "answer": "BlackRock, Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the business description of the company that employs Ms. Sue  Sabo?",
+    "cypher": "MATCH (p:Person {name: \"Ms. Sue  Sabo\"})-[:WORKS_FOR]->(c:Company) RETURN c.description LIMIT 10",
+    "ground_truth": "Masco Corporation provides home improvement and building products in North America, Europe, and internationally. The company's Plumbing Products segment offers faucets, showerheads, handheld showers, valves, bath hardware and accessories, bathing units, shower bases and enclosures, shower drains, steam shower systems, water filtration systems, and sinks and kitchen accessories; acrylic tubs, bath and shower enclosures, and shower bases and trays; spas, exercise pools, and aquatic fitness systems and saunas; brass, copper, and composite plumbing system component and other non-decorative plumbin",
+    "answer": "Masco Corporation provides home improvement and building products in North America, Europe, and internationally. The company's Plumbing Products segment offers faucets, showerheads, handheld showers, valves, bath hardware and accessories, bathing units, shower bases and enclosures, shower drains, steam shower systems, water filtration systems, and sinks and kitchen accessories; acrylic tubs, bath and shower enclosures, and shower bases and trays; spas, exercise pools, and aquatic fitness systems and saunas; brass, copper, and composite plumbing system component and other non-decorative plumbin"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the state containing the city of Dublin?",
+    "cypher": "MATCH (c:City {name: \"Dublin\"})-[:IN_STATE]->(s:State) RETURN s.neo4jImportId LIMIT 10",
+    "ground_truth": "15251; 15842",
+    "answer": "15251; 15842"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which industry falls under the Energy sector?",
+    "cypher": "MATCH (s:Sector {name: \"Energy\"})<-[:PART_OF]-(i:Industry) RETURN i.name LIMIT 10",
+    "ground_truth": "Oil & Gas Equipment & Services; Oil & Gas Exploration & Production; Oil & Gas Refining & Marketing; Oil & Gas Storage & Transportation; Integrated Oil & Gas",
+    "answer": "Oil & Gas Equipment & Services; Oil & Gas Exploration & Production; Oil & Gas Refining & Marketing; Oil & Gas Storage & Transportation; Integrated Oil & Gas"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company is the subject of the news article titled \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"})-[:NEWS_ABOUT_COMPANY]->(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "AT&T Inc.",
+    "answer": "AT&T Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the business description of the company that requires module testing?",
+    "cypher": "MATCH (r:Resource {name: \"module testing\"})<-[:REQUIRES]-(c:Company) RETURN c.description LIMIT 10",
+    "ground_truth": "O'Reilly Automotive, Inc., together with its subsidiaries, operates as a retailer and supplier of automotive aftermarket parts, tools, supplies, equipment, and accessories in the United States, Puerto Rico, Mexico, and Canada. The company provides new and remanufactured automotive hard parts and maintenance items, such as alternators, batteries, brake system components, belts, chassis parts, driveline parts, engine parts, fuel pumps, hoses, starters, temperature control, water pumps, antifreeze, appearance products, engine additives, filters, fluids, lighting products, and oil and wiper blades",
+    "answer": "O'Reilly Automotive, Inc., together with its subsidiaries, operates as a retailer and supplier of automotive aftermarket parts, tools, supplies, equipment, and accessories in the United States, Puerto Rico, Mexico, and Canada. The company provides new and remanufactured automotive hard parts and maintenance items, such as alternators, batteries, brake system components, belts, chassis parts, driveline parts, engine parts, fuel pumps, hoses, starters, temperature control, water pumps, antifreeze, appearance products, engine additives, filters, fluids, lighting products, and oil and wiper blades"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker for the producer of Data center facilities?",
+    "cypher": "MATCH (p:Product {name: \"Data center facilities\"})<-[:PRODUCES]-(c:Company) RETURN c.ticker LIMIT 10",
+    "ground_truth": "AMT",
+    "answer": "AMT"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import ID of the industry for Mondelez International, Inc.?",
+    "cypher": "MATCH (c:Company {name: \"Mondelez International, Inc.\"})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.neo4jImportId LIMIT 10",
+    "ground_truth": "1705",
+    "answer": "1705"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the fund that owns a stake in Mondelez International, Inc.?",
+    "cypher": "MATCH (f:Fund)-[r:OWNS]->(c:Company {name: 'Mondelez International, Inc.'}) RETURN f.name LIMIT 10",
+    "ground_truth": "Vanguard Group Inc; JPMORGAN CHASE & CO; Capital International Investors; State Street Corporation; Blackrock Inc.",
+    "answer": "Vanguard Group Inc\nJPMORGAN CHASE & CO\nCapital International Investors\nState Street Corporation\nBlackrock Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the person who works for Quest Diagnostics Incorporated?",
+    "cypher": "MATCH (p:Person)-[:WORKS_FOR]->(c:Company {name: 'Quest Diagnostics Incorporated'}) RETURN p.name LIMIT 10",
+    "ground_truth": "Mr. Garry  Clark; Mr. Karthik  Kuppusamy Ph.D.; Mr. Michael J. Deppe; Mr. Sam A. Samad; Mr. Michael E. Prevoznik J.D.; Ms. Catherine T. Doherty; Mr. James E. Davis; Mr. Murali  Balakumar; Mr. Shawn C. Bevec; Ms. Kristin Lee Wallace Esq.",
+    "answer": "Mr. Garry Clark, Quest Diagnostics Incorporated\nMr. Karthik Kuppusamy Ph.D., Quest Diagnostics Incorporated\nMr. Michael J. Deppe, Quest Diagnostics Incorporated\nMr. Sam A. Samad, Quest Diagnostics Incorporated\nMr. Michael E. Prevoznik J.D., Quest Diagnostics Incorporated\nMs. Catherine T. Doherty, Quest Diagnostics Incorporated\nMr. James E. Davis, Quest Diagnostics Incorporated\nMr. Murali Balakumar, Quest Diagnostics Incorporated\nMr. Shawn C. Bevec, Quest Diagnostics Incorporated\nMs. Kristin Lee Wallace Esq., Quest Diagnostics Incorporated"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the industry that the company with ticker DGX operates in?",
+    "cypher": "MATCH (c:Company {ticker: 'DGX'})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.name LIMIT 10",
+    "ground_truth": "Health Care Services",
+    "answer": "Health Care Services"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the date of the news article that mentions the sector \"Industrials\"?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_SECTOR]->(s:Sector {name: 'Industrials'}) RETURN n.date LIMIT 10",
+    "ground_truth": "2026-04-19; 2026-04-19; 2026-04-19; 2026-04-19; 2026-04-19; 2026-04-19; 2026-04-19; 2026-04-19; 2026-04-19; 2026-04-19",
+    "answer": "2026-04-19"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the product produced by the company with ticker MDLZ?",
+    "cypher": "MATCH (c:Company {ticker: 'MDLZ'})-[:PRODUCES]->(p:Product) RETURN p.name LIMIT 10",
+    "ground_truth": "gums and candies; Cadbury Dairy Milk; Milka; Ritz; Toblerone chocolate; powdered beverage products; Oreo; various cheese and grocery products; CLIF Bar; LU",
+    "answer": "gums and candies; Cadbury Dairy Milk; Milka; Ritz; Toblerone chocolate; powdered beverage products; Oreo; various cheese and grocery products; CLIF Bar; LU"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the source country of the news article that mentions the fund \"Canada Pension Plan Investment Board\"?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_FUND]->(f:Fund {name: 'Canada Pension Plan Investment Board'}) RETURN n.sourcecountry LIMIT 10",
+    "ground_truth": "United Kingdom; Canada; United States; Canada; United States; United States; Russia; United States; nan; United States",
+    "answer": "Canada"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the URL associated with the news headline \"PBM proposed transparency rule supported by public comment\"?",
+    "cypher": "MATCH (n:News {headline: \"PBM proposed transparency rule supported by public comment\"}) RETURN n.url LIMIT 10",
+    "ground_truth": "https://www.healthcarefinancenews.com/news/pbm-proposed-transparency-rule-supported-public-comment",
+    "answer": "https://www.healthcarefinancenews.com/news/pbm-proposed-transparency-rule-supported-public-comment"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the raw text content of the news article titled \"PBM proposed transparency rule supported by public comment\"?",
+    "cypher": "MATCH (n:News {headline: \"PBM proposed transparency rule supported by public comment\"}) RETURN n.raw_text LIMIT 10",
+    "ground_truth": "PBM proposed transparency rule supported by public comment nan",
+    "answer": "PBM proposed transparency rule supported by public comment nan"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the UTC collection timestamp for the news headline \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"?",
+    "cypher": "MATCH (n:News {headline: \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"}) RETURN n.collected_at_utc LIMIT 10",
+    "ground_truth": "2026-04-21T22:07:15+00:00",
+    "answer": "2026-04-21T22:07:15+00:00"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the company named Ameriprise Financial, Inc.?",
+    "cypher": "MATCH (c:Company {name: \"Ameriprise Financial, Inc.\"}) RETURN c.neo4jImportId LIMIT 10",
+    "ground_truth": "30",
+    "answer": "30"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier assigned to the city of Santa Clara?",
+    "cypher": "MATCH (c:City {name: \"Santa Clara\"}) RETURN c.neo4jImportId LIMIT 10",
+    "ground_truth": "15281",
+    "answer": "15281"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the state abbreviated as IA?",
+    "cypher": "MATCH (s:State {name: \"IA\"}) RETURN s.neo4jImportId LIMIT 10",
+    "ground_truth": "10581",
+    "answer": "10581"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the country named Netherlands?",
+    "cypher": "MATCH (c:Country {name: \"Netherlands\"}) RETURN c.neo4jImportId LIMIT 10",
+    "ground_truth": "9636",
+    "answer": "9636"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the industry named Cargo Ground Transportation?",
+    "cypher": "MATCH (i:Industry {name: \"Cargo Ground Transportation\"}) RETURN i.neo4jImportId LIMIT 10",
+    "ground_truth": "6884",
+    "answer": "6884"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the sector named Consumer Discretionary?",
+    "cypher": "MATCH (s:Sector {name: \"Consumer Discretionary\"}) RETURN s.neo4jImportId LIMIT 10",
+    "ground_truth": "15432",
+    "answer": "15432"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the sector that encompasses the Water Utilities industry?",
+    "cypher": "MATCH (i:Industry {name: 'Water Utilities'})-[:PART_OF]->(s:Sector) RETURN s.neo4jImportId LIMIT 10",
+    "ground_truth": "15306",
+    "answer": "15306"
+  },
+  {
+    "complexity": "simple",
+    "question": "On what date was the news article published that discusses Temasek Holdings (Private) Ltd?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_FUND]->(f:Fund {name: 'Temasek Holdings (Private) Ltd'}) RETURN n.date LIMIT 10",
+    "ground_truth": "2026-03-14; 2026-03-14; 2026-03-14; 2026-03-14; 2026-03-14; 2026-03-15; 2026-03-16; 2026-03-25; 2026-03-25; 2026-03-25",
+    "answer": "2026-03-14; 2026-03-14; 2026-03-14; 2026-03-14; 2026-03-14; 2026-03-15; 2026-03-16; 2026-03-25; 2026-03-25; 2026-03-25"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the country that contains the state IL?",
+    "cypher": "MATCH (s:State {name: 'IL'})-[:IN_COUNTRY]->(c:Country) RETURN c.neo4jImportId LIMIT 10",
+    "ground_truth": "15049",
+    "answer": "15049"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the resource that Ameriprise Financial, Inc. requires?",
+    "cypher": "MATCH (c:Company {ticker: 'AMP'})-[:REQUIRES]->(r:Resource) RETURN r.neo4jImportId LIMIT 10",
+    "ground_truth": "56; 52; 55; 53; 54",
+    "answer": "56; 52; 55; 53; 54"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the business description of the company that operates in the Cargo Ground Transportation industry?",
+    "cypher": "MATCH (c:Company)-[:OPERATES_IN_INDUSTRY]->(i:Industry {name: 'Cargo Ground Transportation'}) RETURN c.description LIMIT 10",
+    "ground_truth": "Old Dominion Freight Line, Inc. operates as a less-than-truckload motor carrier in the United States and North America. The company offers regional, inter-regional, and national less-than-truckload services, as well as expedited transportation. It also provides various value-added services, including container drayage, truckload brokerage, and supply chain consulting. In addition, the company operates service and fleet maintenance centers. As of December 31, 2024, it owned and operated 11,284 tractors, 31,451 linehaul trailers, and 15,263 pickup and delivery trailers. Old Dominion Freight Line; J.B. Hunt Transport Services, Inc. provides surface transportation, delivery, and logistic services in the United States. It operates through five segments: Intermodal (JBI), Dedicated Contract Services (DCS), Integrated Capacity Solutions (ICS), Final Mile Services (FMS), and Truckload (JBT). The JBI segment offers intermodal freight solutions. It operates 122,272 pieces of company-owned trailing equipment; owns and maintains its chassis fleet of 103,850 units; and manages a fleet of 6,153 company-owned tractors, 349 independent contractor trucks, and 8,117 company drivers. The DCS segment de",
+    "answer": "Old Dominion Freight Line, Inc. operates as a less-than-truckload motor carrier in the United States and North America. The company offers regional, inter-regional, and national less-than-truckload services, as well as expedited transportation. It also provides various value-added services, including container drayage, truckload brokerage, and supply chain consulting. In addition, the company operates service and fleet maintenance centers."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the city that serves as the headquarters for Mondelez International, Inc.?",
+    "cypher": "MATCH (c:Company {name: 'Mondelez International, Inc.'})-[:LOCATED_IN]->(city:City) RETURN city.neo4jImportId LIMIT 10",
+    "ground_truth": "447",
+    "answer": "447"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the resource that Mondelez International, Inc. requires?",
+    "cypher": "MATCH (c:Company {ticker: 'MDLZ'})-[:REQUIRES]->(r:Resource) RETURN r.neo4jImportId LIMIT 10",
+    "ground_truth": "8901; 15212; 8903; 1742; 8899; 8896; 8897; 8898; 8900; 8902",
+    "answer": "8901; 15212; 8903; 1742; 8899; 8896; 8897; 8898; 8900; 8902"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the fund named Aristotle Capital Management, LLC?",
+    "cypher": "MATCH (f:Fund {name: \"Aristotle Capital Management, LLC\"}) RETURN f.neo4jImportId LIMIT 10",
+    "ground_truth": "19",
+    "answer": "19"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the product named cash management?",
+    "cypher": "MATCH (p:Product {name: \"cash management\"}) RETURN p.neo4jImportId LIMIT 10",
+    "ground_truth": "7218",
+    "answer": "7218"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the resource named module testing?",
+    "cypher": "MATCH (r:Resource {name: \"module testing\"}) RETURN r.neo4jImportId LIMIT 10",
+    "ground_truth": "9689",
+    "answer": "9689"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which city is located in the country of Ireland?",
+    "cypher": "MATCH (c:City)-[:IN_COUNTRY]->(co:Country {name: \"Ireland\"}) RETURN c.name LIMIT 10",
+    "ground_truth": "Dublin; Swords; Ballybrit; Galway; Cork",
+    "answer": "Dublin, Swords, Ballybrit, Galway, Cork"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which resource is discussed in the news article titled PBM proposed transparency rule supported by public comment?",
+    "cypher": "MATCH (n:News {headline: \"PBM proposed transparency rule supported by public comment\"})-[:NEWS_ABOUT_RESOURCE]->(r:Resource) RETURN r.name LIMIT 10",
+    "ground_truth": "third-party administrators",
+    "answer": "third-party administrators"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the person named Ms. Sue  Sabo?",
+    "cypher": "MATCH (p:Person {name: \"Ms. Sue  Sabo\"}) RETURN p.neo4jImportId LIMIT 10",
+    "ground_truth": "8164",
+    "answer": "8164"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker for the searchable entity named Ameriprise Financial, Inc.?",
+    "cypher": "MATCH (s:Searchable {name: \"Ameriprise Financial, Inc.\"}) RETURN s.ticker LIMIT 10",
+    "ground_truth": "AMP; None",
+    "answer": "AMP"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which country contains the state abbreviated as IA?",
+    "cypher": "MATCH (s:State {name: \"IA\"})-[:IN_COUNTRY]->(c:Country) RETURN c.name LIMIT 10",
+    "ground_truth": "United States",
+    "answer": "United States"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the industry named Electronic Components?",
+    "cypher": "MATCH (i:Industry {name: \"Electronic Components\"}) RETURN i.neo4jImportId LIMIT 10",
+    "ground_truth": "152",
+    "answer": "152"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the official name of the company with the stock ticker MDLZ?",
+    "cypher": "MATCH (c:Company {ticker: 'MDLZ'}) RETURN c.name LIMIT 10",
+    "ground_truth": "Mondelez International, Inc.",
+    "answer": "Mondelez International, Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the headline of the news article that mentions the fund 'Temasek Holdings (Private) Ltd'?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_FUND]->(f:Fund {name: 'Temasek Holdings (Private) Ltd'}) RETURN n.headline LIMIT 10",
+    "ground_truth": "Temasek Holdings Private Ltd Boosts Position in Walmart Inc . $WMT; Temasek Holdings Private Ltd Increases Stock Position in Meta Platforms , Inc . $META; Zuckerman Investment Group LLC Has $28 . 45 Million Position in KKR & Co . Inc . $KKR; Temasek Holdings Private Ltd Trims Stock Position in Oracle Corporation $ORCL; NVIDIA Corporation $NVDA is Temasek Holdings Private Ltd 4th Largest Position; Canaccord Genuity Group Cuts The Descartes Systems Group ( NASDAQ : DSGX ) Price Target to $92 . 00; ServiceNow ( NYSE : NOW ) Stock Price Up 1 . 2 % Following Analyst Upgrade; ServiceNow , Inc . $NOW Shares Acquired by Congress Asset Management Co . ; JPMorgan Ultra - Short Income ETF ( NYSEARCA : JPST ) Short Interest Down 93 . 7 % in March; GE HealthCare Technologies Inc . $GEHC Position Raised by Nordea Investment Management AB",
+    "answer": "Temasek Holdings Private Ltd Boosts Position in Walmart Inc . $WMT\nTemasek Holdings Private Ltd Increases Stock Position in Meta Platforms , Inc . $META\nTemasek Holdings Private Ltd Trims Stock Position in Oracle Corporation $ORCL\nNVIDIA Corporation $NVDA is Temasek Holdings Private Ltd 4th Largest Position"
+  },
+  {
+    "complexity": "simple",
+    "question": "What news headline discusses the Water Utilities industry?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_INDUSTRY]->(i:Industry {name: 'Water Utilities'}) RETURN n.headline LIMIT 10",
+    "ground_truth": "PFAS contamination spreads in North Georgia carpet towns | Georgia; Badger Meter ( BMI ) Q1 2026 Earnings Transcript; Why Have Infrastructure Funds Experienced Strong Growth in Recent Quarters ? ; Badger Meter Q1 Earnings Call Highlights; Water Stocks Worth Watching – April 17th; EPA Targets Microplastics , Pharmaceuticals , and PFAS in Drinking Water | Alston & Bird; Do data centers really use so much water ? Here are 5 key issues",
+    "answer": "Water Stocks Worth Watching – April 17th"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker of the company that employs Ms. Janene I. Asgeirsson J.D.?",
+    "cypher": "MATCH (p:Person {name: 'Ms. Janene I. Asgeirsson J.D.'})-[:WORKS_FOR]->(c:Company) RETURN c.ticker LIMIT 10",
+    "ground_truth": "ADI",
+    "answer": "ADI"
+  },
+  {
+    "complexity": "simple",
+    "question": "In which city is Mondelez International, Inc. headquartered?",
+    "cypher": "MATCH (c:Company {name: 'Mondelez International, Inc.'})-[:LOCATED_IN]->(city:City) RETURN city.name LIMIT 10",
+    "ground_truth": "Chicago",
+    "answer": "Chicago"
+  },
+  {
+    "complexity": "simple",
+    "question": "What news headline discusses the resource 'residual fuel oil'?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_RESOURCE]->(r:Resource {name: 'residual fuel oil'}) RETURN n.headline LIMIT 10",
+    "ground_truth": "Strategists Project WoW united states Crude Inventory Rise; Search Oil & Gas Jobs | Rigzone; America Most Powerful Locomotive Was So Extreme , Cities Had To Ban It; Singapore strengthens its lead as Asia multifuel marine and aviation hub | Hellenic Shipping News Worldwide; Strategists See 5MM Barrel WoW united states Crude Stock Rise; Singapore fuel oil stocks edge down amid lower net imports | Hellenic Shipping News Worldwide; FEATURE : Asian Bunker Suppliers Urge Early Booking as Middle East Conflict Disrupts Flows; Light , Heavy , Sweet , Sour : Why The World Cant Just Replace Gulf Oil Overnight | Explainers News; OPEC Retains Oil Forecast , Says Saudi Arabia Increased Oil Production Prior to Iran War; USA Crude Oil Stocks Rise Almost 4MM Barrels WoW",
+    "answer": "Singapore fuel oil stocks edge down amid lower net imports | Hellenic Shipping News Worldwide"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the industry named Water Utilities?",
+    "cypher": "MATCH (i:Industry {name: 'Water Utilities'}) RETURN i.neo4jImportId LIMIT 10",
+    "ground_truth": "6",
+    "answer": "6"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker of the company that requires the resource named 'module testing'?",
+    "cypher": "MATCH (c:Company)-[:REQUIRES]->(r:Resource {name: 'module testing'}) RETURN c.ticker LIMIT 10",
+    "ground_truth": "ORLY",
+    "answer": "ORLY"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the company that manufactures the product named 'parts for equipment'?",
+    "cypher": "MATCH (c:Company)-[:PRODUCES]->(p:Product {name: 'parts for equipment'}) RETURN c.name LIMIT 10",
+    "ground_truth": "United Rentals, Inc.",
+    "answer": "United Rentals, Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "On what date was the news article published that discusses the resource 'third-party financial institutions'?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_RESOURCE]->(r:Resource {name: 'third-party financial institutions'}) RETURN n.date LIMIT 10",
+    "ground_truth": "2026-02-04; 2026-02-26; 2026-04-02",
+    "answer": "2026-02-04; 2026-02-26; 2026-04-02"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker of the company that employs Mr. John C. Griffith?",
+    "cypher": "MATCH (p:Person {name: 'Mr. John C. Griffith'})-[:WORKS_FOR]->(c:Company) RETURN c.ticker LIMIT 10",
+    "ground_truth": "AWK",
+    "answer": "AWK"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the state that contains the city of Santa Clara?",
+    "cypher": "MATCH (c:City {name: 'Santa Clara'})-[:IN_STATE]->(s:State) RETURN s.neo4jImportId LIMIT 10",
+    "ground_truth": "15251",
+    "answer": "15251"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary for the company that Temasek Holdings (Private) Ltd has an ownership stake in?",
+    "cypher": "MATCH (f:Fund {name: 'Temasek Holdings (Private) Ltd'})-[:OWNS]->(c:Company) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "BlackRock, Inc. is an American multinational investment company. Founded in 1988, initially as an enterprise risk management and fixed income institutional asset manager, BlackRock is the world's largest asset manager, with $12.5 trillion in assets under management as of 2025. Headquartered in New York City, BlackRock has 70 offices in 30 countries and clients in 100 countries.\nBlackRock is the manager of the iShares group of exchange-traded funds, and along with Fidelity, Vanguard, and State Street, it is considered one of the Big Four index fund managers. Its Aladdin software keeps track of investment portfolios for many major financial institutions and its BlackRock Solutions division provides financial risk management services. As of 2025, BlackRock was ranked 210th on the Fortune 500 list of the largest U.S. corporations by revenue.\nBlackRock has sought to position itself as an industry leader in environmental, social, and governance (ESG) considerations in investments. The states",
+    "answer": "BlackRock, Inc. is an American multinational investment company. Founded in 1988, initially as an enterprise risk management and fixed income institutional asset manager, BlackRock is the world's largest asset manager, with $12.5 trillion in assets under management as of 2025. Headquartered in New York City, BlackRock has 70 offices in 30 countries and clients in 100 countries. BlackRock is the manager of the iShares group of exchange-traded funds, and along with Fidelity, Vanguard, and State Street, it is considered one of the Big Four index fund managers. Its Aladdin software keeps track of investment portfolios for many major financial institutions and its BlackRock Solutions division provides financial risk management services. As of 2025, BlackRock was ranked 210th on the Fortune 500 list of the largest U.S. corporations by revenue. BlackRock has sought to position itself as an industry leader in environmental, social, and governance (ESG) considerations in investments."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the web domain associated with the news article that discusses Mondelez International, Inc.?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_COMPANY]->(c:Company {name: 'Mondelez International, Inc.'}) RETURN n.domain LIMIT 10",
+    "ground_truth": "wellandtribune.ca; themarketsdaily.com; benzinga.com; tickerreport.com; dailypolitical.com; themarketsdaily.com; tickerreport.com; sharecast.com; insidermonkey.com; finance.yahoo.com",
+    "answer": "wellandtribune.ca; themarketsdaily.com; benzinga.com; tickerreport.com; dailypolitical.com; themarketsdaily.com; tickerreport.com; sharecast.com; insidermonkey.com; finance.yahoo.com"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the product manufactured by Quest Diagnostics Incorporated?",
+    "cypher": "MATCH (c:Company {name: 'Quest Diagnostics Incorporated'})-[:PRODUCES]->(p:Product) RETURN p.neo4jImportId LIMIT 10",
+    "ground_truth": "10889; 10887; 10888; 10886; 10890",
+    "answer": "10889; 10887; 10888; 10886; 10890"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier assigned to the sector named 'Industrials'?",
+    "cypher": "MATCH (s:Sector {name: 'Industrials'}) RETURN s.neo4jImportId LIMIT 10",
+    "ground_truth": "15046",
+    "answer": "15046"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the product named 'parts for equipment'?",
+    "cypher": "MATCH (p:Product {name: 'parts for equipment'}) RETURN p.neo4jImportId LIMIT 10",
+    "ground_truth": "13181",
+    "answer": "13181"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the resource named 'third-party financial institutions'?",
+    "cypher": "MATCH (r:Resource {name: 'third-party financial institutions'}) RETURN r.neo4jImportId LIMIT 10",
+    "ground_truth": "52",
+    "answer": "52"
+  },
+  {
+    "complexity": "simple",
+    "question": "At what UTC timestamp was the news article 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) ' collected?",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '}) RETURN n.collected_at_utc LIMIT 10",
+    "ground_truth": "2026-04-21T22:07:15+00:00",
+    "answer": "2026-04-21T22:07:15+00:00"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the fund named 'Canada Pension Plan Investment Board'?",
+    "cypher": "MATCH (f:Fund {name: 'Canada Pension Plan Investment Board'}) RETURN f.neo4jImportId LIMIT 10",
+    "ground_truth": "1585",
+    "answer": "1585"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the country named 'Bermuda'?",
+    "cypher": "MATCH (c:Country {name: 'Bermuda'}) RETURN c.neo4jImportId LIMIT 10",
+    "ground_truth": "402",
+    "answer": "402"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the resource named 'residual fuel oil'?",
+    "cypher": "MATCH (r:Resource {name: 'residual fuel oil'}) RETURN r.neo4jImportId LIMIT 10",
+    "ground_truth": "13269",
+    "answer": "13269"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the business description of the company owned by Temasek Holdings (Private) Ltd?",
+    "cypher": "MATCH (f:Fund {name: \"Temasek Holdings (Private) Ltd\"})-[:OWNS]->(c:Company) RETURN c.description LIMIT 10",
+    "ground_truth": "BlackRock, Inc. is a publicly owned investment manager. The firm primarily provides its services to institutional, intermediary, and individual investors including corporate, public, union, and industry pension plans, insurance companies, third-party mutual funds, endowments, public institutions, governments, foundations, charities, sovereign wealth funds, corporations, official institutions, and banks. It also provides global risk management and advisory services. The firm manages separate client-focused equity, fixed income, and balanced portfolios. It also launches and manages open-end and ",
+    "answer": "BlackRock, Inc. is a publicly owned investment manager. The firm primarily provides its services to institutional, intermediary, and individual investors including corporate, public, union, and industry pension plans, insurance companies, third-party mutual funds, endowments, public institutions, governments, foundations, charities, sovereign wealth funds, corporations, official institutions, and banks. It also provides global risk management and advisory services. The firm manages separate client-focused equity, fixed income, and balanced portfolios. It also launches and manages open-end and"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker of the company that requires the resource named 'residual fuel oil'?",
+    "cypher": "MATCH (r:Resource {name: \"residual fuel oil\"})<-[:REQUIRES]-(c:Company) RETURN c.ticker LIMIT 10",
+    "ground_truth": "VLO",
+    "answer": "VLO"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary for the company owned by Canada Pension Plan Investment Board?",
+    "cypher": "MATCH (f:Fund {name: \"Canada Pension Plan Investment Board\"})-[:OWNS]->(c:Company) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "Bunge Global SA (BUN-ghee) is a global agribusiness and food company, incorporated in Geneva, Switzerland and headquartered in St. Louis, Missouri, United States. \nAs well as being an international soybean exporter, it is also involved in food processing, grain trading, and fertilizer. It competes with Archer Daniels Midland, Cargill and Louis Dreyfus. The company has approximately 23,000 employees in 40 countries.",
+    "answer": "Bunge Global SA (BUN-ghee) is a global agribusiness and food company, incorporated in Geneva, Switzerland and headquartered in St. Louis, Missouri, United States. As well as being an international soybean exporter, it is also involved in food processing, grain trading, and fertilizer. It competes with Archer Daniels Midland, Cargill and Louis Dreyfus. The company has approximately 23,000 employees in 40 countries."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the business description of the company that employs Mr. John C. Griffith?",
+    "cypher": "MATCH (p:Person {name: \"Mr. John C. Griffith\"})-[:WORKS_FOR]->(c:Company) RETURN c.description LIMIT 10",
+    "ground_truth": "American Water Works Company, Inc., through its subsidiaries, provides water and wastewater services in the United States. It offers water and wastewater services on military installations; and undertakes contracts with municipal customers, primarily to operate and manage water and wastewater facilities, as well as offers other related services. The company also operates approximately 80 surface water treatment plants; 520 groundwater treatment plants; 190 wastewater treatment plants; 54,500 miles of transmission, distribution, and collection mains and pipes; 1,200 groundwater wells; 1,800 wat",
+    "answer": "American Water Works Company, Inc., through its subsidiaries, provides water and wastewater services in the United States. It offers water and wastewater services on military installations; and undertakes contracts with municipal customers, primarily to operate and manage water and wastewater facilities, as well as offers other related services. The company also operates approximately 80 surface water treatment plants; 520 groundwater treatment plants; 190 wastewater treatment plants; 54,500 miles of transmission, distribution, and collection mains and pipes; 1,200 groundwater wells; 1,800 wat"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the sector that encompasses the Cargo Ground Transportation industry?",
+    "cypher": "MATCH (i:Industry {name: \"Cargo Ground Transportation\"})-[:PART_OF]->(s:Sector) RETURN s.neo4jImportId LIMIT 10",
+    "ground_truth": "15046",
+    "answer": "15046"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the industry that Quest Diagnostics Incorporated operates in?",
+    "cypher": "MATCH (c:Company {name: \"Quest Diagnostics Incorporated\"})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.neo4jImportId LIMIT 10",
+    "ground_truth": "2350",
+    "answer": "2350"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the entity label recorded for the company mentioned in the news article titled \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"})-[r:NEWS_ABOUT_COMPANY]->(c:Company) RETURN r.entity_label LIMIT 10",
+    "ground_truth": "Company",
+    "answer": "Company"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company has an ownership stake held by Canada Pension Plan Investment Board?",
+    "cypher": "MATCH (f:Fund {name: \"Canada Pension Plan Investment Board\"})-[:OWNS]->(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "Bunge Limited",
+    "answer": "Bunge Limited"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the state that contains the city of Marlborough?",
+    "cypher": "MATCH (ci:City {name: \"Marlborough\"})-[:IN_STATE]->(s:State) RETURN s.neo4jImportId LIMIT 10",
+    "ground_truth": "15456",
+    "answer": "15456"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the product produced by Mondelez International, Inc.?",
+    "cypher": "MATCH (c:Company {name: \"Mondelez International, Inc.\"})-[:PRODUCES]->(p:Product) RETURN p.neo4jImportId LIMIT 10",
+    "ground_truth": "8885; 8893; 8894; 8889; 8895; 8887; 8888; 8886; 8891; 8890",
+    "answer": "8885; 8893; 8894; 8889; 8895; 8887; 8888; 8886; 8891; 8890"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the entity name linked to the news headline \"PBM proposed transparency rule supported by public comment\" via a resource relationship?",
+    "cypher": "MATCH (n:News {headline: \"PBM proposed transparency rule supported by public comment\"})-[r:NEWS_ABOUT_RESOURCE]->(res:Resource) RETURN r.entity_name LIMIT 10",
+    "ground_truth": "third-party administrators",
+    "answer": "third-party administrators"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the country that the state IL belongs to?",
+    "cypher": "MATCH (s:State {name: \"IL\"})-[:IN_COUNTRY]->(co:Country) RETURN co.name LIMIT 10",
+    "ground_truth": "United States",
+    "answer": "United States"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the resource required by Quest Diagnostics Incorporated?",
+    "cypher": "MATCH (c:Company {name: \"Quest Diagnostics Incorporated\"})-[:REQUIRES]->(r:Resource) RETURN r.neo4jImportId LIMIT 10",
+    "ground_truth": "10895; 10894; 10891; 10896; 10892; 10893",
+    "answer": "10895; 10894; 10891; 10896; 10892; 10893"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the sector that the Electronic Components industry is part of?",
+    "cypher": "MATCH (i:Industry {name: \"Electronic Components\"})-[:PART_OF]->(s:Sector) RETURN s.neo4jImportId LIMIT 10",
+    "ground_truth": "15214",
+    "answer": "15214"
+  },
+  {
+    "complexity": "simple",
+    "question": "What entity type is recorded for the fund mentioned in the news article titled \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"?",
+    "cypher": "MATCH (n:News {headline: \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"})-[r:NEWS_ABOUT_FUND]->(f:Fund) RETURN r.entity_type LIMIT 10",
+    "ground_truth": "Fund",
+    "answer": "Fund"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the person named Mr. John C. Griffith?",
+    "cypher": "MATCH (p:Person {name: \"Mr. John C. Griffith\"}) RETURN p.neo4jImportId LIMIT 10",
+    "ground_truth": "9",
+    "answer": "9"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the person named Ms. Janene I. Asgeirsson J.D.?",
+    "cypher": "MATCH (p:Person {name: \"Ms. Janene I. Asgeirsson J.D.\"}) RETURN p.neo4jImportId LIMIT 10",
+    "ground_truth": "190",
+    "answer": "190"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the city of Dublin?",
+    "cypher": "MATCH (ci:City {name: \"Dublin\"}) RETURN ci.neo4jImportId LIMIT 10",
+    "ground_truth": "15216",
+    "answer": "15216"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the city of Marlborough?",
+    "cypher": "MATCH (ci:City {name: \"Marlborough\"}) RETURN ci.neo4jImportId LIMIT 10",
+    "ground_truth": "1298",
+    "answer": "1298"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the sector named Energy?",
+    "cypher": "MATCH (s:Sector {name: \"Energy\"}) RETURN s.neo4jImportId LIMIT 10",
+    "ground_truth": "234",
+    "answer": "234"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the product named Data center facilities?",
+    "cypher": "MATCH (p:Product {name: \"Data center facilities\"}) RETURN p.neo4jImportId LIMIT 10",
+    "ground_truth": "1",
+    "answer": "1"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the company named Mondelez International, Inc.?",
+    "cypher": "MATCH (c:Company {name: \"Mondelez International, Inc.\"}) RETURN c.neo4jImportId LIMIT 10",
+    "ground_truth": "8872",
+    "answer": "8872"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier assigned to Quest Diagnostics Incorporated?",
+    "cypher": "MATCH (c:Company {name: \"Quest Diagnostics Incorporated\"}) RETURN c.neo4jImportId LIMIT 10",
+    "ground_truth": "10874",
+    "answer": "10874"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the fund named 'Temasek Holdings (Private) Ltd'?",
+    "cypher": "MATCH (f:Fund {name: \"Temasek Holdings (Private) Ltd\"}) RETURN f.neo4jImportId LIMIT 10",
+    "ground_truth": "1127",
+    "answer": "1127"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the seendate recorded for the news headline \"PBM proposed transparency rule supported by public comment\"?",
+    "cypher": "MATCH (n:News {headline: \"PBM proposed transparency rule supported by public comment\"}) RETURN n.seendate LIMIT 10",
+    "ground_truth": "20260421T171500Z",
+    "answer": "20260421T171500Z"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the web domain associated with the news article titled \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"}) RETURN n.domain LIMIT 10",
     "ground_truth": "themarketsdaily.com",
     "answer": "themarketsdaily.com"
   },
   {
     "complexity": "simple",
-    "question": "Which company employs Ms. Kellye L. Walker J.D.?",
-    "cypher": "MATCH (p:Person {name: 'Ms. Kellye L. Walker J.D.'})-[:WORKS_FOR]->(c:Company) RETURN c.name LIMIT 10",
-    "ground_truth": "Deere & Company",
-    "answer": "Ms. Kellye L. Walker J.D., Deere & Company"
+    "question": "What entity type is recorded for the resource mentioned in the news headline \"PBM proposed transparency rule supported by public comment\"?",
+    "cypher": "MATCH (n:News {headline: \"PBM proposed transparency rule supported by public comment\"})-[r:NEWS_ABOUT_RESOURCE]->() RETURN r.entity_type LIMIT 10",
+    "ground_truth": "Resource",
+    "answer": "Resource"
   },
   {
     "complexity": "simple",
-    "question": "Which company employs Mr. Tamer K. Abuaita?",
-    "cypher": "MATCH (p:Person {name: 'Mr. Tamer K. Abuaita'})-[:WORKS_FOR]->(c:Company) RETURN c.name LIMIT 10",
-    "ground_truth": "Stanley Black & Decker, Inc.",
-    "answer": "Mr. Tamer K. Abuaita, Stanley Black & Decker, Inc."
+    "question": "What is the entity name recorded on the NEWS_ABOUT_COMPANY relationship for the news headline 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'})-[r:NEWS_ABOUT_COMPANY]->(c:Company) RETURN r.entity_name LIMIT 10",
+    "ground_truth": "AT&T Inc.",
+    "answer": "AT&T Inc."
   },
   {
     "complexity": "simple",
-    "question": "What resources are required by West Pharmaceutical Services, I?",
-    "cypher": "MATCH (c:Company {name: 'West Pharmaceutical Services, I'})-[:REQUIRES]->(r:Resource) RETURN r.name LIMIT 10",
-    "ground_truth": "advanced reconstitution, mixing, and transfer technologies; regulatory expertise; components for syringes and cartridges; after-sales technical support services; raw materials for stoppers and seals; cyclic olefin polymer for Crystal Zenith",
-    "answer": "advanced reconstitution, mixing, and transfer technologies; regulatory expertise; components for syringes and cartridges; after-sales technical support services; raw materials for stoppers and seals; cyclic olefin polymer for Crystal Zenith"
+    "question": "What is the entity label stored on the NEWS_ABOUT_FUND relationship for the article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '})-[r:NEWS_ABOUT_FUND]->(f:Fund) RETURN r.entity_label LIMIT 10",
+    "ground_truth": "Fund",
+    "answer": "Fund"
   },
   {
     "complexity": "simple",
-    "question": "Which industry is discussed in the news article titled '4 banks cutting mortgage rates in boost for buyers - full list'?",
-    "cypher": "MATCH (n:News {headline: '4 banks cutting mortgage rates in boost for buyers - full list'})-[:NEWS_ABOUT_INDUSTRY]->(i:Industry) RETURN i.name LIMIT 10",
-    "ground_truth": "Consumer Finance",
-    "answer": "Consumer Finance"
+    "question": "What is the entity type associated with the NEWS_ABOUT_RESOURCE relationship for the news headline 'PBM proposed transparency rule supported by public comment'?",
+    "cypher": "MATCH (n:News {headline: 'PBM proposed transparency rule supported by public comment'})-[r:NEWS_ABOUT_RESOURCE]->(res:Resource) RETURN r.entity_type LIMIT 10",
+    "ground_truth": "Resource",
+    "answer": "Resource"
   },
   {
     "complexity": "simple",
-    "question": "Which company produces the product named Haoyuan?",
-    "cypher": "MATCH (p:Product {name: 'Haoyuan'})<-[:PRODUCES]-(c:Company) RETURN c.name LIMIT 10",
-    "ground_truth": "Revvity, Inc.",
-    "answer": "Revvity, Inc."
+    "question": "What is the exact publication date for the news article with the headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '}) RETURN n.date LIMIT 10",
+    "ground_truth": "2026-04-19",
+    "answer": "2026-04-19"
   },
   {
     "complexity": "simple",
-    "question": "Which country contains the state of NJ?",
+    "question": "What is the web domain associated with the news article titled 'PBM proposed transparency rule supported by public comment'?",
+    "cypher": "MATCH (n:News {headline: 'PBM proposed transparency rule supported by public comment'}) RETURN n.domain LIMIT 10",
+    "ground_truth": "healthcarefinancenews.com",
+    "answer": "healthcarefinancenews.com"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the raw text content of the news article 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'}) RETURN n.raw_text LIMIT 10",
+    "ground_truth": "AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley nan",
+    "answer": "AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley nan"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the entity label recorded on the industry relationship for the news headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '})-[r:NEWS_ABOUT_INDUSTRY]->() RETURN r.entity_label LIMIT 10",
+    "ground_truth": "Industry",
+    "answer": "Industry"
+  },
+  {
+    "complexity": "simple",
+    "question": "What entity type is associated with the sector relationship in the news headline 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'})-[r:NEWS_ABOUT_SECTOR]->() RETURN r.entity_type LIMIT 10",
+    "ground_truth": "Sector",
+    "answer": "Sector"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the industry classified under the Consumer Discretionary sector?",
+    "cypher": "MATCH (i:Industry)-[:PART_OF]->(s:Sector {name: 'Consumer Discretionary'}) RETURN i.name LIMIT 10",
+    "ground_truth": "Computer & Electronics Retail; Automotive Retail; Automotive Parts & Equipment; Broadline Retail; Hotels, Resorts & Cruise Lines; Homefurnishing Retail; Other Specialty Retail; Apparel Retail; Home Furnishings; Apparel, Accessories & Luxury Goods",
+    "answer": "Computer & Electronics Retail; Automotive Retail; Automotive Parts & Equipment; Broadline Retail; Hotels, Resorts & Cruise Lines; Homefurnishing Retail; Other Specialty Retail; Apparel Retail; Home Furnishings; Apparel, Accessories & Luxury Goods"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the web address for the news headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '}) RETURN n.url LIMIT 10",
+    "ground_truth": "https://www.themarketsdaily.com/2026/04/19/comparing-principal-financial-group-nasdaqpfg-hamilton-insurance-group-nysehg.html",
+    "answer": "https://www.themarketsdaily.com/2026/04/19/comparing-principal-financial-group-nasdaqpfg-hamilton-insurance-group-nysehg.html"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary text for the company with ticker AMP?",
+    "cypher": "MATCH (c:Company {ticker: 'AMP'}) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "Ameriprise Financial, Inc. is an American diversified financial services company and bank holding company based in Minneapolis, Minnesota. It provides financial planning products and services, including wealth management, asset management, insurance, annuities, and estate planning.\nAs of April 2022, more than 80% of the company's revenue came from wealth management.\nAmeriprise was formerly a division of American Express, which completed the corporate spin-off of the company in September 2005.\nThe company is ranked 254th on the Fortune 500. It is on the list of largest banks in the United States and was ranked the 9th largest independent broker-dealer based on assets under management. It is one of the largest financial planning companies in the United States and ranks among the 25 largest asset managers globally. It is ranked 8th in long-term mutual fund assets in the U.S., fourth in retail funds in the U.K., and 27th in global assets under management.",
+    "answer": "Ameriprise Financial, Inc. is an American diversified financial services company and bank holding company based in Minneapolis, Minnesota. It provides financial planning products and services, including wealth management, asset management, insurance, annuities, and estate planning.\nAs of April 2022, more than 80% of the company's revenue came from wealth management.\nAmeriprise was formerly a division of American Express, which completed the corporate spin-off of the company in September 2005.\nThe company is ranked 254th on the Fortune 500. It is on the list of largest banks in the United States and was ranked the 9th largest independent broker-dealer based on assets under management. It is one of the largest financial planning companies in the United States and ranks among the 25 largest asset managers globally. It is ranked 8th in long-term mutual fund assets in the U.S., fourth in retail funds in the U.K., and 27th in global assets under management."
+  },
+  {
+    "complexity": "simple",
+    "question": "Which state encompasses the city of Dublin?",
+    "cypher": "MATCH (c:City {name: 'Dublin'})-[:IN_STATE]->(s:State) RETURN s.name LIMIT 10",
+    "ground_truth": "CA; OH",
+    "answer": "CA; OH"
+  },
+  {
+    "complexity": "simple",
+    "question": "Identify the fund that owns a stake in the company with ticker MDLZ.",
+    "cypher": "MATCH (f:Fund)-[:OWNS]->(c:Company {ticker: 'MDLZ'}) RETURN f.name LIMIT 10",
+    "ground_truth": "Vanguard Group Inc; JPMORGAN CHASE & CO; Capital International Investors; State Street Corporation; Blackrock Inc.",
+    "answer": "Vanguard Group Inc; JPMORGAN CHASE & CO; Capital International Investors; State Street Corporation; Blackrock Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the official title held by Ms. Janene I. Asgeirsson J.D. at her workplace?",
+    "cypher": "MATCH (p:Person {name: 'Ms. Janene I. Asgeirsson J.D.'})-[r:WORKS_FOR]->(c:Company) RETURN r.title LIMIT 10",
+    "ground_truth": "Chief Legal Officer & Corporate Secretary",
+    "answer": "Chief Legal Officer & Corporate Secretary"
+  },
+  {
+    "complexity": "simple",
+    "question": "Return the seendate property for the news article AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley.",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'}) RETURN n.seendate LIMIT 10",
+    "ground_truth": "20260419T073000Z",
+    "answer": "20260419T073000Z"
+  },
+  {
+    "complexity": "simple",
+    "question": "What product does Ameriprise Financial, Inc. manufacture?",
+    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'})-[:PRODUCES]->(p:Product) RETURN p.name LIMIT 10",
+    "ground_truth": "face-amount certificates; discretionary and non-discretionary investment advisory accounts; brokerage products and services for retail and institutional clients; mutual funds; U.S. mutual funds and their non-U.S. equivalents, exchange-traded funds, variable product funds underlying insurance, and annuity separate accounts; institutional asset management products, such as traditional asset classes, separately managed accounts, individually managed accounts, collateralized loan obligations, hedge funds, collective funds, and property and infrastructure funds; insurance and annuities products; cash management and banking products; variable annuity products",
+    "answer": "face-amount certificates; discretionary and non-discretionary investment advisory accounts; brokerage products and services for retail and institutional clients; mutual funds; U.S. mutual funds and their non-U.S. equivalents, exchange-traded funds, variable product funds underlying insurance, and annuity separate accounts; institutional asset management products, such as traditional asset classes, separately managed accounts, individually managed accounts, collateralized loan obligations, hedge funds, collective funds, and property and infrastructure funds; insurance and annuities products; cash management and banking products; variable annuity products"
+  },
+  {
+    "complexity": "simple",
+    "question": "From which country does the news article Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG )  originate?",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '}) RETURN n.sourcecountry LIMIT 10",
+    "ground_truth": "United States",
+    "answer": "United States"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the neo4jImportId for the sector Consumer Discretionary?",
+    "cypher": "MATCH (s:Sector {name: 'Consumer Discretionary'}) RETURN s.neo4jImportId LIMIT 10",
+    "ground_truth": "15432",
+    "answer": "15432"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the query string used to fetch the news headline PBM proposed transparency rule supported by public comment?",
+    "cypher": "MATCH (n:News {headline: 'PBM proposed transparency rule supported by public comment'}) RETURN n.query LIMIT 10",
+    "ground_truth": "\"third-party administrators\" AND (commodity OR supply OR price OR production)",
+    "answer": "\"third-party administrators\" AND (commodity OR supply OR price OR production)"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the city where Ameriprise Financial, Inc. is headquartered?",
+    "cypher": "MATCH (c:Company {ticker: \"AMP\"})-[:LOCATED_IN]->(ci:City) RETURN ci.neo4jImportId LIMIT 10",
+    "ground_truth": "32",
+    "answer": "32"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary for the company that Canada Pension Plan Investment Board holds a stake in?",
+    "cypher": "MATCH (f:Fund {name: \"Canada Pension Plan Investment Board\"})-[:OWNS]->(c:Company) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "Bunge Global SA (BUN-ghee) is a global agribusiness and food company, incorporated in Geneva, Switzerland and headquartered in St. Louis, Missouri, United States. \nAs well as being an international soybean exporter, it is also involved in food processing, grain trading, and fertilizer. It competes with Archer Daniels Midland, Cargill and Louis Dreyfus. The company has approximately 23,000 employees in 40 countries.",
+    "answer": "Bunge Global SA (BUN-ghee) is a global agribusiness and food company, incorporated in Geneva, Switzerland and headquartered in St. Louis, Missouri, United States. As well as being an international soybean exporter, it is also involved in food processing, grain trading, and fertilizer. It competes with Archer Daniels Midland, Cargill and Louis Dreyfus. The company has approximately 23,000 employees in 40 countries."
+  },
+  {
+    "complexity": "simple",
+    "question": "From which country does the news article PBM proposed transparency rule supported by public comment originate?",
+    "cypher": "MATCH (n:News {headline: \"PBM proposed transparency rule supported by public comment\"}) RETURN n.sourcecountry LIMIT 10",
+    "ground_truth": "United States",
+    "answer": "United States"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which sector encompasses the Electronic Components industry?",
+    "cypher": "MATCH (i:Industry {name: \"Electronic Components\"})-[:PART_OF]->(s:Sector) RETURN s.name LIMIT 10",
+    "ground_truth": "Information Technology",
+    "answer": "Information Technology"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the business description of the manufacturer of parts for equipment?",
+    "cypher": "MATCH (p:Product {name: \"parts for equipment\"})<-[:PRODUCES]-(c:Company) RETURN c.description LIMIT 10",
+    "ground_truth": "United Rentals, Inc., through its subsidiaries, operates as an equipment rental company. It operates in two segments, General Rentals and Specialty. The General Rentals segment rents general construction and industrial equipment includes backhoes, skid-steer loaders, forklifts, earthmoving equipment, and material handling equipment; aerial work platforms, such as boom and scissor lifts; and general tools and light equipment comprising pressure washers, water pumps, and power tools for construction and industrial companies, manufacturers, utilities, municipalities, homeowners, and government en",
+    "answer": "operates as an equipment rental company"
+  },
+  {
+    "complexity": "simple",
+    "question": "When was the record for the company requiring third-party financial institutions last updated?",
+    "cypher": "MATCH (r:Resource {name: \"third-party financial institutions\"})<-[:REQUIRES]-(c:Company) RETURN c.last_updated LIMIT 10",
+    "ground_truth": "2026-03-23",
+    "answer": "2026-03-23"
+  },
+  {
+    "complexity": "simple",
+    "question": "In which country is the state IL located?",
+    "cypher": "MATCH (s:State {name: \"IL\"})-[:IN_COUNTRY]->(co:Country) RETURN co.name LIMIT 10",
+    "ground_truth": "United States",
+    "answer": "United States"
+  },
+  {
+    "complexity": "simple",
+    "question": "What entity type is recorded for the company mentioned in the news headline AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"})-[r:NEWS_ABOUT_COMPANY]->(c:Company) RETURN r.entity_type LIMIT 10",
+    "ground_truth": "Company",
+    "answer": "Company"
+  },
+  {
+    "complexity": "simple",
+    "question": "Retrieve the exact ticker symbol for the company node named 'Mondelez International, Inc.'.",
+    "cypher": "MATCH (c:Company {name: 'Mondelez International, Inc.'}) RETURN c.ticker LIMIT 10",
+    "ground_truth": "MDLZ",
+    "answer": "MDLZ"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki_summary text associated with the Company record for 'Quest Diagnostics Incorporated'?",
+    "cypher": "MATCH (c:Company {name: 'Quest Diagnostics Incorporated'}) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "Quest Diagnostics Incorporated is an American clinical laboratory. A Fortune 500 company, Quest operates in the United States, Puerto Rico, Mexico, and Brazil. Quest also maintains collaborative agreements with various hospitals and clinics across the globe.\nAs of 2020, the company had approximately 48,000 employees, and it generated more than $7.7 billion in revenue in 2019. The company offers access to diagnostic testing services for cancer, cardiovascular disease, infectious disease, neurological disorders, COVID-19, and employment and court-ordered drug testing.",
+    "answer": "Quest Diagnostics Incorporated is an American clinical laboratory. A Fortune 500 company, Quest operates in the United States, Puerto Rico, Mexico, and Brazil. Quest also maintains collaborative agreements with various hospitals and clinics across the globe. As of 2020, the company had approximately 48,000 employees, and it generated more than $7.7 billion in revenue in 2019. The company offers access to diagnostic testing services for cancer, cardiovascular disease, infectious disease, neurological disorders, COVID-19, and employment and court-ordered drug testing."
+  },
+  {
+    "complexity": "simple",
+    "question": "Identify the last_updated timestamp for the Company entity named 'Ameriprise Financial, Inc.'.",
+    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'}) RETURN c.last_updated LIMIT 10",
+    "ground_truth": "2026-03-23",
+    "answer": "2026-03-23"
+  },
+  {
+    "complexity": "simple",
+    "question": "Return the domain property from the News node with the headline 'PBM proposed transparency rule supported by public comment'.",
+    "cypher": "MATCH (n:News {headline: 'PBM proposed transparency rule supported by public comment'}) RETURN n.domain LIMIT 10",
+    "ground_truth": "healthcarefinancenews.com",
+    "answer": "healthcarefinancenews.com"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the language field value for the News article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '}) RETURN n.language LIMIT 10",
+    "ground_truth": "English",
+    "answer": "English"
+  },
+  {
+    "complexity": "simple",
+    "question": "Fetch the sourcecountry attribute for the News entry with the headline 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'.",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'}) RETURN n.sourcecountry LIMIT 10",
+    "ground_truth": "United States",
+    "answer": "United States"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the Industry node that 'Mondelez International, Inc.' operates in?",
+    "cypher": "MATCH (c:Company {name: 'Mondelez International, Inc.'})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.name LIMIT 10",
+    "ground_truth": "Packaged Foods & Meats",
+    "answer": "Packaged Foods & Meats"
+  },
+  {
+    "complexity": "simple",
+    "question": "Identify the name of the Sector that encompasses the 'Water Utilities' industry.",
+    "cypher": "MATCH (i:Industry {name: 'Water Utilities'})-[:PART_OF]->(s:Sector) RETURN s.name LIMIT 10",
+    "ground_truth": "Utilities",
+    "answer": "Utilities"
+  },
+  {
+    "complexity": "simple",
+    "question": "Return the name of the Product manufactured by 'Ameriprise Financial, Inc.'.",
+    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'})-[:PRODUCES]->(p:Product) RETURN p.name LIMIT 10",
+    "ground_truth": "face-amount certificates; discretionary and non-discretionary investment advisory accounts; brokerage products and services for retail and institutional clients; mutual funds; U.S. mutual funds and their non-U.S. equivalents, exchange-traded funds, variable product funds underlying insurance, and annuity separate accounts; institutional asset management products, such as traditional asset classes, separately managed accounts, individually managed accounts, collateralized loan obligations, hedge funds, collective funds, and property and infrastructure funds; insurance and annuities products; cash management and banking products; variable annuity products",
+    "answer": "face-amount certificates; discretionary and non-discretionary investment advisory accounts; brokerage products and services for retail and institutional clients; mutual funds; U.S. mutual funds and their non-U.S. equivalents, exchange-traded funds, variable product funds underlying insurance, and annuity separate accounts; institutional asset management products, such as traditional asset classes, separately managed accounts, individually managed accounts, collateralized loan obligations, hedge funds, collective funds, and property and infrastructure funds; insurance and annuities products; cash management and banking products; variable annuity products"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the Resource required by 'Quest Diagnostics Incorporated'?",
+    "cypher": "MATCH (c:Company {name: 'Quest Diagnostics Incorporated'})-[:REQUIRES]->(r:Resource) RETURN r.name LIMIT 10",
+    "ground_truth": "call centers and mobile phlebotomists; phlebotomists in physician offices; collaborative agreements with various hospitals and clinics; nurses and other health and wellness professionals; network of laboratories; patient service centers",
+    "answer": "call centers and mobile phlebotomists; phlebotomists in physician offices; collaborative agreements with various hospitals and clinics; nurses and other health and wellness professionals; network of laboratories; patient service centers"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which state contains the city of Marlborough?",
+    "cypher": "MATCH (c:City {name: 'Marlborough'})-[:IN_STATE]->(s:State) RETURN s.name LIMIT 10",
+    "ground_truth": "MA",
+    "answer": "MA"
+  },
+  {
+    "complexity": "simple",
+    "question": "To which country does the state NJ belong?",
     "cypher": "MATCH (s:State {name: 'NJ'})-[:IN_COUNTRY]->(c:Country) RETURN c.name LIMIT 10",
     "ground_truth": "United States",
     "answer": "United States"
   },
   {
     "complexity": "simple",
-    "question": "To which sector does the Real Estate Services industry belong?",
-    "cypher": "MATCH (i:Industry {name: 'Real Estate Services'})-[:PART_OF]->(s:Sector) RETURN s.name LIMIT 10",
-    "ground_truth": "Real Estate",
-    "answer": "Real Estate"
+    "question": "What industry does Ameriprise Financial, Inc. operate within?",
+    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.name LIMIT 10",
+    "ground_truth": "Asset Management & Custody Banks",
+    "answer": "Asset Management & Custody Banks"
   },
   {
     "complexity": "simple",
-    "question": "On what date was the news article about Lingotto Investment Management LLP published?",
-    "cypher": "MATCH (f:Fund {name: 'Lingotto Investment Management LLP'})<-[:NEWS_ABOUT_FUND]-(n:News) RETURN n.date LIMIT 10",
-    "ground_truth": "2026-01-30; 2026-02-11; 2026-03-01; 2026-03-04; 2026-03-09; 2026-04-04",
-    "answer": "2026-01-30; 2026-02-11; 2026-03-01; 2026-03-04; 2026-03-09; 2026-04-04"
+    "question": "Which resource does Ameriprise Financial, Inc. require for its operations?",
+    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'})-[:REQUIRES]->(r:Resource) RETURN r.name LIMIT 10",
+    "ground_truth": "raw materials and technologies needed for investment management and advisory services; third-party financial institutions; Columbia Threadneedle Investments brand name; advisor networks; institutional sales force",
+    "answer": "raw materials and technologies needed for investment management and advisory services; third-party financial institutions; Columbia Threadneedle Investments brand name; advisor networks; institutional sales force"
   },
   {
     "complexity": "simple",
-    "question": "What is the language of the news article with the headline \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
-    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"}) RETURN n.language LIMIT 10",
-    "ground_truth": "English",
-    "answer": "English"
+    "question": "Under which sector is the Cargo Ground Transportation industry classified?",
+    "cypher": "MATCH (i:Industry {name: 'Cargo Ground Transportation'})-[:PART_OF]->(s:Sector) RETURN s.name LIMIT 10",
+    "ground_truth": "Industrials",
+    "answer": "Industrials"
   },
   {
     "complexity": "simple",
-    "question": "What is the wiki summary for the company with the ticker \"WST\"?",
-    "cypher": "MATCH (c:Company {ticker: \"WST\"}) RETURN c.wiki_summary LIMIT 10",
-    "ground_truth": "The pharmaceutical industry is a medical industry that discovers, develops, produces, and markets pharmaceutical goods such as medications. Medications are then administered to (or self-administered by) patients for curing or preventing disease or for alleviating symptoms of illness or injury. \nGeneric drugs are typically not protected by patents, whereas branded drugs are covered by patents. The industry's various subdivisions include distinct areas, such as manufacturing biologics and total synthesis. The industry is subject to a variety of laws and regulations that govern the patenting, efficacy testing, safety evaluation, and marketing of these drugs.\nThe global pharmaceutical market was valued at approximately US$1.48 trillion in 2022, reflecting steady growth from 2020 and continuing expansion despite the impacts of the COVID-19 pandemic. The sector showed a compound annual growth rate (CAGR) of 1.8% in 2021, including the effects of the COVID-19 pandemic.\nIn historical terms, th",
-    "answer": "No data for this query."
+    "question": "What ownership percentage does Temasek Holdings (Private) Ltd hold in its portfolio company?",
+    "cypher": "MATCH (f:Fund {name: 'Temasek Holdings (Private) Ltd'})-[o:OWNS]->(c:Company) RETURN o.pct LIMIT 10",
+    "ground_truth": "0.0328",
+    "answer": "0.0328"
   },
   {
     "complexity": "simple",
-    "question": "Which city is located in the state named \"NH\"?",
-    "cypher": "MATCH (c:City)-[:IN_STATE]->(s:State {name: \"NH\"}) RETURN c.name LIMIT 10",
-    "ground_truth": "Portsmouth",
-    "answer": "Portsmouth"
+    "question": "What is the full legal name of the company with ticker DGX?",
+    "cypher": "MATCH (c:Company {ticker: 'DGX'}) RETURN c.name LIMIT 10",
+    "ground_truth": "Quest Diagnostics Incorporated",
+    "answer": "Quest Diagnostics Incorporated"
   },
   {
     "complexity": "simple",
-    "question": "When was the record for Ameriprise Financial, Inc. last updated?",
-    "cypher": "MATCH (c:Company {name: \"Ameriprise Financial, Inc.\"}) RETURN c.last_updated LIMIT 10",
+    "question": "What is the official name of the state that contains the city of Marlborough?",
+    "cypher": "MATCH (c:City {name: 'Marlborough'})-[:IN_STATE]->(s:State) RETURN s.name LIMIT 10",
+    "ground_truth": "MA",
+    "answer": "MA"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company operates within the Electronic Components industry?",
+    "cypher": "MATCH (c:Company)-[:OPERATES_IN_INDUSTRY]->(i:Industry {name: 'Electronic Components'}) RETURN c.name LIMIT 10",
+    "ground_truth": "Amphenol Corporation; Corning Incorporated",
+    "answer": "Amphenol Corporation; Corning Incorporated"
+  },
+  {
+    "complexity": "simple",
+    "question": "When was the record last updated for the company that requires residual fuel oil?",
+    "cypher": "MATCH (c:Company)-[:REQUIRES]->(r:Resource {name: 'residual fuel oil'}) RETURN c.last_updated LIMIT 10",
     "ground_truth": "2026-03-23",
     "answer": "2026-03-23"
   },
   {
     "complexity": "simple",
-    "question": "What search query was used to collect the news article titled \"4 banks cutting mortgage rates in boost for buyers - full list\"?",
-    "cypher": "MATCH (n:News {headline: \"4 banks cutting mortgage rates in boost for buyers - full list\"}) RETURN n.query LIMIT 10",
-    "ground_truth": "\"Consumer Finance\" AND (industry OR market OR companies)",
-    "answer": "\"Consumer Finance\" AND (industry OR market OR companies)"
+    "question": "What is the wiki summary for the manufacturer of parts for equipment?",
+    "cypher": "MATCH (c:Company)-[:PRODUCES]->(p:Product {name: 'parts for equipment'}) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "United Rentals, Inc. is an American equipment rental company, with about 16 percent of the North American market share as of 2022. It owns the largest rental fleet in the world with approximately 4,800 classes of equipment totaling about $20.59 billion in original equipment cost (OEC) as of 2025. The company has a combined total of 1,625 locations, including an integrated network of 1,504 rental locations in North America, 38 in Europe, 23 in Australia and 19 in New Zealand. In North America, the company operates in 49 U.S. states and Puerto Rico and in every Canadian province. In 2017, United Rentals' revenue totaled more than $6.64 billion, with over $1.35 billion in profit. \nIn the year 2024, United Rentals revenue totaled $15.35 billion. It is ranked #298 on the Fortune 500 as of 2024, #555 on the Forbes Global 2000 list of the world's largest public companies, and, as of 2025, ranked as the largest rental equipment company in North America according to the Rental Equipment Registe",
+    "answer": "United Rentals, Inc. is an American equipment rental company, with about 16 percent of the North American market share as of 2022. It owns the largest rental fleet in the world with approximately 4,800 classes of equipment totaling about $20.59 billion in original equipment cost (OEC) as of 2025. The company has a combined total of 1,625 locations, including an integrated network of 1,504 rental locations in North America, 38 in Europe, 23 in Australia and 19 in New Zealand. In North America, the company operates in 49 U.S. states and Puerto Rico and in every Canadian province. In 2017, United Rentals' revenue totaled more than $6.64 billion, with over $1.35 billion in profit. \nIn the year 2024, United Rentals revenue totaled $15.35 billion. It is ranked #298 on the Fortune 500 as of 2024, #555 on the Forbes Global 2000 list of the world's largest public companies, and, as of 2025, ranked as the largest rental equipment company in North America according to the Rental Equipment Registe"
   },
   {
     "complexity": "simple",
-    "question": "What is the stock ticker of the company that produces the product \"Data center facilities\"?",
-    "cypher": "MATCH (c:Company)-[:PRODUCES]->(p:Product {name: \"Data center facilities\"}) RETURN c.ticker LIMIT 10",
-    "ground_truth": "AMT",
-    "answer": "AMT"
+    "question": "What is the import identifier for the fund that owns a stake in Ameriprise Financial, Inc.?",
+    "cypher": "MATCH (f:Fund)-[:OWNS]->(c:Company {name: 'Ameriprise Financial, Inc.'}) RETURN f.neo4jImportId LIMIT 10",
+    "ground_truth": "15065; 15061; 15064; 15063; 15062",
+    "answer": "15065; 15061; 15064; 15063; 15062"
   },
   {
     "complexity": "simple",
-    "question": "What is the URL for the news article with the headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
-    "cypher": "MATCH (n:News {headline: \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"}) RETURN n.url LIMIT 10",
-    "ground_truth": "https://www.themarketsdaily.com/2026/04/19/comparing-principal-financial-group-nasdaqpfg-hamilton-insurance-group-nysehg.html",
-    "answer": "https://www.themarketsdaily.com/2026/04/19/comparing-principal-financial-group-nasdaqpfg-hamilton-insurance-group-nysehg.html"
+    "question": "What is the official job title held by the person working for Quest Diagnostics Incorporated?",
+    "cypher": "MATCH (p:Person)-[r:WORKS_FOR]->(c:Company {name: 'Quest Diagnostics Incorporated'}) RETURN r.title LIMIT 10",
+    "ground_truth": "Senior VP and Chief Marketing & Communications Officer; Senior Vice President of Clinical Solutions; Senior VP, Corporate Controller & Chief Accounting Officer; Executive VP & CFO; Senior VP & General Counsel; Executive Vice President of Regional Businesses; Chairman, CEO & President; Senior VP and Chief Information & Digital Officer; Vice President of Investor Relations; Senior VP & Chief Compliance Officer",
+    "answer": "Senior VP and Chief Marketing & Communications Officer; Senior Vice President of Clinical Solutions; Senior VP, Corporate Controller & Chief Accounting Officer; Executive VP & CFO; Senior VP & General Counsel; Executive Vice President of Regional Businesses; Chairman, CEO & President; Senior VP and Chief Information & Digital Officer; Vice President of Investor Relations; Senior VP & Chief Compliance Officer"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the web address for the news article titled 'PBM proposed transparency rule supported by public comment'?",
+    "cypher": "MATCH (n:News {headline: 'PBM proposed transparency rule supported by public comment'}) RETURN n.url LIMIT 10",
+    "ground_truth": "https://www.healthcarefinancenews.com/news/pbm-proposed-transparency-rule-supported-public-comment",
+    "answer": "https://www.healthcarefinancenews.com/news/pbm-proposed-transparency-rule-supported-public-comment"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the industry that Ameriprise Financial, Inc. operates in?",
+    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.neo4jImportId LIMIT 10",
+    "ground_truth": "31",
+    "answer": "31"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the resource required by Mondelez International, Inc.?",
+    "cypher": "MATCH (c:Company {name: 'Mondelez International, Inc.'})-[:REQUIRES]->(r:Resource) RETURN r.name LIMIT 10",
+    "ground_truth": "retailer digital platforms; logistics and distribution services; direct-to-consumer websites and social media platforms; packaging materials; raw materials for cheese and grocery products; raw materials for biscuits and baked snacks; raw materials for chocolates; raw materials for gums and candies; raw materials for powdered beverage products; e-retail platforms",
+    "answer": "retailer digital platforms; logistics and distribution services; direct-to-consumer websites and social media platforms; packaging materials; raw materials for cheese and grocery products; raw materials for biscuits and baked snacks; raw materials for chocolates; raw materials for gums and candies; raw materials for powdered beverage products; e-retail platforms"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the web address for the news article with the headline 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"}) RETURN n.url LIMIT 10",
+    "ground_truth": "https://www.themarketsdaily.com/2026/04/19/att-nyset-research-coverage-started-at-morgan-stanley.html",
+    "answer": "https://www.themarketsdaily.com/2026/04/19/att-nyset-research-coverage-started-at-morgan-stanley.html"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the official name of the company owned by Aristotle Capital Management, LLC?",
+    "cypher": "MATCH (f:Fund {name: \"Aristotle Capital Management, LLC\"})-[:OWNS]->(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "American Water Works Company, I; Williams-Sonoma, Inc.; Coterra Energy Inc.",
+    "answer": "American Water Works Company, I; Williams-Sonoma, Inc.; Coterra Energy Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "In which city is Ameriprise Financial, Inc. headquartered?",
+    "cypher": "MATCH (c:Company {name: \"Ameriprise Financial, Inc.\"})-[:LOCATED_IN]->(city:City) RETURN city.name LIMIT 10",
+    "ground_truth": "Minneapolis",
+    "answer": "Minneapolis"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which sector is mentioned in the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"})-[:NEWS_ABOUT_SECTOR]->(s:Sector) RETURN s.name LIMIT 10",
+    "ground_truth": "Communication Services",
+    "answer": "Communication Services"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the business description of the company that employs Ms. Janene I. Asgeirsson J.D.?",
+    "cypher": "MATCH (p:Person {name: \"Ms. Janene I. Asgeirsson J.D.\"})-[:WORKS_FOR]->(c:Company) RETURN c.description LIMIT 10",
+    "ground_truth": "Analog Devices, Inc. engages in the design, manufacture, testing, and marketing of integrated circuits (ICs), software, and subsystems products in the United States, rest of North and South America, Europe, Japan, China, and rest of Asia. It provides data converter products, which translate real-world analog signals into digital data, as well as translates digital data into analog signals; power management and reference products for power conversion, driver monitoring, sequencing, and energy management applications in the automotive, communications, industrial, and consumer markets; and power ",
+    "answer": "Analog Devices, Inc. engages in the design, manufacture, testing, and marketing of integrated circuits (ICs), software, and subsystems products in the United States, rest of North and South America, Europe, Japan, China, and rest of Asia. It provides data converter products, which translate real-world analog signals into digital data, as well as translates digital data into analog signals; power management and reference products for power conversion, driver monitoring, sequencing, and energy management applications in the automotive, communications, industrial, and consumer markets; and power"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which product is discussed in the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"})-[:NEWS_ABOUT_PRODUCT]->(p:Product) RETURN p.name LIMIT 10",
+    "ground_truth": "investment advisory; investment advisory services; wireless services",
+    "answer": "wireless services"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the state that contains the city of Santa Clara?",
+    "cypher": "MATCH (city:City {name: \"Santa Clara\"})-[:IN_STATE]->(s:State) RETURN s.name LIMIT 10",
+    "ground_truth": "CA",
+    "answer": "CA"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the full name of the company that employs Ms. Sue  Sabo?",
+    "cypher": "MATCH (p:Person {name: 'Ms. Sue  Sabo'})-[:WORKS_FOR]->(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "Masco Corporation",
+    "answer": "Masco Corporation"
+  },
+  {
+    "complexity": "simple",
+    "question": "In which language is the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley' written?",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'}) RETURN n.language LIMIT 10",
+    "ground_truth": "English",
+    "answer": "English"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary for the company that requires the resource named 'module testing'?",
+    "cypher": "MATCH (r:Resource {name: 'module testing'})<-[:REQUIRES]-(c:Company) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "O'Reilly Automotive, Inc., doing business as O'Reilly Auto Parts, is an American automotive part retailer that provides automotive parts, tools, supplies, equipment, and accessories to professional service providers and do-it-yourself customers. Founded in 1957 by the O'Reilly family, O'Reilly Auto Parts operates more than 6,400 stores in 48 states, Puerto Rico, Mexico, and Canada.\n\n",
+    "answer": "O'Reilly Automotive, Inc., doing business as O'Reilly Auto Parts, is an American automotive part retailer that provides automotive parts, tools, supplies, equipment, and accessories to professional service providers and do-it-yourself customers. Founded in 1957 by the O'Reilly family, O'Reilly Auto Parts operates more than 6,400 stores in 48 states, Puerto Rico, Mexico, and Canada."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the industry classified under the Energy sector?",
+    "cypher": "MATCH (s:Sector {name: 'Energy'})<-[:PART_OF]-(i:Industry) RETURN i.neo4jImportId LIMIT 10",
+    "ground_truth": "777; 235; 8059; 7350; 2214",
+    "answer": "777; 235; 8059; 7350; 2214"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the last_updated timestamp for the company that produces 'Data center facilities'?",
+    "cypher": "MATCH (p:Product {name: 'Data center facilities'})<-[:PRODUCES]-(c:Company) RETURN c.last_updated LIMIT 10",
+    "ground_truth": "2026-03-23",
+    "answer": "2026-03-23"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the entity name linked to the NEWS_ABOUT_LOCATION relationship for the news headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '})-[r:NEWS_ABOUT_LOCATION]->(loc) RETURN r.entity_name LIMIT 10",
+    "ground_truth": "Des Moines; Pembroke",
+    "answer": "Des Moines; Pembroke"
+  },
+  {
+    "complexity": "simple",
+    "question": "What ownership percentage does Aristotle Capital Management, LLC hold in its invested company?",
+    "cypher": "MATCH (f:Fund {name: 'Aristotle Capital Management, LLC'})-[r:OWNS]->(c:Company) RETURN r.pct LIMIT 10",
+    "ground_truth": "0.0323; 0.0765; 0.040799998",
+    "answer": "0.0323; 0.0765; 0.040799998"
+  },
+  {
+    "complexity": "simple",
+    "question": "What product is manufactured by Quest Diagnostics Incorporated?",
+    "cypher": "MATCH (c:Company {name: 'Quest Diagnostics Incorporated'})-[:PRODUCES]->(p:Product) RETURN p.name LIMIT 10",
+    "ground_truth": "risk assessment services for the life insurance industry; anatomic pathology testing; diagnostic information services; routine, non-routine and advanced clinical testing; information technology solutions",
+    "answer": "risk assessment services for the life insurance industry; anatomic pathology testing; diagnostic information services; routine, non-routine and advanced clinical testing; information technology solutions"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the full name of the company that employs Ms. Janene I. Asgeirsson J.D.?",
+    "cypher": "MATCH (p:Person {name: 'Ms. Janene I. Asgeirsson J.D.'})-[:WORKS_FOR]->(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "Analog Devices, Inc.",
+    "answer": "Analog Devices, Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the city located in the state of IA?",
+    "cypher": "MATCH (c:City)-[:IN_STATE]->(s:State {name: 'IA'}) RETURN c.name LIMIT 10",
+    "ground_truth": "Des Moines",
+    "answer": "Des Moines"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker of the company discussed in the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'})-[:NEWS_ABOUT_COMPANY]->(c:Company) RETURN c.ticker LIMIT 10",
+    "ground_truth": "T",
+    "answer": "T"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the industry in which Mondelez International, Inc. operates?",
+    "cypher": "MATCH (c:Company {name: 'Mondelez International, Inc.'})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.neo4jImportId LIMIT 10",
+    "ground_truth": "1705",
+    "answer": "1705"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the company that employs Ms. Sue  Sabo?",
+    "cypher": "MATCH (p:Person {name: 'Ms. Sue  Sabo'})-[:WORKS_FOR]->(c:Company) RETURN c.neo4jImportId LIMIT 10",
+    "ground_truth": "8155",
+    "answer": "8155"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker assigned to the company named 'Quest Diagnostics Incorporated'?",
+    "cypher": "MATCH (c:Company {name: 'Quest Diagnostics Incorporated'}) RETURN c.ticker LIMIT 10",
+    "ground_truth": "DGX",
+    "answer": "DGX"
+  },
+  {
+    "complexity": "simple",
+    "question": "Provide the full raw text content for the news article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '.",
+    "cypher": "MATCH (n:News {headline: 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '}) RETURN n.raw_text LIMIT 10",
+    "ground_truth": "Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG )  nan",
+    "answer": "Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG )  nan"
+  },
+  {
+    "complexity": "simple",
+    "question": "Identify the name of the investment fund that holds a stake in 'Quest Diagnostics Incorporated'.",
+    "cypher": "MATCH (f:Fund)-[:OWNS]->(c:Company {name: 'Quest Diagnostics Incorporated'}) RETURN f.name LIMIT 10",
+    "ground_truth": "Vanguard Group Inc; State Street Corporation; JPMORGAN CHASE & CO; Blackrock Inc.; Price (T.Rowe) Associates Inc",
+    "answer": "Vanguard Group Inc; State Street Corporation; JPMORGAN CHASE & CO; Blackrock Inc.; Price (T.Rowe) Associates Inc"
+  },
+  {
+    "complexity": "simple",
+    "question": "Who is the individual listed as working for 'Mondelez International, Inc.'?",
+    "cypher": "MATCH (p:Person)-[:WORKS_FOR]->(c:Company {name: 'Mondelez International, Inc.'}) RETURN p.name LIMIT 10",
+    "ground_truth": "Mr. Brian C. Stevens; Mr. Martin  Renaud; Ms. Laura  Stein J.D.; Mr. Dirk  Van de Put; Mr. Mohit  Bhalla; Mr. Filippo  Catalano; Mr. Luca  Zaramella; Mr. Gustavo Carlos Valle; Ms. Stephanie  Lilak; Mr. Shep  Dunlap",
+    "answer": "Mr. Brian C. Stevens, Mondelez International, Inc.\nMr. Martin Renaud, Mondelez International, Inc.\nMs. Laura Stein J.D., Mondelez International, Inc.\nMr. Dirk Van de Put, Mondelez International, Inc.\nMr. Mohit Bhalla, Mondelez International, Inc.\nMr. Filippo Catalano, Mondelez International, Inc.\nMr. Luca Zaramella, Mondelez International, Inc.\nMr. Gustavo Carlos Valle, Mondelez International, Inc.\nMs. Stephanie Lilak, Mondelez International, Inc.\nMr. Shep Dunlap, Mondelez International, Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the official business description provided for 'Quest Diagnostics Incorporated'?",
+    "cypher": "MATCH (c:Company {name: 'Quest Diagnostics Incorporated'}) RETURN c.description LIMIT 10",
+    "ground_truth": "Quest Diagnostics Incorporated provides diagnostic testing and services in the United States and internationally. The company develops and delivers diagnostic information services, such as routine, non-routine and advanced clinical testing, anatomic pathology testing, and other diagnostic information services. It also provides diagnostic information services primarily under the Quest Diagnostics brand, as well as under the AmeriPath, Dermpath Diagnostics, ExamOne, and Quanum brands to physicians, hospitals, patients and consumers, health plans, government agencies, employers, emerging retail h",
+    "answer": "Quest Diagnostics Incorporated provides diagnostic testing and services in the United States and internationally. The company develops and delivers diagnostic information services, such as routine, non-routine and advanced clinical testing, anatomic pathology testing, and other diagnostic information services. It also provides diagnostic information services primarily under the Quest Diagnostics brand, as well as under the AmeriPath, Dermpath Diagnostics, ExamOne, and Quanum brands to physicians, hospitals, patients and consumers, health plans, government agencies, employers, emerging retail h"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which country officially contains the state abbreviated as 'NJ'?",
+    "cypher": "MATCH (s:State {name: 'NJ'})-[:IN_COUNTRY]->(c:Country) RETURN c.name LIMIT 10",
+    "ground_truth": "United States",
+    "answer": "United States"
+  },
+  {
+    "complexity": "simple",
+    "question": "What sector classification does the 'Water Utilities' industry fall under?",
+    "cypher": "MATCH (i:Industry {name: 'Water Utilities'})-[:PART_OF]->(s:Sector) RETURN s.name LIMIT 10",
+    "ground_truth": "Utilities",
+    "answer": "Utilities"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which specific resource does 'Ameriprise Financial, Inc.' require for its daily operations?",
+    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'})-[:REQUIRES]->(r:Resource) RETURN r.name LIMIT 10",
+    "ground_truth": "raw materials and technologies needed for investment management and advisory services; third-party financial institutions; Columbia Threadneedle Investments brand name; advisor networks; institutional sales force",
+    "answer": "raw materials and technologies needed for investment management and advisory services; third-party financial institutions; Columbia Threadneedle Investments brand name; advisor networks; institutional sales force"
+  },
+  {
+    "complexity": "simple",
+    "question": "What product is manufactured by the company 'Mondelez International, Inc.'?",
+    "cypher": "MATCH (c:Company {name: 'Mondelez International, Inc.'})-[:PRODUCES]->(p:Product) RETURN p.name LIMIT 10",
+    "ground_truth": "gums and candies; Cadbury Dairy Milk; Milka; Ritz; Toblerone chocolate; powdered beverage products; Oreo; various cheese and grocery products; CLIF Bar; LU",
+    "answer": "gums and candies; Cadbury Dairy Milk; Milka; Ritz; Toblerone chocolate; powdered beverage products; Oreo; various cheese and grocery products; CLIF Bar; LU"
+  },
+  {
+    "complexity": "simple",
+    "question": "Retrieve the web domain associated with the news headline 'PBM proposed transparency rule supported by public comment'.",
+    "cypher": "MATCH (n:News {headline: 'PBM proposed transparency rule supported by public comment'}) RETURN n.domain LIMIT 10",
+    "ground_truth": "healthcarefinancenews.com",
+    "answer": "healthcarefinancenews.com"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier of the company where Mr. John C. Griffith works?",
+    "cypher": "MATCH (p:Person {name: \"Mr. John C. Griffith\"})-[:WORKS_FOR]->(c:Company) RETURN c.neo4jImportId LIMIT 10",
+    "ground_truth": "5",
+    "answer": "5"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the company in which Canada Pension Plan Investment Board holds an ownership stake?",
+    "cypher": "MATCH (f:Fund {name: \"Canada Pension Plan Investment Board\"})-[:OWNS]->(c:Company) RETURN c.neo4jImportId LIMIT 10",
+    "ground_truth": "1572",
+    "answer": "1572"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which industry is classified under the Industrials sector?",
+    "cypher": "MATCH (s:Sector {name: \"Industrials\"})<-[:PART_OF]-(i:Industry) RETURN i.name LIMIT 10",
+    "ground_truth": "Aerospace & Defense; Human Resource & Employment Services; Electrical Components & Equipment; Building Products; Industrial Conglomerates; Passenger Ground Transportation; Environmental & Facilities Services; Cargo Ground Transportation; Heavy Electrical Equipment; Trading Companies & Distributors",
+    "answer": "Aerospace & Defense; Human Resource & Employment Services; Electrical Components & Equipment; Building Products; Industrial Conglomerates; Passenger Ground Transportation; Environmental & Facilities Services; Cargo Ground Transportation; Heavy Electrical Equipment; Trading Companies & Distributors"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier of the resource discussed in the news article titled 'PBM proposed transparency rule supported by public comment'?",
+    "cypher": "MATCH (n:News {headline: \"PBM proposed transparency rule supported by public comment\"})-[:NEWS_ABOUT_RESOURCE]->(r:Resource) RETURN r.neo4jImportId LIMIT 10",
+    "ground_truth": "5767",
+    "answer": "5767"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the full name of the company that manufactures Data center facilities?",
+    "cypher": "MATCH (p:Product {name: \"Data center facilities\"})<-[:PRODUCES]-(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "American Tower Corporation (REI",
+    "answer": "American Tower Corporation"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the fund mentioned in the news headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"})-[:NEWS_ABOUT_FUND]->(f:Fund) RETURN f.neo4jImportId LIMIT 10",
+    "ground_truth": "1470",
+    "answer": "1470"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier of the company that relies on third-party financial institutions?",
+    "cypher": "MATCH (r:Resource {name: \"third-party financial institutions\"})<-[:REQUIRES]-(c:Company) RETURN c.neo4jImportId LIMIT 10",
+    "ground_truth": "30",
+    "answer": "30"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which city is situated within the state of IL?",
+    "cypher": "MATCH (s:State {name: \"IL\"})<-[:IN_STATE]-(c:City) RETURN c.name LIMIT 10",
+    "ground_truth": "Deerfield; Rolling Meadows; Chicago; Northbrook; North Chicago; Lincolnshire; Bolingbrook; Lake Forest; Glenview; Downers Grove",
+    "answer": "Deerfield, Rolling Meadows, Chicago, Northbrook, North Chicago, Lincolnshire, Bolingbrook, Lake Forest, Glenview, Downers Grove"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the business description of the company mentioned in the news headline 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'})-[:NEWS_ABOUT_COMPANY]->(c:Company) RETURN c.description LIMIT 10",
+    "ground_truth": "AT&T Inc. provides telecommunications and technology services worldwide. The company operates through two segments, Communications and Latin America. The Communications segment offers wireless voice and data communications services; and sells handsets, wireless data cards, wireless computing devices, carrying cases/protective covers, and wireless chargers through its own company-owned stores, agents, and third-party retail stores. It also provides AT&T Dedicated Internet, fiber ethernet and broadband, fixed wireless, and hosted and managed professional services; and copper-based voice and data",
+    "answer": "AT&T Inc. provides telecommunications and technology services worldwide. The company operates through two segments, Communications and Latin America. The Communications segment offers wireless voice and data communications services; and sells handsets, wireless data cards, wireless computing devices, carrying cases/protective covers, and wireless chargers through its own company-owned stores, agents, and third-party retail stores. It also provides AT&T Dedicated Internet, fiber ethernet and broadband, fixed wireless, and hosted and managed professional services; and copper-based voice and data"
+  },
+  {
+    "complexity": "simple",
+    "question": "When was the record last updated for the company that employs Ms. Sue  Sabo?",
+    "cypher": "MATCH (p:Person {name: 'Ms. Sue  Sabo'})-[:WORKS_FOR]->(c:Company) RETURN c.last_updated LIMIT 10",
+    "ground_truth": "2026-03-23",
+    "answer": "2026-03-23"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary for the company that relies on third-party financial institutions?",
+    "cypher": "MATCH (r:Resource {name: 'third-party financial institutions'})<-[:REQUIRES]-(c:Company) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "Ameriprise Financial, Inc. is an American diversified financial services company and bank holding company based in Minneapolis, Minnesota. It provides financial planning products and services, including wealth management, asset management, insurance, annuities, and estate planning.\nAs of April 2022, more than 80% of the company's revenue came from wealth management.\nAmeriprise was formerly a division of American Express, which completed the corporate spin-off of the company in September 2005.\nThe company is ranked 254th on the Fortune 500. It is on the list of largest banks in the United States and was ranked the 9th largest independent broker-dealer based on assets under management. It is one of the largest financial planning companies in the United States and ranks among the 25 largest asset managers globally. It is ranked 8th in long-term mutual fund assets in the U.S., fourth in retail funds in the U.K., and 27th in global assets under management.",
+    "answer": "Ameriprise Financial, Inc. is an American diversified financial services company and bank holding company based in Minneapolis, Minnesota. It provides financial planning products and services, including wealth management, asset management, insurance, annuities, and estate planning."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker of the company that produces cash management?",
+    "cypher": "MATCH (p:Product {name: 'cash management'})<-[:PRODUCES]-(c:Company) RETURN c.ticker LIMIT 10",
+    "ground_truth": "KEY",
+    "answer": "KEY"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary for the company that employs Mr. John C. Griffith?",
+    "cypher": "MATCH (p:Person {name: 'Mr. John C. Griffith'})-[:WORKS_FOR]->(c:Company) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "On Holding AG is a Swiss athletic shoe and performance sportswear company that designs and markets sports clothing and running shoes.\nIn 2019, On products were sold in 6,000 retailers in 55 countries and the company held 40% of the running shoe market in Switzerland and 10% in Germany. The United States is its biggest single market, where it accounts for 6.6% of the performance running shoe category. Globally, as of 2024, On is estimated to have 2% of the athletic footwear market. As of 2025, On is on its way to a $20 billion market cap, continually growing year-over-year.",
+    "answer": "On Holding AG is a Swiss athletic shoe and performance sportswear company that designs and markets sports clothing and running shoes."
+  },
+  {
+    "complexity": "simple",
+    "question": "In which language is the news article titled \"PBM proposed transparency rule supported by public comment\" written?",
+    "cypher": "MATCH (n:News {headline: \"PBM proposed transparency rule supported by public comment\"}) RETURN n.language LIMIT 10",
+    "ground_truth": "English",
+    "answer": "English"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the official job title held by Mr. John C. Griffith?",
+    "cypher": "MATCH (p:Person {name: \"Mr. John C. Griffith\"})-[r:WORKS_FOR]->(c:Company) RETURN r.title LIMIT 10",
+    "ground_truth": "CEO, President & Director",
+    "answer": "CEO, President & Director"
+  },
+  {
+    "complexity": "simple",
+    "question": "What ownership percentage does Canada Pension Plan Investment Board hold in its portfolio company?",
+    "cypher": "MATCH (f:Fund {name: \"Canada Pension Plan Investment Board\"})-[r:OWNS]->(c:Company) RETURN r.pct LIMIT 10",
+    "ground_truth": "0.1357",
+    "answer": "0.1357"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the last_updated timestamp for Mondelez International, Inc.?",
+    "cypher": "MATCH (c:Company {name: \"Mondelez International, Inc.\"}) RETURN c.last_updated LIMIT 10",
+    "ground_truth": "2026-03-23",
+    "answer": "2026-03-23"
+  },
+  {
+    "complexity": "simple",
+    "question": "What entity type is recorded on the NEWS_ABOUT_PRODUCT relationship for the news headline \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"?",
+    "cypher": "MATCH (n:News {headline: \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"})-[r:NEWS_ABOUT_PRODUCT]->(p:Product) RETURN r.entity_type LIMIT 10",
+    "ground_truth": "Product; Product; Product; Product; Product; Product; Product; Product; Product; Product",
+    "answer": "Product"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the name of the product manufactured by the company with ticker AMP?",
+    "cypher": "MATCH (c:Company {ticker: \"AMP\"})-[:PRODUCES]->(p:Product) RETURN p.name LIMIT 10",
+    "ground_truth": "face-amount certificates; discretionary and non-discretionary investment advisory accounts; brokerage products and services for retail and institutional clients; mutual funds; U.S. mutual funds and their non-U.S. equivalents, exchange-traded funds, variable product funds underlying insurance, and annuity separate accounts; institutional asset management products, such as traditional asset classes, separately managed accounts, individually managed accounts, collateralized loan obligations, hedge funds, collective funds, and property and infrastructure funds; insurance and annuities products; cash management and banking products; variable annuity products",
+    "answer": "face-amount certificates; discretionary and non-discretionary investment advisory accounts; brokerage products and services for retail and institutional clients; mutual funds; U.S. mutual funds and their non-U.S. equivalents, exchange-traded funds, variable product funds underlying insurance, and annuity separate accounts; institutional asset management products, such as traditional asset classes, separately managed accounts, individually managed accounts, collateralized loan obligations, hedge funds, collective funds, and property and infrastructure funds; insurance and annuities products; cash management and banking products; variable annuity products"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the search query string used to fetch the news article titled \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"}) RETURN n.query LIMIT 10",
+    "ground_truth": "\"investment advisory services\" AND (commodity OR supply OR price OR production)",
+    "answer": "\"investment advisory services\" AND (commodity OR supply OR price OR production)"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier of the city where Quest Diagnostics Incorporated is headquartered?",
+    "cypher": "MATCH (c:Company {name: 'Quest Diagnostics Incorporated'})-[:LOCATED_IN]->(city:City) RETURN city.neo4jImportId LIMIT 10",
+    "ground_truth": "10875",
+    "answer": "10875"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker of the company in which Aristotle Capital Management, LLC holds an ownership stake?",
+    "cypher": "MATCH (f:Fund {name: 'Aristotle Capital Management, LLC'})-[:OWNS]->(c:Company) RETURN c.ticker LIMIT 10",
+    "ground_truth": "AWK; WSM; CTRA",
+    "answer": "AWK; WSM; CTRA"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the import identifier for the sector mentioned in the news article titled AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley?",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'})-[:NEWS_ABOUT_SECTOR]->(sec:Sector) RETURN sec.neo4jImportId LIMIT 10",
+    "ground_truth": "15679",
+    "answer": "15679"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary for the company that employs Ms. Janene I. Asgeirsson J.D.?",
+    "cypher": "MATCH (p:Person {name: 'Ms. Janene I. Asgeirsson J.D.'})-[:WORKS_FOR]->(c:Company) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "Analog Devices, Inc. (ADI), also known simply as Analog, is an American multinational semiconductor company specializing in data conversion, signal processing, and power management technology, headquartered in Wilmington, Massachusetts.\nThe company manufactures analog, mixed-signal and digital signal processing (DSP) integrated circuits (ICs) used in electronic equipment. These technologies are used to convert, condition and process real-world phenomena, such as light, sound, temperature, motion, and pressure into electrical signals.\nAnalog Devices has approximately 100,000 customers in the following industries: communications, computer, instrumentation, military/aerospace, automotive, and consumer electronics applications.",
+    "answer": "Analog Devices, Inc. (ADI), also known simply as Analog, is an American multinational semiconductor company specializing in data conversion, signal processing, and power management technology, headquartered in Wilmington, Massachusetts. The company manufactures analog, mixed-signal and digital signal processing (DSP) integrated circuits (ICs) used in electronic equipment. These technologies are used to convert, condition and process real-world phenomena, such as light, sound, temperature, motion, and pressure into electrical signals. Analog Devices has approximately 100,000 customers in the following industries: communications, computer, instrumentation, military/aerospace, automotive, and consumer electronics applications."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the official name of the company that produces cash management?",
+    "cypher": "MATCH (p:Product {name: 'cash management'})<-[:PRODUCES]-(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "KeyCorp",
+    "answer": "KeyCorp"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the business description of the company in which Canada Pension Plan Investment Board holds an ownership stake?",
+    "cypher": "MATCH (f:Fund {name: 'Canada Pension Plan Investment Board'})-[:OWNS]->(c:Company) RETURN c.description LIMIT 10",
+    "ground_truth": "Bunge Global SA operates as an agribusiness and food company worldwide. It operates through four segments: Agribusiness, Refined and Specialty Oils, Milling, and Sugar and Bioenergy. The Agribusiness segment purchases, stores, transports, processes, and sells agricultural commodities and commodity products, including oilseeds primarily soybeans, rapeseed, canola, and sunflower seeds, as well as grains comprising wheat and corn; and processes oilseeds into vegetable oils and protein meals. This segment offers its products for animal feed manufacturers, livestock producers, wheat and corn miller",
+    "answer": "Bunge Global SA operates as an agribusiness and food company worldwide."
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the exact search query string used to fetch the news article titled 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"}) RETURN n.query LIMIT 10",
+    "ground_truth": "\"insurance solutions\" AND (commodity OR supply OR price OR production)",
+    "answer": "\"insurance solutions\" AND (commodity OR supply OR price OR production)"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the UTC collection timestamp for the news headline 'PBM proposed transparency rule supported by public comment'?",
+    "cypher": "MATCH (n:News {headline: 'PBM proposed transparency rule supported by public comment'}) RETURN n.collected_at_utc LIMIT 10",
+    "ground_truth": "2026-04-22T07:00:57+00:00",
+    "answer": "2026-04-22T07:00:57+00:00"
   }
 ]

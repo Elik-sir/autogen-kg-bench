@@ -17,3 +17,4 @@ dependencies = [
 # "Multiple top-level modules discovered in a flat-layout".
 [tool.setuptools]
 py-modules = ["main", "corpus_text", "llm_accuracy", "settings"]
+packages = ["utils"]

@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal
 
 # Порядок прогона: сначала все simple, затем все multi-hop и т.д.
 QUESTION_TYPE_ORDER: tuple[str, ...] = (
@@ -41,13 +39,10 @@ def output_suffix_from_setting(output_file: str) -> str:
     return suf if suf in (".json", ".jsonl") else ".jsonl"
 
 
-@dataclass(frozen=True)
 class BenchmarkSource:
-    mode: Literal["single", "multi"]
-    # single: one path; items carry their own complexity
-    single_path: Path | None = None
-    # multi: ordered (complexity, path, items)
-    multi_parts: tuple[tuple[str, Path, list[dict]], ...] = ()
+    def __init__(self, multi_parts: tuple[tuple[str, Path, list[dict]], ...]) -> None:
+        self.mode = "multi"
+        self.multi_parts = multi_parts
 
 
 def build_benchmark_plan(
@@ -58,22 +53,10 @@ def build_benchmark_plan(
     benchmark_questions_dir_setting: str,
 ) -> BenchmarkSource:
     """
-    Если задан существующий файл в BENCHMARK_FILE — один файл (как раньше).
-    Иначе, если каталог benchmark_questions_by_type (или BENCHMARK_QUESTIONS_DIR)
-    содержит json по типам — режим multi с прогоном в QUESTION_TYPE_ORDER.
-    Иначе — один файл graphrag_benchmark.json в корне репо.
+    Загружает вопросы только в multi-режиме:
+    каталог benchmark_questions_by_type (или BENCHMARK_QUESTIONS_DIR)
+    содержит json по типам с прогоном в QUESTION_TYPE_ORDER.
     """
-    bf = (benchmark_file_setting or "").strip()
-    if bf:
-        p = Path(bf).expanduser()
-        if not p.is_absolute():
-            a = (benchmark_pkg_dir / p).resolve()
-            p = a if a.is_file() else (repo_root / p).resolve()
-        else:
-            p = p.resolve()
-        if p.is_file():
-            return BenchmarkSource(mode="single", single_path=p)
-
     qdir = resolve_benchmark_questions_dir(benchmark_questions_dir_setting, repo_root)
     parts: list[tuple[str, Path, list[dict]]] = []
     for complexity in QUESTION_TYPE_ORDER:
@@ -88,11 +71,7 @@ def build_benchmark_plan(
         if items:
             parts.append((complexity, fp, items))
 
-    if parts:
-        return BenchmarkSource(mode="multi", multi_parts=tuple(parts))
-
-    mono = (repo_root / "graphrag_benchmark.json").resolve()
-    return BenchmarkSource(mode="single", single_path=mono)
+    return BenchmarkSource(multi_parts=tuple(parts))
 
 
 def results_subdir(benchmark_pkg_dir: Path) -> Path:

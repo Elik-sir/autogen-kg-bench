@@ -9,6 +9,9 @@ LightRAG: индексация текста и прогон бенчмарка.
 Уже проиндексировано — только вопросы бенчмарка:
   (PowerShell)  $env:LIGHTRAG_QUERY_ONLY = "1"; uv run python main.py
 
+Вопросы берутся из каталога `benchmark_questions_by_type/` (см. `utils.benchmark_by_type`).
+Результаты — в `results/<тип>.<суффикс>` и сводка `results/_summary.json`.
+
 В каждую запись результатов добавляется `contexts` — тексты чанков из retrieval
 (LightRAG `aquery_llm` → `data.chunks`), чтобы RAGAS Faithfulness опиралась на
 реальный контекст (см. `src/judge`, `load_eval_records`). Объём retrieval задаётся
@@ -19,204 +22,36 @@ LightRAG: индексация текста и прогон бенчмарка.
 from __future__ import annotations
 
 import asyncio
+import importlib.util
 import json
-import re
 import sys
 from pathlib import Path
 
-_SRC = Path(__file__).resolve().parent.parent.parent
-if str(_SRC) not in sys.path:
-    sys.path.insert(0, str(_SRC))
+_BENCH_ROOT = Path(__file__).resolve().parent
+if str(_BENCH_ROOT) not in sys.path:
+    sys.path.insert(0, str(_BENCH_ROOT))
+
+_SRC = _BENCH_ROOT.parent.parent
+_BENCHMARK_BY_TYPE_PATH = _SRC / "utils" / "benchmark_by_type.py"
+_BENCHMARK_BY_TYPE_SPEC = importlib.util.spec_from_file_location(
+    "shared_benchmark_by_type",
+    _BENCHMARK_BY_TYPE_PATH,
+)
+assert _BENCHMARK_BY_TYPE_SPEC is not None
+assert _BENCHMARK_BY_TYPE_SPEC.loader is not None
+_benchmark_by_type = importlib.util.module_from_spec(_BENCHMARK_BY_TYPE_SPEC)
+_BENCHMARK_BY_TYPE_SPEC.loader.exec_module(_benchmark_by_type)
 
 import settings  # noqa: E402
-from utils.benchmark_by_type import (  # noqa: E402
-    build_benchmark_plan,
-    output_suffix_from_setting,
-    results_subdir,
-)
+from utils.indexing import require_indexing_complete  # noqa: E402
+from utils.io import resolve_working_dir, write_json, write_results  # noqa: E402
+from utils.query import benchmark_query_param, run_single_benchmark_query  # noqa: E402
+
+build_benchmark_plan = _benchmark_by_type.build_benchmark_plan
+output_suffix_from_setting = _benchmark_by_type.output_suffix_from_setting
+results_subdir = _benchmark_by_type.results_subdir
 
 REPO_ROOT = settings.LIGHT_RAG_DIR.parent.parent.parent
-
-
-def _tokenize(s: str) -> set[str]:
-    s = s.lower()
-    return set(re.findall(r"[\w\.\-]+", s, re.UNICODE)) - {""}
-
-
-def recall_overlap(ground_truth: str, answer: str) -> float:
-    if not ground_truth.strip():
-        return 1.0
-    g = _tokenize(ground_truth)
-    if not g:
-        return 0.0
-    a = _tokenize(answer) if answer else set()
-    return len(g & a) / len(g)
-
-
-def _contexts_from_aquery_llm(full: dict) -> list[str]:
-    """Тексты чанков из `LightRAG.aquery_llm` (`data.chunks[].content`) для RAGAS."""
-    data = full.get("data")
-    if not isinstance(data, dict):
-        return []
-    chunks = data.get("chunks") or []
-    if not isinstance(chunks, list):
-        return []
-    out: list[str] = []
-    for ch in chunks:
-        if not isinstance(ch, dict):
-            continue
-        raw = ch.get("content")
-        if raw is None:
-            continue
-        s = str(raw).strip()
-        if s:
-            out.append(s)
-    return out
-
-
-def _answer_from_aquery_llm(full: dict) -> str:
-    lr = full.get("llm_response") or {}
-    if lr.get("is_streaming"):
-        return ""
-    c = lr.get("content")
-    return "" if c is None else str(c)
-
-
-def _benchmark_query_param(mode: str):
-    """Параметры запроса: те же лимиты, что режут контекст для ответа и для `contexts`."""
-    from lightrag import QueryParam  # noqa: WPS433
-
-    return QueryParam(
-        mode=mode,
-        stream=False,
-        top_k=int(settings.QUERY_TOP_K),
-        chunk_top_k=int(settings.QUERY_CHUNK_TOP_K),
-        max_entity_tokens=int(settings.QUERY_MAX_ENTITY_TOKENS),
-        max_relation_tokens=int(settings.QUERY_MAX_RELATION_TOKENS),
-        max_total_tokens=int(settings.QUERY_MAX_TOTAL_TOKENS),
-    )
-
-
-async def _run_single_benchmark_query(
-    rag: object,
-    qp: object,
-    semaphore: asyncio.Semaphore,
-    print_lock: asyncio.Lock,
-    *,
-    index: int,
-    item: dict,
-    n_items: int,
-) -> dict:
-    """Один вопрос: `aquery_llm` под семафором, печать прогресса под lock."""
-    q = item.get("question", "")
-    ground_truth = item.get("ground_truth")
-    complexity = item.get("complexity", "")
-    is_subgraph_deep = complexity == "subgraph-deep-analytics"
-    benchmark_answer = str(item.get("answer") or "").strip()
-    reference = (
-        benchmark_answer
-        if is_subgraph_deep
-        else (str(ground_truth).strip() if ground_truth is not None else "")
-    )
-
-    rag_contexts: list[str] = []
-    rag_answer = ""
-    async with semaphore:
-        try:
-            full = await rag.aquery_llm(q, param=qp)
-            rag_answer = _answer_from_aquery_llm(full)
-            rag_contexts = _contexts_from_aquery_llm(full)
-        except Exception as e:  # noqa: BLE001
-            rag_answer = f"[error] {e}"
-
-    rdict = {
-        "index": index,
-        "complexity": complexity,
-        "scoring_reference": "answer" if is_subgraph_deep else "ground_truth",
-        "recall_on_ground_truth_tokens": round(
-            recall_overlap(reference, str(rag_answer)), 4
-        ),
-        "question": q,
-        "ground_truth": ground_truth,
-        "answer": rag_answer,
-        "contexts": rag_contexts,
-    }
-    if is_subgraph_deep:
-        rdict["ideal_for_scoring"] = benchmark_answer
-
-    sc = rdict["recall_on_ground_truth_tokens"]
-    ref_tag = rdict["scoring_reference"]
-    line = (
-        f"  [{index}/{n_items}] recall@{ref_tag}={sc:.3f}  {q[:70]}…"
-        if len(q) > 70
-        else f"  [{index}/{n_items}] recall@{ref_tag}={sc:.3f}  {q}"
-    )
-    async with print_lock:
-        print(line, flush=True)
-
-    return rdict
-
-
-def _resolve_working_dir() -> Path:
-    s = settings.WORKING_DIR
-    p = Path(s).expanduser()
-    if p.is_absolute():
-        return p.resolve()
-    return (settings.LIGHT_RAG_DIR / p).resolve()
-
-
-def _resolve_output_path() -> Path:
-    s = settings.OUTPUT_FILE
-    if s and str(s).strip():
-        p = Path(s).expanduser()
-        return p if p.is_absolute() else (settings.LIGHT_RAG_DIR / p).resolve()
-    return (REPO_ROOT / "lightrag_benchmark_results.json").resolve()
-
-
-async def _require_indexing_complete(rag) -> str | None:
-    """Если индексация не дошла до успешного статуса, вернуть сообщение об ошибке."""
-    from lightrag.base import DocStatus  # noqa: WPS433
-
-    failed = await rag.doc_status.get_docs_by_status(DocStatus.FAILED)
-    if failed:
-        lines = [
-            f"  {doc_id}: {(st.error_msg or str(st.status)).strip()}"
-            for doc_id, st in failed.items()
-        ]
-        return (
-            f"Индексация не завершена: {len(failed)} документ(ов) в статусе FAILED "
-            f"(см. LIGHTRAG_LLM_TIMEOUT_SEC в settings.py, сейчас {settings.LLM_TIMEOUT_SEC}s).\n"
-            + "\n".join(lines)
-        )
-
-    incomplete = await rag.doc_status.get_docs_by_statuses(
-        [DocStatus.PENDING, DocStatus.PROCESSING]
-    )
-    if incomplete:
-        lines = [f"  {doc_id}: {st.status}" for doc_id, st in incomplete.items()]
-        return (
-            "Индексация не завершена: остались документы PENDING/PROCESSING:\n"
-            + "\n".join(lines)
-        )
-    return None
-
-
-def _write_results(path: Path, summary: dict, items: list[dict]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    if path.suffix.lower() == ".jsonl":
-        lines = [json.dumps({"kind": "summary", **summary}, ensure_ascii=False)]
-        lines += [json.dumps({"kind": "item", **it}, ensure_ascii=False) for it in items]
-        path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    else:
-        path.write_text(
-            json.dumps({"summary": summary, "items": items}, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
-
-
-def _write_json(path: Path, obj: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 async def _run() -> int:
@@ -238,21 +73,11 @@ async def _run() -> int:
         benchmark_file_setting=settings.BENCHMARK_FILE,
         benchmark_questions_dir_setting=getattr(settings, "BENCHMARK_QUESTIONS_DIR", ""),
     )
-    if plan.mode == "single":
-        bench_path = plan.single_path
-        assert bench_path is not None
-        if not bench_path.is_file():
-            print(f"Файл бенчмарка не найден: {bench_path}", file=sys.stderr)
-            return 1
-        with open(bench_path, encoding="utf-8") as f:
-            all_benchmark_items: list[dict] = json.load(f)
-        batches: list[tuple[str | None, Path, list[dict]]] = [(None, bench_path, all_benchmark_items)]
-    else:
-        batches = [(c, p, its) for c, p, its in plan.multi_parts]
-        if not batches:
-            print("Нет файлов в benchmark_questions_by_type и нет graphrag_benchmark.json.", file=sys.stderr)
-            return 1
-        bench_path = batches[0][1]
+    batches = [(c, p, its) for c, p, its in plan.multi_parts]
+    if not batches:
+        print("Нет файлов в benchmark_questions_by_type.", file=sys.stderr)
+        return 1
+    bench_path = batches[0][1]
 
     limit = int(settings.LIMIT_QUESTIONS)
     remaining = limit if limit and limit > 0 else 0
@@ -294,7 +119,10 @@ async def _run() -> int:
                 print("Файл корпуса пустой: нечего индексировать.", file=sys.stderr)
                 return 1
 
-    work = _resolve_working_dir()
+    work = resolve_working_dir(
+        working_dir_setting=settings.WORKING_DIR,
+        light_rag_dir=settings.LIGHT_RAG_DIR,
+    )
     if settings.REBUILD_CACHE and settings.RESUME_PIPELINE_ONLY:
         print(
             "Несовместимо: REBUILD_CACHE и RESUME_PIPELINE_ONLY. "
@@ -345,7 +173,7 @@ async def _run() -> int:
             with indexing_llm_retry_scope():
                 await rag.ainsert(corpus)
         if not settings.QUERY_ONLY:
-            indexing_err = await _require_indexing_complete(rag)
+            indexing_err = await require_indexing_complete(rag)
             if indexing_err:
                 print(indexing_err, file=sys.stderr)
                 return 2
@@ -365,7 +193,7 @@ async def _run() -> int:
                 else ""
             )
         )
-        _qp = _benchmark_query_param(mode)
+        _qp = benchmark_query_param(mode)
         _conc = int(getattr(settings, "QUERY_CONCURRENCY", 1))
         print(f"Параллельных запросов к RAG (aquery_llm): {_conc}", flush=True)
 
@@ -374,8 +202,8 @@ async def _run() -> int:
         results_all: list[dict] = []
         per_type_meta: list[dict] = []
         rem = remaining
-        sfx = output_suffix_from_setting(settings.OUTPUT_FILE) if plan.mode == "multi" else ""
-        res_dir = results_subdir(settings.LIGHT_RAG_DIR) if plan.mode == "multi" else None
+        sfx = output_suffix_from_setting(settings.OUTPUT_FILE)
+        res_dir = results_subdir(settings.LIGHT_RAG_DIR)
 
         for complexity, bpath, raw_items in batches:
             chunk = raw_items
@@ -386,7 +214,7 @@ async def _run() -> int:
                 continue
             n_items = len(chunk)
             _tasks = [
-                _run_single_benchmark_query(
+                run_single_benchmark_query(
                     rag,
                     _qp,
                     _sem,
@@ -411,26 +239,25 @@ async def _run() -> int:
                     "mean_recall_on_ground_truth_tokens": round(mean_b, 4),
                 }
             )
-            if plan.mode == "multi" and res_dir is not None:
-                type_summary = {
-                    "settings": "settings.py",
-                    "corpus": str(corpus_path),
-                    "benchmark_mode": "multi",
-                    "question_type": type_key,
-                    "benchmark": str(bpath),
-                    "mode": mode,
-                    "n": len(batch_results),
-                    "mean_recall_on_ground_truth_tokens": round(mean_b, 4),
-                    "query_top_k": settings.QUERY_TOP_K,
-                    "query_chunk_top_k": settings.QUERY_CHUNK_TOP_K,
-                    "query_max_entity_tokens": settings.QUERY_MAX_ENTITY_TOKENS,
-                    "query_max_relation_tokens": settings.QUERY_MAX_RELATION_TOKENS,
-                    "query_max_total_tokens": settings.QUERY_MAX_TOTAL_TOKENS,
-                    "query_full_budget": getattr(settings, "USE_FULL_QUERY_BUDGET", False),
-                    "query_concurrency": int(getattr(settings, "QUERY_CONCURRENCY", 1)),
-                }
-                _write_results(res_dir / f"{type_key}{sfx}", type_summary, batch_results)
-                print(f"Тип {type_key!r}: результаты → {res_dir / f'{type_key}{sfx}'}", flush=True)
+            type_summary = {
+                "settings": "settings.py",
+                "corpus": str(corpus_path),
+                "benchmark_mode": "multi",
+                "question_type": type_key,
+                "benchmark": str(bpath),
+                "mode": mode,
+                "n": len(batch_results),
+                "mean_recall_on_ground_truth_tokens": round(mean_b, 4),
+                "query_top_k": settings.QUERY_TOP_K,
+                "query_chunk_top_k": settings.QUERY_CHUNK_TOP_K,
+                "query_max_entity_tokens": settings.QUERY_MAX_ENTITY_TOKENS,
+                "query_max_relation_tokens": settings.QUERY_MAX_RELATION_TOKENS,
+                "query_max_total_tokens": settings.QUERY_MAX_TOTAL_TOKENS,
+                "query_full_budget": getattr(settings, "USE_FULL_QUERY_BUDGET", False),
+                "query_concurrency": int(getattr(settings, "QUERY_CONCURRENCY", 1)),
+            }
+            write_results(res_dir / f"{type_key}{sfx}", type_summary, batch_results)
+            print(f"Тип {type_key!r}: результаты → {res_dir / f'{type_key}{sfx}'}", flush=True)
             if rem == 0 and remaining > 0:
                 break
 
@@ -442,7 +269,7 @@ async def _run() -> int:
         summary = {
             "settings": "settings.py",
             "corpus": str(corpus_path),
-            "benchmark_mode": plan.mode,
+            "benchmark_mode": "multi",
             "benchmark": str(bench_path),
             "mode": mode,
             "n": len(results_all),
@@ -455,18 +282,11 @@ async def _run() -> int:
             "query_full_budget": getattr(settings, "USE_FULL_QUERY_BUDGET", False),
             "query_concurrency": int(getattr(settings, "QUERY_CONCURRENCY", 1)),
             "by_question_type": per_type_meta,
+            "results_dir": str(res_dir),
         }
-        if plan.mode == "single":
-            out_path = _resolve_output_path()
-            _write_results(out_path, summary, results_all)
-            print(json.dumps(summary, ensure_ascii=False, indent=2))
-            print(f"Результаты записаны: {out_path}")
-        else:
-            assert res_dir is not None
-            summary["results_dir"] = str(res_dir)
-            _write_json(res_dir / "_summary.json", summary)
-            print(json.dumps(summary, ensure_ascii=False, indent=2))
-            print(f"Сводка по типам: {res_dir / '_summary.json'}")
+        write_json(res_dir / "_summary.json", summary)
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
+        print(f"Сводка по типам: {res_dir / '_summary.json'}")
     finally:
         await rag.finalize_storages()
 

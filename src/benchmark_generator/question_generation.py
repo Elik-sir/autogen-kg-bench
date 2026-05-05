@@ -13,11 +13,7 @@ from benchmark_generator.utils.company_subgraph_context import build_company_sub
 from benchmark_generator.utils.llm_response_parser import parse_qa_pairs_response
 from benchmark_generator.utils.prompt_builder import (
     build_aggregation_prompts,
-    build_multi_hop_2_prompts,
-    build_multi_hop_3_prompts,
-    build_multi_hop_4_prompts,
     build_same_type_common_prompts,
-    build_simple_prompts,
     build_subgraph_deep_analytics_prompts,
 )
 from benchmark_generator.utils.same_type_common_context import find_same_type_common_contexts
@@ -52,10 +48,40 @@ class QuestionGenerationEngine:
         return parse_qa_pairs_response(response)
 
     def generate_simple_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
-        print(f"Генерация {num_questions} simple-вопросов...")
-        return self._generate_by_prompt_builder(
-            build_simple_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
+        """Simple = multi-hop-1: свойство якорной сущности или ровно одно ребро A–B (детерминированный Cypher)."""
+        print(
+            f"Генерация {num_questions} simple-вопросов (свойство узла или 1 сосед по ребру)..."
         )
+        out: list[dict[str, Any]] = []
+        max_attempts = max(num_questions * 8, 18)
+        attempts = 0
+        while len(out) < num_questions and attempts < max_attempts:
+            attempts += 1
+            prefer_edge = (attempts % 2) == 1
+            item: dict[str, Any] | None = None
+            if prefer_edge:
+                item = self._try_generate_path_multi_hop_item(
+                    hop_count=1,
+                    complexity="simple",
+                    existing_questions=existing_questions,
+                )
+            if item is None:
+                item = self._try_generate_simple_property_item(existing_questions=existing_questions)
+            if item is None and not prefer_edge:
+                item = self._try_generate_path_multi_hop_item(
+                    hop_count=1,
+                    complexity="simple",
+                    existing_questions=existing_questions,
+                )
+            if item:
+                out.append(item)
+
+        if len(out) < num_questions:
+            print(
+                f"[ПРЕДУПРЕЖДЕНИЕ] simple: получено {len(out)}/{num_questions} "
+                f"после {attempts} попыток."
+            )
+        return out
 
     def generate_multi_hop_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         # Backward-compatible alias: old "multi-hop" maps to 2-hop variant.
@@ -92,55 +118,24 @@ class QuestionGenerationEngine:
         num_questions: int = 2,
         existing_questions=None,
     ):
-        complexity = f"multi-hop-{hop_count}"
-        print(f"Генерация {num_questions} {complexity}-вопросов...")
-        prompt_builders = {
-            2: build_multi_hop_2_prompts,
-            3: build_multi_hop_3_prompts,
-            4: build_multi_hop_4_prompts,
-        }
-        if prompt_builders.get(hop_count) is None:
-            print(f"[ПРОПУСК] Неизвестный hop_count={hop_count}")
+        if hop_count < 1 or hop_count > 4:
+            print(f"[ПРОПУСК] hop_count вне диапазона 1..4: {hop_count}")
             return []
 
+        complexity = f"multi-hop-{hop_count}"
+        print(f"Генерация {num_questions} {complexity}-вопросов...")
         out: list[dict[str, Any]] = []
         max_attempts = max(num_questions * 8, 18)
         attempts = 0
         while len(out) < num_questions and attempts < max_attempts:
             attempts += 1
-            anchor = self._next_anchor()
-            if not anchor:
-                break
-            local_context = build_anchor_subgraph_context(
-                self.db,
-                anchor=anchor,
-                hop_count=hop_count,
-                max_paths_per_anchor=MAX_PATHS_PER_ANCHOR,
-            )
-            if not local_context:
-                continue
-            path = self._select_path_for_cypher(local_context)
-            if not path:
-                continue
-            deterministic = self._build_deterministic_multi_hop_cypher(path)
-            if not deterministic:
-                continue
-            cypher, params = deterministic
-            question = self._build_question_from_path(
-                path=path,
+            item = self._try_generate_path_multi_hop_item(
                 hop_count=hop_count,
                 complexity=complexity,
                 existing_questions=existing_questions,
             )
-            if not question:
-                continue
-            item: dict[str, Any] = {
-                "question": question,
-                "cypher": cypher,
-                "params": params,
-            }
-            item["complexity"] = complexity
-            out.append(item)
+            if item:
+                out.append(item)
 
         if len(out) < num_questions:
             print(
@@ -148,6 +143,139 @@ class QuestionGenerationEngine:
                 f"после {attempts} попыток."
             )
         return out
+
+    def _try_generate_path_multi_hop_item(
+        self,
+        *,
+        hop_count: int,
+        complexity: str,
+        existing_questions,
+    ) -> dict[str, Any] | None:
+        anchor = self._next_anchor()
+        if not anchor:
+            return None
+        local_context = build_anchor_subgraph_context(
+            self.db,
+            anchor=anchor,
+            hop_count=hop_count,
+            max_paths_per_anchor=MAX_PATHS_PER_ANCHOR,
+        )
+        if not local_context:
+            return None
+        path = self._select_path_for_cypher(local_context)
+        if not path:
+            return None
+        deterministic = self._build_deterministic_multi_hop_cypher(path)
+        if not deterministic:
+            return None
+        cypher, params = deterministic
+        question = self._build_question_from_path(
+            path=path,
+            hop_count=hop_count,
+            complexity=complexity,
+            existing_questions=existing_questions,
+        )
+        if not question:
+            return None
+        item: dict[str, Any] = {
+            "question": question,
+            "cypher": cypher,
+            "params": params,
+            "complexity": complexity,
+        }
+        return item
+
+    def _try_generate_simple_property_item(self, *, existing_questions) -> dict[str, Any] | None:
+        anchor = self._next_anchor()
+        if not anchor:
+            return None
+        props = dict(anchor.get("props") or {})
+        skip_keys = {"embedding", "embeddings", "vector", "password", "secret"}
+        preferred = (
+            "industry",
+            "sector",
+            "country",
+            "region",
+            "city",
+            "category",
+            "year",
+            "status",
+            "ticker",
+            "symbol",
+        )
+        picked_key: str | None = None
+        for k in preferred:
+            if k in props and props[k] not in (None, ""):
+                picked_key = k
+                break
+        if not picked_key:
+            for k, v in props.items():
+                kl = str(k).lower()
+                if kl in skip_keys or v in (None, ""):
+                    continue
+                if isinstance(v, (dict, list)):
+                    continue
+                picked_key = str(k)
+                break
+        if not picked_key:
+            return None
+        element_id = str(anchor.get("element_id") or "").strip()
+        if not element_id:
+            return None
+
+        cypher = """
+MATCH (n)
+WHERE elementId(n) = $anchor_element_id
+RETURN n[$prop_key] AS value
+LIMIT 5
+""".strip()
+        params = {"anchor_element_id": element_id, "prop_key": picked_key}
+
+        labels = anchor.get("labels") or [anchor.get("label") or "Node"]
+        anchor_node = {
+            "labels": labels if isinstance(labels, list) else [labels],
+            "props": props,
+            "element_id": element_id,
+        }
+        entity_name = self._node_name(anchor_node, fallback="this entity")
+        label_s = self._node_label(anchor_node, fallback="entity").lower()
+
+        existing_block = ""
+        existing_list = [str(q).strip() for q in (existing_questions or []) if str(q).strip()]
+        if existing_list:
+            existing_block = "\n".join(f"- {q}" for q in existing_list[-50:])
+
+        prompt = f"""
+Write exactly one short English benchmark question.
+The answer must be the value of property "{picked_key}" for the entity named "{entity_name}" ({label_s}).
+
+Constraints:
+1) One sentence, English, business tone.
+2) Do NOT mention: graph, node, edge, Cypher, property key "{picked_key}" verbatim, database.
+3) Do NOT state the answer value.
+4) Avoid similarity to existing questions.
+
+Existing questions to avoid:
+{existing_block if existing_block else "- (none)"}
+"""
+        response = self.llm.generate_response(
+            "You create natural benchmark questions for enterprise graph QA.",
+            prompt,
+        )
+        q = str(response or "").strip()
+        q = re.sub(r"^['\"`]+|['\"`]+$", "", q).strip()
+        if "\n" in q:
+            q = q.splitlines()[0].strip()
+        if not q.endswith("?"):
+            q = q.rstrip(".") + "?"
+        if not q:
+            q = f"What {picked_key.replace('_', ' ')} is associated with {entity_name}?"
+        return {
+            "question": q,
+            "cypher": cypher,
+            "params": params,
+            "complexity": "simple",
+        }
 
     def _select_path_for_cypher(self, local_context: dict[str, Any]) -> dict[str, Any] | None:
         paths = local_context.get("paths") if isinstance(local_context, dict) else None
@@ -454,13 +582,14 @@ LIMIT 10
         if existing_list:
             existing_block = "\n".join(f"- {q}" for q in existing_list[-50:])
 
+        hop_phrase = "1 hop" if hop_count == 1 else f"{hop_count} hops"
         prompt = f"""
 Write exactly one natural-sounding English benchmark question.
 The question must be answerable by a graph query and must target exactly one {target_label}.
 
 Facts you may use:
 - Anchor entity: {anchor_name}
-- Required reasoning depth: {hop_count} hops
+- Required reasoning depth: {hop_phrase}
 - Relevant evidence themes: {hints_text}
 - Concrete path clues: {clues_text}
 

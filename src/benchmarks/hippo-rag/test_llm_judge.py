@@ -37,6 +37,7 @@ settings.OUTPUT_FILE): строки `kind: item`, эталон как в бен�
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import sys
 import time
@@ -47,8 +48,17 @@ _SRC = Path(__file__).resolve().parent.parent.parent
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
+_HIPPO_ROOT = Path(__file__).resolve().parent
+_JUDGE_SPEC = importlib.util.spec_from_file_location(
+    "hippo_bench_judge_helpers",
+    _HIPPO_ROOT / "utils" / "judge.py",
+)
+assert _JUDGE_SPEC is not None and _JUDGE_SPEC.loader is not None
+_judge_mod = importlib.util.module_from_spec(_JUDGE_SPEC)
+_JUDGE_SPEC.loader.exec_module(_judge_mod)
+_ideal_for_llm_judge = _judge_mod.ideal_for_llm_judge
+
 import settings  # noqa: E402
-from bench_utils import _ideal_for_llm_judge  # noqa: E402
 from openai import OpenAI  # noqa: E402
 from utils.eval import (  # noqa: E402
     ACCURACY_SYSTEM,

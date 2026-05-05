@@ -1,0 +1,3603 @@
+{
+  "source_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\aggregation.jsonl",
+  "n": 298,
+  "mean_metrics": {
+    "context_recall": 0.1779,
+    "context_relevance": 0.1048,
+    "faithfulness": 0.0913,
+    "answer_relevancy": 0.0351,
+    "evidence_coverage": 0.0758
+  },
+  "source_summary": {
+    "kind": "summary",
+    "settings": "settings.py",
+    "backend": "vector-rag-langchain-faiss",
+    "corpus": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\light-rag\\corpus.txt",
+    "benchmark_mode": "multi",
+    "question_type": "aggregation",
+    "benchmark": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\benchmark_questions_by_type\\aggregation.json",
+    "chunk_size": 600,
+    "chunk_overlap": 100,
+    "retrieval_k": 5,
+    "n": 298,
+    "mean_recall_on_ground_truth_tokens": 0.0416
+  },
+  "items": [
+    {
+      "index": 1,
+      "complexity": "aggregation",
+      "question": "How many news articles in the database are specifically about Ameriprise Financial, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2249,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 2,
+      "complexity": "aggregation",
+      "question": "Which fund holds the highest ownership percentage in Quest Diagnostics Incorporated, and what is that percentage?",
+      "metrics": {
+        "context_recall": 0.75,
+        "context_relevance": 0.0952,
+        "faithfulness": 0.4375,
+        "answer_relevancy": 0.5385,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 3,
+      "complexity": "aggregation",
+      "question": "What is the total number of persons recorded as working for Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 4,
+      "complexity": "aggregation",
+      "question": "What is the most recent publication date for news articles covering the Water Utilities industry?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1032,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 5,
+      "complexity": "aggregation",
+      "question": "What is the average ownership percentage held by funds in Ameriprise Financial, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2338,
+        "faithfulness": 0.1,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.25
+      }
+    },
+    {
+      "index": 6,
+      "complexity": "aggregation",
+      "question": "What is the lowest ownership percentage recorded for any fund holding a stake in Mondelez International, Inc.?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.155,
+        "faithfulness": 0.5294,
+        "answer_relevancy": 0.7586,
+        "evidence_coverage": 0.6667
+      }
+    },
+    {
+      "index": 7,
+      "complexity": "aggregation",
+      "question": "What is the total count of news articles covering the 'Electronic Components' industry, and what is the earliest publication date recorded for these articles?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1078,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 8,
+      "complexity": "aggregation",
+      "question": "How many distinct persons are recorded as working for 'Quest Diagnostics Incorporated', and how many unique job titles do they hold?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.184,
+        "faithfulness": 0.15,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 9,
+      "complexity": "aggregation",
+      "question": "Which three funds have the highest number of ownership stakes in companies, and what are their respective counts?",
+      "metrics": {
+        "context_recall": 0.8,
+        "context_relevance": 0.0,
+        "faithfulness": 0.025,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 10,
+      "complexity": "aggregation",
+      "question": "What is the total number of distinct companies owned by 'Canada Pension Plan Investment Board', and what is the average ownership percentage across these holdings?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.0885,
+        "faithfulness": 0.25,
+        "answer_relevancy": 0.2927,
+        "evidence_coverage": 0.1667
+      }
+    },
+    {
+      "index": 11,
+      "complexity": "aggregation",
+      "question": "Rank the top five industries by the number of companies operating within them, returning the industry name and the corresponding company count.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1207,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 12,
+      "complexity": "aggregation",
+      "question": "What is the average ownership percentage held by 'Aristotle Capital Management, LLC' across all the companies it has invested in?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2091,
+        "faithfulness": 0.24,
+        "answer_relevancy": 0.2051,
+        "evidence_coverage": 0.0588
+      }
+    },
+    {
+      "index": 13,
+      "complexity": "aggregation",
+      "question": "How many news articles are associated with the product 'Data center facilities', and what is the most recent publication date among them?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1071,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 14,
+      "complexity": "aggregation",
+      "question": "Rank the top five sectors by the total number of associated news articles, returning the sector name and article count.",
+      "metrics": {
+        "context_recall": 0.2727,
+        "context_relevance": 0.0556,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 15,
+      "complexity": "aggregation",
+      "question": "For funds investing in companies within the 'Electronic Components' industry, what is the average ownership percentage held by each fund, ranked from highest to lowest?",
+      "metrics": {
+        "context_recall": 0.44,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 16,
+      "complexity": "aggregation",
+      "question": "For the product 'Data center facilities', how many news articles were published on each distinct date, ordered by publication count in descending order?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0857,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 17,
+      "complexity": "aggregation",
+      "question": "For the 'Water Utilities' industry, how many distinct persons hold each specific job title across all operating companies, ranked by employee count from highest to lowest?",
+      "metrics": {
+        "context_recall": 0.4667,
+        "context_relevance": 0.0831,
+        "faithfulness": 0.2571,
+        "answer_relevancy": 0.022,
+        "evidence_coverage": 0.2667
+      }
+    },
+    {
+      "index": 18,
+      "complexity": "aggregation",
+      "question": "For companies owned by 'Temasek Holdings (Private) Ltd', what is the count of associated news articles for each company, returning the top five companies by article volume?",
+      "metrics": {
+        "context_recall": 0.6667,
+        "context_relevance": 0.0629,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 19,
+      "complexity": "aggregation",
+      "question": "Among companies operating in the 'Cargo Ground Transportation' industry, which three require the highest number of distinct resources, and what are those counts?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1767,
+        "faithfulness": 0.1471,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 20,
+      "complexity": "aggregation",
+      "question": "Across the entire database, which job title is assigned to the highest number of person-company relationships, and what is the exact frequency of that title?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.0533,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 21,
+      "complexity": "aggregation",
+      "question": "For 'Quest Diagnostics Incorporated', which news domain has published the greatest number of articles, and what is the total article count for that domain?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.184,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 22,
+      "complexity": "aggregation",
+      "question": "What are the absolute minimum and maximum ownership percentages ('pct') recorded across all fund-to-company investment relationships in the graph?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.0272,
+        "faithfulness": 0.2857,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 23,
+      "complexity": "aggregation",
+      "question": "Rank all sectors by the number of distinct industries they encompass, returning the sector name and the corresponding industry count in descending order.",
+      "metrics": {
+        "context_recall": 0.3636,
+        "context_relevance": 0.0205,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 24,
+      "complexity": "aggregation",
+      "question": "Identify the product that has been referenced in the highest volume of news articles, and report the total number of articles associated with it.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0556,
+        "faithfulness": 0.5714,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 25,
+      "complexity": "aggregation",
+      "question": "For companies operating within the 'Electronic Components' industry, what is the average count of distinct resources required per company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1313,
+        "faithfulness": 0.3043,
+        "answer_relevancy": 0.5946,
+        "evidence_coverage": 0.6667
+      }
+    },
+    {
+      "index": 26,
+      "complexity": "aggregation",
+      "question": "Which three companies attract investment from the largest number of distinct funds, and what are their respective fund investor counts?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0357,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 27,
+      "complexity": "aggregation",
+      "question": "Which company does 'Canada Pension Plan Investment Board' own with the highest percentage stake, and what is that exact percentage?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.0945,
+        "faithfulness": 0.6667,
+        "answer_relevancy": 0.5217,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 28,
+      "complexity": "aggregation",
+      "question": "For 'Mondelez International, Inc.', what is the earliest and latest publication date of news articles mentioning it, and how many articles fall within that range?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1397,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 29,
+      "complexity": "aggregation",
+      "question": "Which product is associated with the highest number of distinct companies that produce it, and what is that count?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.0136,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 30,
+      "complexity": "aggregation",
+      "question": "Which city in the state of 'IL' hosts the highest number of companies, and what is that company count?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.2485,
+        "faithfulness": 0.2258,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 31,
+      "complexity": "aggregation",
+      "question": "What is the total number of distinct funds that have invested in companies operating in the 'Energy' sector, and what is the average ownership percentage across all these investments?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 32,
+      "complexity": "aggregation",
+      "question": "For the 'Industrials' sector, how many distinct companies operate within its associated industries, and what is the maximum number of news articles published about any single one of these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0625,
+        "faithfulness": 0.2727,
+        "answer_relevancy": 0.0455,
+        "evidence_coverage": 0.6667
+      }
+    },
+    {
+      "index": 33,
+      "complexity": "aggregation",
+      "question": "For the product 'cash management', how many distinct companies produce it, and what is the total count of unique resources required by these companies combined?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.066,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 34,
+      "complexity": "aggregation",
+      "question": "For the 'Energy' sector, which news domain has published the highest volume of associated articles, and what is that exact count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0845,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 35,
+      "complexity": "aggregation",
+      "question": "Which fund has invested in the highest number of distinct companies operating within the 'Consumer Discretionary' sector, and what is the exact count of these investments?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0986,
+        "faithfulness": 0.087,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 36,
+      "complexity": "aggregation",
+      "question": "For the resource 'residual fuel oil', how many distinct companies require it, and what is the earliest publication date among all news articles covering this resource?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.07,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 37,
+      "complexity": "aggregation",
+      "question": "What is the average ownership percentage held by funds in companies that produce 'Data center facilities', and how many distinct funds are involved in these investments?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1192,
+        "faithfulness": 0.1471,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 38,
+      "complexity": "aggregation",
+      "question": "Among companies located in the state of 'NJ', which one has the highest number of associated news articles, and what is that exact count?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.0913,
+        "faithfulness": 0.2143,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 39,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', what are the minimum and maximum ownership percentages across all its recorded investments, and how many companies does it hold stakes in?",
+      "metrics": {
+        "context_recall": 0.6667,
+        "context_relevance": 0.1749,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 40,
+      "complexity": "aggregation",
+      "question": "How many distinct persons are recorded as working for companies that require 'residual fuel oil', and what is the most frequently assigned job title among them?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.0687,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 41,
+      "complexity": "aggregation",
+      "question": "For the 'Cargo Ground Transportation' industry, what is the total count of distinct resources required by its operating companies, and which resource is required by the highest number of these companies?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.171,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 42,
+      "complexity": "aggregation",
+      "question": "For the fund 'Canada Pension Plan Investment Board', what is the total number of news articles published about it, and what is the average ownership percentage it holds across all its recorded investments?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.1043,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 43,
+      "complexity": "aggregation",
+      "question": "For the company 'Quest Diagnostics Incorporated', which industry does it operate in that has the highest volume of associated news articles, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.75,
+        "context_relevance": 0.2007,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 44,
+      "complexity": "aggregation",
+      "question": "For the 'Water Utilities' industry, which operating company has the highest volume of associated news articles, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.8333,
+        "context_relevance": 0.14,
+        "faithfulness": 0.4667,
+        "answer_relevancy": 0.1935,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 45,
+      "complexity": "aggregation",
+      "question": "For companies located in the state of 'IA', what is the total count of distinct funds that have invested in them, and what is the average ownership percentage ('pct') across these holdings?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.045,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 46,
+      "complexity": "aggregation",
+      "question": "For the 'Consumer Discretionary' sector, which industry has the highest number of associated news articles, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.1502,
+        "faithfulness": 0.2857,
+        "answer_relevancy": 0.6207,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 47,
+      "complexity": "aggregation",
+      "question": "For the resource 'residual fuel oil', what is the total number of distinct companies that require it, and what is the minimum ownership percentage held by any fund in these specific companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0682,
+        "faithfulness": 0.175,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.2
+      }
+    },
+    {
+      "index": 48,
+      "complexity": "aggregation",
+      "question": "For the company \"Mondelez International, Inc.\", calculate the average ownership percentage (pct) held by each fund that has invested in it, and return the fund names along with their average percentages, ordered from highest to lowest.",
+      "metrics": {
+        "context_recall": 0.5789,
+        "context_relevance": 0.0397,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 49,
+      "complexity": "aggregation",
+      "question": "Across all news articles covering the \"Energy\" sector, which sourcecountry has published the highest volume of articles, and what is that exact count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0893,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 50,
+      "complexity": "aggregation",
+      "question": "For the product \"cash management\", what is the earliest and latest publication date recorded in its associated news articles, and how many unique news domains have covered it?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0675,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 51,
+      "complexity": "aggregation",
+      "question": "For the fund \"Aristotle Capital Management, LLC\", identify the top three resources most frequently required by its portfolio companies, returning each resource name and the number of companies that require it.",
+      "metrics": {
+        "context_recall": 0.04,
+        "context_relevance": 0.1702,
+        "faithfulness": 0.1765,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 52,
+      "complexity": "aggregation",
+      "question": "Rank the top three companies operating within the \"Consumer Discretionary\" sector by the number of distinct persons recorded as working for them, returning the company names and their respective employee counts.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1386,
+        "faithfulness": 0.3103,
+        "answer_relevancy": 0.1176,
+        "evidence_coverage": 0.375
+      }
+    },
+    {
+      "index": 53,
+      "complexity": "aggregation",
+      "question": "For the resource \"module testing\", calculate the total number of distinct funds that have invested in companies requiring this resource, and determine the overall average ownership percentage across all such investment relationships.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0145,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 54,
+      "complexity": "aggregation",
+      "question": "Rank the top three companies operating within the 'Industrials' sector by the number of distinct products they produce, returning the company name and product count.",
+      "metrics": {
+        "context_recall": 0.2,
+        "context_relevance": 0.1412,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 55,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', identify the top three industries represented by its portfolio companies, ranked by the number of invested companies in each industry.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1873,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 56,
+      "complexity": "aggregation",
+      "question": "For companies that produce 'parts for equipment', calculate the average ownership percentage (pct) held by funds across all investments, and return the maximum single investment percentage recorded for these companies.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0238,
+        "faithfulness": 0.0385,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 57,
+      "complexity": "aggregation",
+      "question": "Across all news articles covering the 'Water Utilities' industry, rank the publishing domains by article volume, returning each domain and its corresponding article count in descending order.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1277,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 58,
+      "complexity": "aggregation",
+      "question": "For the resource 'module testing', identify the top three companies that require it, ranked by the number of distinct funds that have invested in them, and return each company's name and fund investor count.",
+      "metrics": {
+        "context_recall": 0.2,
+        "context_relevance": 0.0294,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 59,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', what is the maximum ownership percentage ('pct') it holds in any single company, and which company is it?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.2033,
+        "faithfulness": 0.1522,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.2
+      }
+    },
+    {
+      "index": 60,
+      "complexity": "aggregation",
+      "question": "Across all news articles covering the 'Consumer Discretionary' sector, which language appears most frequently, and what is the total count of articles in that language?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1396,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 61,
+      "complexity": "aggregation",
+      "question": "For companies operating in the 'Electronic Components' industry, which company has attracted investment from the highest number of distinct funds, and what is that exact count?",
+      "metrics": {
+        "context_recall": 0.6667,
+        "context_relevance": 0.1208,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 62,
+      "complexity": "aggregation",
+      "question": "For companies that produce 'Data center facilities', which job title is assigned to the highest number of persons, and how many persons hold that title?",
+      "metrics": {
+        "context_recall": 0.75,
+        "context_relevance": 0.0669,
+        "faithfulness": 0.4286,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 63,
+      "complexity": "aggregation",
+      "question": "For the 'Cargo Ground Transportation' industry, what is the average ownership percentage ('pct') held by funds across all investments in its operating companies, and what is the maximum single investment percentage recorded?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.156,
+        "faithfulness": 0.1579,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 64,
+      "complexity": "aggregation",
+      "question": "Across all news articles mentioning the 'Water Utilities' industry, which sourcecountry has published the highest volume of articles, and what is that exact count?",
+      "metrics": {
+        "context_recall": 0.6667,
+        "context_relevance": 0.0989,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 65,
+      "complexity": "aggregation",
+      "question": "For the fund 'Temasek Holdings (Private) Ltd', which news domains have published articles about it, and what is the article count for each domain, ordered from highest to lowest?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0848,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 66,
+      "complexity": "aggregation",
+      "question": "Among companies that produce the product 'parts for equipment', which single fund-to-company investment holds the highest ownership percentage (pct), and what are the corresponding company and fund names?",
+      "metrics": {
+        "context_recall": 0.5714,
+        "context_relevance": 0.0483,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 67,
+      "complexity": "aggregation",
+      "question": "Across all news articles covering the 'Energy' sector, how many articles were published on each distinct date, returning the top five dates by article volume?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0698,
+        "faithfulness": 0.0625,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 68,
+      "complexity": "aggregation",
+      "question": "For the city 'Dublin', what is the total number of distinct companies located there, and what is the average ownership percentage (pct) held by funds across all investments in these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1387,
+        "faithfulness": 0.1515,
+        "answer_relevancy": 0.0385,
+        "evidence_coverage": 0.1667
+      }
+    },
+    {
+      "index": 69,
+      "complexity": "aggregation",
+      "question": "For the company 'Mondelez International, Inc.', what is the total number of distinct resources it requires, and what is the minimum ownership percentage (pct) recorded across all funds that have invested in it?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1278,
+        "faithfulness": 0.1622,
+        "answer_relevancy": 0.2105,
+        "evidence_coverage": 0.125
+      }
+    },
+    {
+      "index": 70,
+      "complexity": "aggregation",
+      "question": "For the product 'Data center facilities', how many distinct companies produce it, and what is the maximum number of news articles published about any single one of these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0959,
+        "faithfulness": 0.2368,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.1111
+      }
+    },
+    {
+      "index": 71,
+      "complexity": "aggregation",
+      "question": "For the city 'Dublin', what is the total number of distinct resources required by all companies located there, and what is the maximum ownership percentage ('pct') held by any fund in these specific companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1167,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 72,
+      "complexity": "aggregation",
+      "question": "Among companies that require 'module testing', which three have attracted the highest number of distinct news articles, and what are their respective article counts?",
+      "metrics": {
+        "context_recall": 0.2,
+        "context_relevance": 0.1132,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 73,
+      "complexity": "aggregation",
+      "question": "For the 'Consumer Discretionary' sector, what is the total count of distinct industries it encompasses, and what is the average number of companies operating within each of these industries?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1741,
+        "faithfulness": 0.125,
+        "answer_relevancy": 0.125,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 74,
+      "complexity": "aggregation",
+      "question": "For the company 'Ameriprise Financial, Inc.', identify the top three news domains that have published articles about it, returning each domain and its corresponding article count in descending order.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1547,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 75,
+      "complexity": "aggregation",
+      "question": "For the resource 'residual fuel oil', calculate the total number of distinct companies that require it, and find the maximum ownership percentage ('pct') held by any single fund in these specific companies.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0377,
+        "faithfulness": 0.1071,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 76,
+      "complexity": "aggregation",
+      "question": "For the company 'Quest Diagnostics Incorporated', what is the distribution of news articles by language, returning each language and its corresponding article count in descending order?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1865,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 77,
+      "complexity": "aggregation",
+      "question": "For the 'Consumer Discretionary' sector, calculate the average number of distinct persons recorded as working for each company operating within its associated industries.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1449,
+        "faithfulness": 0.1026,
+        "answer_relevancy": 0.0714,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 78,
+      "complexity": "aggregation",
+      "question": "Which three funds have the lowest average ownership percentage across all their recorded investments in companies, and what are those exact averages?",
+      "metrics": {
+        "context_recall": 0.2,
+        "context_relevance": 0.0,
+        "faithfulness": 0.2571,
+        "answer_relevancy": 0.3774,
+        "evidence_coverage": 0.2143
+      }
+    },
+    {
+      "index": 79,
+      "complexity": "aggregation",
+      "question": "For the company 'Mondelez International, Inc.', what is the most frequently assigned job title among its workforce, and how many persons hold that title?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.174,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 80,
+      "complexity": "aggregation",
+      "question": "For the fund 'Canada Pension Plan Investment Board', what is the total number of distinct industries represented by its portfolio companies, and what is the average ownership percentage it holds across these investments?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.0926,
+        "faithfulness": 0.1389,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 81,
+      "complexity": "aggregation",
+      "question": "For the city 'Santa Clara', what is the total count of distinct products produced by companies located there, and which product is produced by the highest number of these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2222,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 82,
+      "complexity": "aggregation",
+      "question": "For the 'Energy' sector, which industry within it has the highest number of associated companies, and what is that company count?",
+      "metrics": {
+        "context_recall": 0.4,
+        "context_relevance": 0.119,
+        "faithfulness": 0.2333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 83,
+      "complexity": "aggregation",
+      "question": "For the resource 'module testing', identify the fund that holds the highest average ownership percentage across all its investments in companies requiring this resource, and report that average percentage.",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.0123,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 84,
+      "complexity": "aggregation",
+      "question": "Across all news articles mentioning the 'Water Utilities' industry, what is the earliest publication date recorded, and how many distinct news domains published articles on that exact date?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0929,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 85,
+      "complexity": "aggregation",
+      "question": "For 'Mondelez International, Inc.', which product it produces has attracted the highest volume of news coverage, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.8571,
+        "context_relevance": 0.158,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 86,
+      "complexity": "aggregation",
+      "question": "For the fund 'Temasek Holdings (Private) Ltd', which job title is most frequently assigned to persons working at its portfolio companies, and how many persons hold that title?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0513,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 87,
+      "complexity": "aggregation",
+      "question": "For the city 'Marlborough', what is the total number of distinct resources required by all companies located there, and which single resource is required by the highest number of these companies?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.0852,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 88,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', which product is produced by the highest number of its portfolio companies, and what is that company count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1945,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 89,
+      "complexity": "aggregation",
+      "question": "For the 'Industrials' sector, rank the job titles assigned to persons working in its associated companies by frequency, returning the top five titles and their respective employee counts.",
+      "metrics": {
+        "context_recall": 0.6667,
+        "context_relevance": 0.0202,
+        "faithfulness": 0.0714,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 90,
+      "complexity": "aggregation",
+      "question": "For 'Temasek Holdings (Private) Ltd', which sourcecountry has published the most news articles mentioning it, and what is that exact count?",
+      "metrics": {
+        "context_recall": 0.6667,
+        "context_relevance": 0.103,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 91,
+      "complexity": "aggregation",
+      "question": "For the resource 'third-party financial institutions', what is the distribution of news articles covering it by language, returning each language and its corresponding article count in descending order?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0453,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 92,
+      "complexity": "aggregation",
+      "question": "Across all companies operating in the 'Consumer Discretionary' sector, what are the absolute minimum and maximum ownership percentages ('pct') recorded by any fund, and what is the total number of fund-to-company investment relationships in this sector?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0228,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 93,
+      "complexity": "aggregation",
+      "question": "For the 'Energy' sector, which product is produced by the highest number of distinct companies operating within its industries, and what is that company count?",
+      "metrics": {
+        "context_recall": 0.6667,
+        "context_relevance": 0.0988,
+        "faithfulness": 0.4468,
+        "answer_relevancy": 0.3175,
+        "evidence_coverage": 0.8571
+      }
+    },
+    {
+      "index": 94,
+      "complexity": "aggregation",
+      "question": "For the fund 'Temasek Holdings (Private) Ltd', what is the total number of distinct persons recorded as working for its portfolio companies, and what is the average number of persons per portfolio company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1002,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 95,
+      "complexity": "aggregation",
+      "question": "For the product 'parts for equipment', how many distinct companies produce it, and what is the total number of distinct resources required by these companies combined?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0988,
+        "faithfulness": 0.0444,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 96,
+      "complexity": "aggregation",
+      "question": "For the 'Electronic Components' industry, what is the most frequently assigned job title across all operating companies, and how many persons hold that title?",
+      "metrics": {
+        "context_recall": 0.75,
+        "context_relevance": 0.0736,
+        "faithfulness": 0.4286,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 97,
+      "complexity": "aggregation",
+      "question": "For the fund 'Canada Pension Plan Investment Board', what is the total count of distinct resources required by its portfolio companies, and how many portfolio companies require at least one resource?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0943,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 98,
+      "complexity": "aggregation",
+      "question": "For the resource 'third-party financial institutions', what is the average ownership percentage ('pct') held by funds across all investments in companies that require it, and what is the minimum ownership percentage recorded for these investments?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0123,
+        "faithfulness": 0.2,
+        "answer_relevancy": 0.2069,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 99,
+      "complexity": "aggregation",
+      "question": "For the company 'Quest Diagnostics Incorporated', which source countries have published the most news articles about it, and what are the respective article counts for the top three countries?",
+      "metrics": {
+        "context_recall": 0.4,
+        "context_relevance": 0.1761,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 100,
+      "complexity": "aggregation",
+      "question": "Among funds investing in companies within the 'Energy' sector, which funds hold the highest average ownership percentage, and what are those averages?",
+      "metrics": {
+        "context_recall": 0.2703,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 101,
+      "complexity": "aggregation",
+      "question": "For 'Ameriprise Financial, Inc.', what are the most common job titles assigned to its employees, and how many persons hold each of the top three titles?",
+      "metrics": {
+        "context_recall": 0.5833,
+        "context_relevance": 0.1403,
+        "faithfulness": 0.1667,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 102,
+      "complexity": "aggregation",
+      "question": "For companies that produce 'cash management', which one has the highest average fund ownership percentage, and what is that average?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0423,
+        "faithfulness": 0.5932,
+        "answer_relevancy": 0.0278,
+        "evidence_coverage": 0.2308
+      }
+    },
+    {
+      "index": 103,
+      "complexity": "aggregation",
+      "question": "For the 'Electronic Components' industry, on which dates were the most news articles published, and what are the article counts for the top five dates?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0801,
+        "faithfulness": 0.1429,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 104,
+      "complexity": "aggregation",
+      "question": "For the fund 'Canada Pension Plan Investment Board', which industries are most represented in its investment portfolio, and how many distinct companies does it hold in each of the top industries?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0838,
+        "faithfulness": 0.1923,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 105,
+      "complexity": "aggregation",
+      "question": "Rank the top three companies located in 'Dublin' by the number of distinct persons working for them, returning the company name and employee count.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0925,
+        "faithfulness": 0.1379,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 106,
+      "complexity": "aggregation",
+      "question": "Which fund has the highest total number of news articles published about the companies it owns, and what is that total article count?",
+      "metrics": {
+        "context_recall": 0.6667,
+        "context_relevance": 0.0267,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 107,
+      "complexity": "aggregation",
+      "question": "For the product 'cash management', what is the total number of distinct persons working for companies that produce it, and what is the most frequently assigned job title among them?",
+      "metrics": {
+        "context_recall": 0.75,
+        "context_relevance": 0.0505,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 108,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', what is the average ownership percentage across its investments in companies that operate in the 'Water Utilities' industry, and how many such companies are in its portfolio?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.1749,
+        "faithfulness": 0.2353,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 109,
+      "complexity": "aggregation",
+      "question": "For the resource 'module testing', which product is produced by the highest number of companies that require this resource, and what is that company count?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.0602,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 110,
+      "complexity": "aggregation",
+      "question": "Rank the companies located in 'Santa Clara' by the number of distinct resources they require, returning the company name and resource count in descending order.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1481,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 111,
+      "complexity": "aggregation",
+      "question": "For the product 'cash management', which producing company employs the highest number of distinct persons, and what is that employee count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0818,
+        "faithfulness": 0.2778,
+        "answer_relevancy": 0.125,
+        "evidence_coverage": 0.25
+      }
+    },
+    {
+      "index": 112,
+      "complexity": "aggregation",
+      "question": "For funds investing in companies within the 'Water Utilities' industry, what is the average ownership percentage ('pct') across all such investments, and how many distinct investment relationships exist?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0808,
+        "faithfulness": 0.2642,
+        "answer_relevancy": 0.08,
+        "evidence_coverage": 0.25
+      }
+    },
+    {
+      "index": 113,
+      "complexity": "aggregation",
+      "question": "For funds investing in companies located in 'Marlborough', what is the average ownership percentage ('pct') across all recorded investments, and how many distinct companies are involved?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 114,
+      "complexity": "aggregation",
+      "question": "Across all companies operating in the 'Cargo Ground Transportation' industry, what is the total number of distinct persons employed, and which job title is assigned to the highest number of these individuals?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.156,
+        "faithfulness": 0.3824,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.4
+      }
+    },
+    {
+      "index": 115,
+      "complexity": "aggregation",
+      "question": "For the 'Electronic Components' industry, what is the maximum number of distinct resources required by any single operating company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1367,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 116,
+      "complexity": "aggregation",
+      "question": "For the product 'parts for equipment', what is the earliest publication date recorded in its associated news articles, and how many articles were published on that specific date?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1056,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 117,
+      "complexity": "aggregation",
+      "question": "What is the average ownership percentage ('pct') held by all funds in companies located in 'Santa Clara', and how many distinct fund-to-company investment relationships does this represent?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.129,
+        "faithfulness": 0.2703,
+        "answer_relevancy": 0.1379,
+        "evidence_coverage": 0.125
+      }
+    },
+    {
+      "index": 118,
+      "complexity": "aggregation",
+      "question": "For 'Quest Diagnostics Incorporated', which three distinct publication dates have the highest number of associated news articles, and what are the respective counts?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1729,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 119,
+      "complexity": "aggregation",
+      "question": "For companies that require 'residual fuel oil', which industry do the most of them operate in, and how many companies fall into that industry?",
+      "metrics": {
+        "context_recall": 0.8,
+        "context_relevance": 0.0827,
+        "faithfulness": 0.4194,
+        "answer_relevancy": 0.1304,
+        "evidence_coverage": 0.6667
+      }
+    },
+    {
+      "index": 120,
+      "complexity": "aggregation",
+      "question": "For the product 'Data center facilities', find the companies that produce it, and calculate the average number of distinct resources required per company.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1052,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 121,
+      "complexity": "aggregation",
+      "question": "For the resource 'residual fuel oil', identify the top three industries that contain companies requiring this resource, ranked by the number of such companies.",
+      "metrics": {
+        "context_recall": 0.8,
+        "context_relevance": 0.0967,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 122,
+      "complexity": "aggregation",
+      "question": "For the product 'cash management', calculate the total number of associated news articles, and return the average number of articles published per distinct news domain covering it.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0452,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 123,
+      "complexity": "aggregation",
+      "question": "For the city 'Santa Clara', find the company that produces the highest number of distinct products, and return that company's name along with its product count.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2222,
+        "faithfulness": 0.1538,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 124,
+      "complexity": "aggregation",
+      "question": "For the resource 'module testing', identify the top three products produced by companies that require this resource, ranked by the number of distinct companies producing each product.",
+      "metrics": {
+        "context_recall": 0.3,
+        "context_relevance": 0.0669,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 125,
+      "complexity": "aggregation",
+      "question": "For the state of 'IA', which industry contains the highest number of located companies, and what is that exact company count?",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.0932,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 126,
+      "complexity": "aggregation",
+      "question": "For companies that produce 'cash management', identify the fund-to-company investment with the lowest recorded ownership percentage ('pct'), and return the fund name, company name, and that percentage.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0907,
+        "faithfulness": 0.05,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 127,
+      "complexity": "aggregation",
+      "question": "For the 'Industrials' sector, rank its associated industries by the number of operating companies, returning the top three industries and their respective company counts.",
+      "metrics": {
+        "context_recall": 0.2727,
+        "context_relevance": 0.1256,
+        "faithfulness": 0.0588,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 128,
+      "complexity": "aggregation",
+      "question": "For the resource 'residual fuel oil', how many distinct news domains have published articles covering it, and what is the average number of articles published per domain?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0711,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 129,
+      "complexity": "aggregation",
+      "question": "For the fund 'Temasek Holdings (Private) Ltd', what is the average number of distinct resources required by each of its portfolio companies, and what is the maximum resource count observed for any single company in its portfolio?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.086,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 130,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', what is the total number of news articles published about the companies it owns, and what is the average number of articles per portfolio company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1873,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 131,
+      "complexity": "aggregation",
+      "question": "Across all companies operating in the 'Consumer Discretionary' sector, what is the total number of distinct persons recorded as working for them, and how many unique job titles are assigned to these individuals?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1201,
+        "faithfulness": 0.0769,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 132,
+      "complexity": "aggregation",
+      "question": "For companies located in the city 'Dublin', what is the total count of associated news articles, and which single company has attracted the highest volume of news coverage?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1432,
+        "faithfulness": 0.0952,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 133,
+      "complexity": "aggregation",
+      "question": "For the 'Industrials' sector, what is the total number of distinct companies operating within its associated industries, and what is the maximum number of distinct resources required by any single one of these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0647,
+        "faithfulness": 0.125,
+        "answer_relevancy": 0.0392,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 134,
+      "complexity": "aggregation",
+      "question": "For the 'Water Utilities' industry, what is the total count of distinct persons working for its operating companies, and what is the average number of persons per company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1274,
+        "faithfulness": 0.125,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 135,
+      "complexity": "aggregation",
+      "question": "Across all news articles covering the product 'parts for equipment', which news domain has published the fewest articles, and what is that exact count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0935,
+        "faithfulness": 0.1053,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 136,
+      "complexity": "aggregation",
+      "question": "For companies operating in the 'Cargo Ground Transportation' industry, what is the average number of distinct products they produce, and what is the maximum number of products produced by any single company?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.171,
+        "faithfulness": 0.0968,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 137,
+      "complexity": "aggregation",
+      "question": "For the city 'Santa Clara', what is the total number of distinct funds that have invested in its located companies, and what is the minimum ownership percentage ('pct') recorded among these investments?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1935,
+        "faithfulness": 0.1053,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 138,
+      "complexity": "aggregation",
+      "question": "For the 'Consumer Discretionary' sector, what is the earliest publication date recorded across all news articles covering its associated industries, and how many articles were published on that specific date?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1277,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 139,
+      "complexity": "aggregation",
+      "question": "For the city 'Dublin', what is the total number of distinct resource-company requirement relationships, and what is the average number of distinct resources required per company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1647,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 140,
+      "complexity": "aggregation",
+      "question": "For the state of 'IL', which product is produced by the highest number of located companies, and what is that company count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1627,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 141,
+      "complexity": "aggregation",
+      "question": "For the 'Industrials' sector, which language is used in the fewest associated news articles, and what is the exact count of articles in that language?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0721,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 142,
+      "complexity": "aggregation",
+      "question": "For the fund 'Canada Pension Plan Investment Board', rank its portfolio companies by the number of distinct products they produce, returning the top three companies and their respective product counts.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0967,
+        "faithfulness": 0.1905,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 143,
+      "complexity": "aggregation",
+      "question": "For the 'Water Utilities' industry, which job title is assigned to the lowest number of persons working in its operating companies, and what is that exact count?",
+      "metrics": {
+        "context_recall": 0.4,
+        "context_relevance": 0.0971,
+        "faithfulness": 0.1111,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 144,
+      "complexity": "aggregation",
+      "question": "For the fund 'Canada Pension Plan Investment Board', how many news articles have been published about each sector represented by its portfolio companies, returning the top three sectors by article volume?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0546,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 145,
+      "complexity": "aggregation",
+      "question": "Among companies that require the resource 'residual fuel oil', which single company employs the highest number of distinct persons, and what is that employee count?",
+      "metrics": {
+        "context_recall": 0.75,
+        "context_relevance": 0.1292,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 146,
+      "complexity": "aggregation",
+      "question": "For companies located in the state of 'NJ', calculate the average number of distinct products produced per company, and return the maximum product count observed for any single company.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1284,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 147,
+      "complexity": "aggregation",
+      "question": "For the product 'parts for equipment', what is the total count of distinct companies that produce it, and what is the average number of distinct resources required by these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1036,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 148,
+      "complexity": "aggregation",
+      "question": "For the city 'Santa Clara', which job title is assigned to the highest number of persons working for companies located there, and what is that exact frequency?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2222,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 149,
+      "complexity": "aggregation",
+      "question": "For the company 'Quest Diagnostics Incorporated', what is the total number of distinct news domains that have published articles about it, and what is the average number of articles published per domain?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1865,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 150,
+      "complexity": "aggregation",
+      "question": "Across all companies operating in the 'Water Utilities' industry, what is the maximum number of distinct products produced by any single company, and which company holds this maximum?",
+      "metrics": {
+        "context_recall": 0.8333,
+        "context_relevance": 0.1424,
+        "faithfulness": 0.087,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 151,
+      "complexity": "aggregation",
+      "question": "For the 'Industrials' sector, which three news domains have published the highest volume of articles about its associated companies, and what are their respective article counts?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0667,
+        "faithfulness": 0.0556,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 152,
+      "complexity": "aggregation",
+      "question": "For the resource 'third-party financial institutions', which fund holds the highest single ownership percentage ('pct') in any company requiring it, and what is that percentage?",
+      "metrics": {
+        "context_recall": 0.7143,
+        "context_relevance": 0.0133,
+        "faithfulness": 0.4444,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 153,
+      "complexity": "aggregation",
+      "question": "For companies operating in the 'Cargo Ground Transportation' industry, what is the total number of distinct news articles published about them, and what is the average article count per company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1607,
+        "faithfulness": 0.1667,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 154,
+      "complexity": "aggregation",
+      "question": "For companies that produce 'parts for equipment', what is the maximum number of distinct resources required by any single company, and which company holds this maximum?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1446,
+        "faithfulness": 0.069,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 155,
+      "complexity": "aggregation",
+      "question": "For the 'Consumer Discretionary' sector, what is the maximum single ownership percentage ('pct') recorded across all fund investments in its operating companies, and which fund-company pair holds this stake?",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.0113,
+        "faithfulness": 0.1429,
+        "answer_relevancy": 0.1081,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 156,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', calculate the total number of distinct Sectors represented by its portfolio companies, and return the average number of companies held per sector.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.183,
+        "faithfulness": 0.2105,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 157,
+      "complexity": "aggregation",
+      "question": "For companies that require 'third-party financial institutions', what is the maximum number of distinct Products produced by any single one of these companies, and which company holds this maximum?",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.0863,
+        "faithfulness": 0.1765,
+        "answer_relevancy": 0.0556,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 158,
+      "complexity": "aggregation",
+      "question": "For companies located in the city 'Marlborough', which Industry category contains the highest number of these companies, and what is that exact count?",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.0841,
+        "faithfulness": 0.2778,
+        "answer_relevancy": 0.0625,
+        "evidence_coverage": 0.6667
+      }
+    },
+    {
+      "index": 159,
+      "complexity": "aggregation",
+      "question": "For the product 'cash management', what is the total number of distinct Companies that produce it, and what is the average number of news articles published per company about this product?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.091,
+        "faithfulness": 0.0833,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 160,
+      "complexity": "aggregation",
+      "question": "For the 'Energy' sector, rank the top three domains by the total number of news articles published about its associated industries, returning each domain and its article count.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0667,
+        "faithfulness": 0.0526,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 161,
+      "complexity": "aggregation",
+      "question": "For companies operating in the 'Energy' sector, rank them by the total number of news articles published about them, returning the top three company names and their article counts.",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.0711,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 162,
+      "complexity": "aggregation",
+      "question": "For the product 'parts for equipment', what is the total number of distinct funds that have invested in companies producing it, and what is the maximum ownership percentage ('pct') recorded among these investments?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 163,
+      "complexity": "aggregation",
+      "question": "For the 'Cargo Ground Transportation' industry, rank the source countries of associated news articles by publication volume, returning the top three countries and their article counts.",
+      "metrics": {
+        "context_recall": 0.2,
+        "context_relevance": 0.171,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 164,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', which news domain has published the highest number of articles about its portfolio companies, and what is that exact count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1788,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 165,
+      "complexity": "aggregation",
+      "question": "For companies that require 'third-party financial institutions', which sector contains the highest number of them, and what is that exact company count?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.0861,
+        "faithfulness": 0.0968,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 166,
+      "complexity": "aggregation",
+      "question": "For companies located in the city 'Santa Clara', which news domain has published the highest total number of articles about them, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 167,
+      "complexity": "aggregation",
+      "question": "For the fund 'Temasek Holdings (Private) Ltd', what is the total number of distinct products produced by its portfolio companies, and what is the average number of products per portfolio company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1026,
+        "faithfulness": 0.1481,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 168,
+      "complexity": "aggregation",
+      "question": "For the 'Industrials' sector, which resource is required by the highest number of operating companies, and what is that exact company count?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.1065,
+        "faithfulness": 0.0588,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 169,
+      "complexity": "aggregation",
+      "question": "For the product 'cash management', rank the industries represented by its producing companies by the number of companies in each industry, returning the top three industries and their respective company counts.",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.0987,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 170,
+      "complexity": "aggregation",
+      "question": "For the 'Consumer Discretionary' sector, calculate the average number of distinct products produced per company operating within its associated industries, and return the maximum product count observed for any single company.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1515,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 171,
+      "complexity": "aggregation",
+      "question": "For companies that produce 'parts for equipment', what is the total number of news articles published about them, grouped by the sourcecountry of the articles, returning the top three countries by volume?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.0765,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 172,
+      "complexity": "aggregation",
+      "question": "For the city 'Marlborough', calculate the total number of distinct persons working for companies located there, and determine the average number of persons per company.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0858,
+        "faithfulness": 0.2105,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 173,
+      "complexity": "aggregation",
+      "question": "For the resource 'module testing', which industry contains the highest number of companies that require it, and what is the total count of news articles published about those specific companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0366,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 174,
+      "complexity": "aggregation",
+      "question": "For companies located in the state of 'IL', which single resource is required by the highest number of these companies, and what is that exact company count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1644,
+        "faithfulness": 0.3036,
+        "answer_relevancy": 0.3662,
+        "evidence_coverage": 0.3846
+      }
+    },
+    {
+      "index": 175,
+      "complexity": "aggregation",
+      "question": "For the fund 'Canada Pension Plan Investment Board', which product is produced by the highest number of its portfolio companies, and what is the average ownership percentage (pct) the fund holds in those specific companies?",
+      "metrics": {
+        "context_recall": 0.2,
+        "context_relevance": 0.0809,
+        "faithfulness": 0.119,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 176,
+      "complexity": "aggregation",
+      "question": "For the company 'Ameriprise Financial, Inc.', which required resource has been covered in the highest volume of news articles, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.1792,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 177,
+      "complexity": "aggregation",
+      "question": "In the city of 'Marlborough', which job title is assigned to the highest number of persons working for located companies, and what is the total count of persons holding that title?",
+      "metrics": {
+        "context_recall": 0.75,
+        "context_relevance": 0.0502,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 178,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', which source country has published the most news articles about its portfolio companies, and what is the total article count from that country?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1749,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 179,
+      "complexity": "aggregation",
+      "question": "For the fund 'Canada Pension Plan Investment Board', rank the economic sectors represented by its portfolio companies by the total number of distinct companies invested in, returning the sector name and company count.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0809,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 180,
+      "complexity": "aggregation",
+      "question": "For companies that produce 'parts for equipment', rank them by the volume of associated news coverage, returning the company name and total article count in descending order.",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.1241,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 181,
+      "complexity": "aggregation",
+      "question": "Within the 'Energy' sector, identify the single fund-to-company investment relationship with the highest recorded ownership percentage, returning the fund name, company name, and exact percentage.",
+      "metrics": {
+        "context_recall": 0.4286,
+        "context_relevance": 0.0629,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 182,
+      "complexity": "aggregation",
+      "question": "For news articles directly covering the 'Industrials' sector, rank the publishing domains by their total article volume, returning each domain and its corresponding count.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1142,
+        "faithfulness": 0.3143,
+        "answer_relevancy": 0.4074,
+        "evidence_coverage": 0.625
+      }
+    },
+    {
+      "index": 183,
+      "complexity": "aggregation",
+      "question": "For the 'Consumer Discretionary' sector, rank its constituent industries by the total number of distinct funds that have invested in their operating companies, returning the industry name and fund investor count.",
+      "metrics": {
+        "context_recall": 0.2857,
+        "context_relevance": 0.116,
+        "faithfulness": 0.0741,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 184,
+      "complexity": "aggregation",
+      "question": "For Ameriprise Financial, Inc., what is the average and maximum ownership percentage held by investing funds, and how many distinct funds have recorded a stake in the company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1607,
+        "faithfulness": 0.25,
+        "answer_relevancy": 0.1304,
+        "evidence_coverage": 0.0385
+      }
+    },
+    {
+      "index": 185,
+      "complexity": "aggregation",
+      "question": "For the Water Utilities industry, what is the total number of distinct companies operating within it, and what is the average number of distinct resources required per company?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.1314,
+        "faithfulness": 0.087,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 186,
+      "complexity": "aggregation",
+      "question": "For companies located in the state of IL, what is the total count of distinct companies, and what is the maximum number of distinct resources required by any single one of these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 187,
+      "complexity": "aggregation",
+      "question": "For Quest Diagnostics Incorporated, which job title is assigned to the largest number of employees, and how many persons hold that title?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1901,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 188,
+      "complexity": "aggregation",
+      "question": "For companies located in Dublin, calculate the average number of distinct products produced per company, and identify the maximum product count observed for any single company.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0926,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 189,
+      "complexity": "aggregation",
+      "question": "For the fund Temasek Holdings (Private) Ltd, which city hosts the highest number of its portfolio companies, and what is that exact count?",
+      "metrics": {
+        "context_recall": 0.6667,
+        "context_relevance": 0.1033,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 190,
+      "complexity": "aggregation",
+      "question": "For the resource 'module testing', what is the total number of distinct industries represented by companies that require it, and what is the average number of companies per industry?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0772,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 191,
+      "complexity": "aggregation",
+      "question": "Among all companies operating in the 'Water Utilities' industry, which one has attracted the highest number of distinct fund investments, and what is that exact investment count?",
+      "metrics": {
+        "context_recall": 0.8333,
+        "context_relevance": 0.1017,
+        "faithfulness": 0.1,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 192,
+      "complexity": "aggregation",
+      "question": "For the city 'Santa Clara', what is the total number of news articles published about companies located there, and what is the average number of articles per company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2308,
+        "faithfulness": 0.0588,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 193,
+      "complexity": "aggregation",
+      "question": "For the sector 'Energy', what is the total number of distinct persons recorded as working for its associated companies, and what is the maximum number of persons employed by any single company in this sector?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1184,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 194,
+      "complexity": "aggregation",
+      "question": "For the 'Consumer Discretionary' sector, count the total number of distinct job titles (title) assigned to persons working for its associated companies, and find the maximum number of persons holding any single title across these companies.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0891,
+        "faithfulness": 0.3519,
+        "answer_relevancy": 0.2564,
+        "evidence_coverage": 0.25
+      }
+    },
+    {
+      "index": 195,
+      "complexity": "aggregation",
+      "question": "For the 'Water Utilities' industry, calculate the total number of distinct Fund entities that have invested in its operating companies, and find the minimum ownership percentage (pct) recorded across all these fund-to-company relationships.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0763,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.1778,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 196,
+      "complexity": "aggregation",
+      "question": "For the 'Industrials' sector, rank the top three companies by the total number of distinct Resource entities they require, returning the company name and resource count.",
+      "metrics": {
+        "context_recall": 0.1111,
+        "context_relevance": 0.1384,
+        "faithfulness": 0.3784,
+        "answer_relevancy": 0.0741,
+        "evidence_coverage": 0.1429
+      }
+    },
+    {
+      "index": 197,
+      "complexity": "aggregation",
+      "question": "For the resource 'residual fuel oil', calculate the total number of news articles published about companies that require it, and determine the average number of articles per company.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.073,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 198,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', rank the top three Sector categories represented by its portfolio companies by the number of distinct companies invested in each sector.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.183,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 199,
+      "complexity": "aggregation",
+      "question": "For the company 'Mondelez International, Inc.', calculate the total number of distinct News domains that have published articles about it, and find the maximum number of articles published by any single domain.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1725,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 200,
+      "complexity": "aggregation",
+      "question": "For the company 'Mondelez International, Inc.', what is the distribution of associated news articles by sourcecountry, returning each country and its corresponding article count in descending order?",
+      "metrics": {
+        "context_recall": 0.2222,
+        "context_relevance": 0.1744,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 201,
+      "complexity": "aggregation",
+      "question": "Rank the top three funds by the total number of distinct companies they own within the 'Industrials' sector, returning the fund name and company count.",
+      "metrics": {
+        "context_recall": 0.7273,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 202,
+      "complexity": "aggregation",
+      "question": "For the resource 'module testing', which company that requires it has attracted the highest volume of news coverage, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.2,
+        "context_relevance": 0.0803,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 203,
+      "complexity": "aggregation",
+      "question": "For the product 'cash management', rank the top three states by the number of companies located there that produce this product, returning the state name and company count.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1107,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 204,
+      "complexity": "aggregation",
+      "question": "For the resource 'residual fuel oil', what is the total number of distinct products produced by companies that require it, and which product is produced by the highest number of these companies?",
+      "metrics": {
+        "context_recall": 0.4,
+        "context_relevance": 0.1061,
+        "faithfulness": 0.1364,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 205,
+      "complexity": "aggregation",
+      "question": "Across all news articles mentioning the 'Consumer Discretionary' sector, what is the total number of distinct source countries that have published coverage, and which country has contributed the highest volume of articles?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1168,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 206,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', what is the total number of distinct industries represented by its portfolio companies, and which industry contains the highest number of these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1811,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 207,
+      "complexity": "aggregation",
+      "question": "For the city 'Marlborough', calculate the total number of distinct news articles published about companies located there, and determine the average number of articles per company.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0811,
+        "faithfulness": 0.1538,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 208,
+      "complexity": "aggregation",
+      "question": "For the state of 'NJ', rank the located companies by the number of distinct products they produce, returning the top three company names and their respective product counts.",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.1465,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 209,
+      "complexity": "aggregation",
+      "question": "For the 'Water Utilities' industry, identify the job title assigned to the highest number of persons across all operating companies, and report the exact frequency of that title.",
+      "metrics": {
+        "context_recall": 0.4,
+        "context_relevance": 0.092,
+        "faithfulness": 0.3333,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 210,
+      "complexity": "aggregation",
+      "question": "For the 'Consumer Discretionary' sector, which news domain has published the highest total number of articles about its associated companies, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1277,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 211,
+      "complexity": "aggregation",
+      "question": "For the fund 'Canada Pension Plan Investment Board', which state contains the highest number of its portfolio companies, and what is that exact company count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1515,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 212,
+      "complexity": "aggregation",
+      "question": "For the product 'parts for equipment', calculate the total number of distinct industries represented by its producing companies, and determine the average number of companies operating within each of these industries.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0875,
+        "faithfulness": 0.381,
+        "answer_relevancy": 0.4,
+        "evidence_coverage": 0.2857
+      }
+    },
+    {
+      "index": 213,
+      "complexity": "aggregation",
+      "question": "For the company 'Mondelez International, Inc.', what is the total number of distinct persons recorded as working for it, and what is the average ownership percentage ('pct') held by funds across all investments in this company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1248,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 214,
+      "complexity": "aggregation",
+      "question": "Across all news articles directly mentioning a sector, which sector has the highest publication volume, and what is the exact count of articles associated with it?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0703,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 215,
+      "complexity": "aggregation",
+      "question": "Among news articles published about companies, which state has the highest total volume of associated coverage, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0685,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 216,
+      "complexity": "aggregation",
+      "question": "Which company produces the highest number of distinct products, and what is that exact product count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1219,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 217,
+      "complexity": "aggregation",
+      "question": "Which fund has been mentioned in the highest number of news articles, and what is the total article count associated with it?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.0272,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 218,
+      "complexity": "aggregation",
+      "question": "For the state of 'NJ', how many distinct cities are recorded as having located companies, and what is the maximum number of companies located in any single one of those cities?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0979,
+        "faithfulness": 0.1944,
+        "answer_relevancy": 0.5283,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 219,
+      "complexity": "aggregation",
+      "question": "Which city has been mentioned in the highest volume of location-specific news articles, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0476,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 220,
+      "complexity": "aggregation",
+      "question": "For the 'Water Utilities' industry, which operating company employs the largest workforce, and what is that exact employee count?",
+      "metrics": {
+        "context_recall": 0.8333,
+        "context_relevance": 0.1991,
+        "faithfulness": 0.7059,
+        "answer_relevancy": 0.6667,
+        "evidence_coverage": 1.0
+      }
+    },
+    {
+      "index": 221,
+      "complexity": "aggregation",
+      "question": "For companies located in the country 'Ireland', what is the average ownership percentage ('pct') held by investing funds, and how many distinct funds have recorded investments in these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 222,
+      "complexity": "aggregation",
+      "question": "For the resource 'residual fuel oil', which state contains the highest number of companies that require it, and what is the exact count of these companies?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.089,
+        "faithfulness": 0.1429,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 223,
+      "complexity": "aggregation",
+      "question": "For the industry 'Electronic Components', what is the distribution of associated news articles by language, returning the top three languages by publication volume?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.078,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 224,
+      "complexity": "aggregation",
+      "question": "For the city 'Marlborough', which single fund holds the highest ownership percentage ('pct') in any company located there, and what is that exact percentage?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0714,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 225,
+      "complexity": "aggregation",
+      "question": "For the fund 'Temasek Holdings (Private) Ltd', which company does it hold with the lowest recorded ownership percentage ('pct'), and what is that exact percentage?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1046,
+        "faithfulness": 0.3571,
+        "answer_relevancy": 0.3333,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 226,
+      "complexity": "aggregation",
+      "question": "For companies located in the state of 'IA', which product is produced by the highest number of these companies, and what is that exact company count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0698,
+        "faithfulness": 0.5833,
+        "answer_relevancy": 0.3846,
+        "evidence_coverage": 0.5
+      }
+    },
+    {
+      "index": 227,
+      "complexity": "aggregation",
+      "question": "For the product 'Data center facilities', calculate the total number of distinct persons recorded as working for companies that produce it, and determine the average number of employees per producing company.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0957,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 228,
+      "complexity": "aggregation",
+      "question": "For companies located in the state of 'NJ', what is the maximum number of distinct resources required by any single company, and what is the average number of resources required across all companies in this state?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0521,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 229,
+      "complexity": "aggregation",
+      "question": "For the resource 'module testing', identify the top three sectors represented by companies that require it, ranked by the number of companies in each sector.",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.0323,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 230,
+      "complexity": "aggregation",
+      "question": "For the state of 'IA', what is the total count of distinct companies located there, and what is the maximum number of news articles published about any single one of these companies?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.0619,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 231,
+      "complexity": "aggregation",
+      "question": "For the resource 'third-party financial institutions', what is the total number of distinct companies that require it, and what is the average number of distinct products produced by each of these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0743,
+        "faithfulness": 0.0938,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 232,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', calculate the total number of distinct industries represented by its portfolio companies, and return the industry with the highest number of portfolio companies along with that count.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.183,
+        "faithfulness": 0.2222,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 233,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', calculate the average number of news articles published per portfolio company across each industry it invests in, and return the top three industries ranked by this average in descending order.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1108,
+        "faithfulness": 0.1143,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 234,
+      "complexity": "aggregation",
+      "question": "Across all industries within the 'Energy' sector, which job title is assigned to the largest total number of distinct persons, and what is that exact headcount?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0933,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 235,
+      "complexity": "aggregation",
+      "question": "For 'Mondelez International, Inc.', which of its produced products has the highest average number of news articles per publishing domain, and what is that calculated average?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.1695,
+        "faithfulness": 0.1429,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 236,
+      "complexity": "aggregation",
+      "question": "Identify the state with the highest number of companies producing 'Data center facilities', and calculate the total count of distinct resources required by all companies located in that specific state.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1162,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 237,
+      "complexity": "aggregation",
+      "question": "For the fund 'Temasek Holdings (Private) Ltd', calculate the average number of distinct resources required across all its portfolio companies, and identify the maximum number of distinct resources required by any single portfolio company.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0877,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 238,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', which source countries have published news articles about it, and what is the total article count for each country, ordered from highest to lowest?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1581,
+        "faithfulness": 0.1905,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 239,
+      "complexity": "aggregation",
+      "question": "For the product 'Data center facilities', which news domain has published the highest volume of articles directly mentioning it, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1098,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 240,
+      "complexity": "aggregation",
+      "question": "For companies that produce 'cash management', what is the total number of distinct persons recorded as working for them, and what is the average number of employees per producing company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0875,
+        "faithfulness": 0.1034,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 241,
+      "complexity": "aggregation",
+      "question": "Across all news articles directly mentioning the resource 'module testing', what is the distribution of articles by language, returning the top three languages by publication volume?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0563,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 242,
+      "complexity": "aggregation",
+      "question": "For the city 'Marlborough', calculate the total number of distinct fund-to-company investment relationships involving located companies, and determine the maximum single ownership percentage ('pct') recorded among these investments.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0152,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 243,
+      "complexity": "aggregation",
+      "question": "For the fund 'Temasek Holdings (Private) Ltd', identify the top three sectors represented by its portfolio companies, ranked by the total number of distinct news articles published about those sectors, returning the sector name and article count.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.086,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 244,
+      "complexity": "aggregation",
+      "question": "For the industry 'Electronic Components', which fund holds the highest single ownership percentage ('pct') in any operating company, and what is that exact percentage?",
+      "metrics": {
+        "context_recall": 0.75,
+        "context_relevance": 0.036,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 245,
+      "complexity": "aggregation",
+      "question": "For the resource 'third-party financial institutions', what is the most frequently assigned job title among persons working for companies that require it, and how many persons hold that title?",
+      "metrics": {
+        "context_recall": 0.7143,
+        "context_relevance": 0.0647,
+        "faithfulness": 0.04,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 246,
+      "complexity": "aggregation",
+      "question": "For the sector 'Industrials', which news domain has published the highest volume of articles about its associated industries, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0691,
+        "faithfulness": 0.2273,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.6667
+      }
+    },
+    {
+      "index": 247,
+      "complexity": "aggregation",
+      "question": "For the product 'parts for equipment', which state contains the highest number of companies that produce it, and what is that exact company count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1444,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 248,
+      "complexity": "aggregation",
+      "question": "For the industry 'Cargo Ground Transportation', which resource is required by the highest number of operating companies, and what is that exact company count?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.1892,
+        "faithfulness": 0.1538,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 249,
+      "complexity": "aggregation",
+      "question": "For the product 'Data center facilities', calculate the total number of distinct persons working for companies that produce it, and determine the city that hosts the highest number of these employees.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1098,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 250,
+      "complexity": "aggregation",
+      "question": "For the 'Electronic Components' industry, calculate the total number of news articles published, and determine the maximum number of articles published on any single date.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0654,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 251,
+      "complexity": "aggregation",
+      "question": "For the country 'Netherlands', what is the maximum number of news articles published about any single company located there, and what is the average number of articles per company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0735,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 252,
+      "complexity": "aggregation",
+      "question": "For the industry 'Cargo Ground Transportation', what is the total count of distinct persons working for its operating companies, and what is the minimum number of persons assigned to any single job title across these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1515,
+        "faithfulness": 0.1471,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 253,
+      "complexity": "aggregation",
+      "question": "For the city 'Marlborough', calculate the total number of distinct companies located there, and determine the average number of distinct resources required per company.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0818,
+        "faithfulness": 0.2143,
+        "answer_relevancy": 0.0465,
+        "evidence_coverage": 0.3333
+      }
+    },
+    {
+      "index": 254,
+      "complexity": "aggregation",
+      "question": "For the resource 'third-party financial institutions', what is the total number of distinct news domains that have published articles covering it, and what is the average number of articles published per domain?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0683,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 255,
+      "complexity": "aggregation",
+      "question": "For the industry 'Electronic Components', calculate the total number of news articles published about it, and determine the average number of articles published per distinct language.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.078,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 256,
+      "complexity": "aggregation",
+      "question": "Across all companies that produce 'cash management', rank the top three industries they operate in by the total number of distinct persons employed within each industry, returning the industry name and employee count.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0351,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 257,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', what is the minimum and maximum ownership percentage (`pct`) recorded across all its investments, and what is the total count of distinct companies it holds?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.1743,
+        "faithfulness": 0.3158,
+        "answer_relevancy": 0.2,
+        "evidence_coverage": 0.25
+      }
+    },
+    {
+      "index": 258,
+      "complexity": "aggregation",
+      "question": "For the 'Energy' sector, identify the top three resources required by its operating companies, ranked by the number of distinct companies that require each resource, and return the resource name and company count.",
+      "metrics": {
+        "context_recall": 0.2857,
+        "context_relevance": 0.128,
+        "faithfulness": 0.0435,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 259,
+      "complexity": "aggregation",
+      "question": "Among news articles directly mentioning the 'Industrials' sector, what is the distribution of publication dates, returning the top five dates with the highest article counts?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.046,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 260,
+      "complexity": "aggregation",
+      "question": "For the company 'Mondelez International, Inc.', what is the total number of distinct funds that have invested in it, and what is the average ownership percentage (pct) recorded across these investments?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1623,
+        "faithfulness": 0.1613,
+        "answer_relevancy": 0.04,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 261,
+      "complexity": "aggregation",
+      "question": "For the resource 'third-party financial institutions', what is the total number of distinct companies that require it, and what is the maximum ownership percentage (pct) held by any single fund across investments in these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0119,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 262,
+      "complexity": "aggregation",
+      "question": "For the industry 'Water Utilities', rank the publishing domain values of associated news articles by volume, returning the top three domains and their exact article counts.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1364,
+        "faithfulness": 0.125,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 263,
+      "complexity": "aggregation",
+      "question": "For the product 'Data center facilities', what is the total number of distinct companies that produce it, and what is the minimum ownership percentage (pct) held by any fund in these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1068,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 264,
+      "complexity": "aggregation",
+      "question": "For the resource 'residual fuel oil', calculate the total number of distinct companies that require it, and find the average number of distinct persons working for each of these companies.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0738,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 265,
+      "complexity": "aggregation",
+      "question": "For the city 'Marlborough', calculate the distribution of news articles published about located companies by language, returning the top three languages and their corresponding article counts in descending order.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0487,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 266,
+      "complexity": "aggregation",
+      "question": "For the 'Industrials' sector, which associated industry contains companies that collectively require the highest number of distinct resources, and what is that total resource count?",
+      "metrics": {
+        "context_recall": 0.2,
+        "context_relevance": 0.0899,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 267,
+      "complexity": "aggregation",
+      "question": "For the resource 'module testing', which city hosts the highest number of companies that require it, and what is that exact company count?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0766,
+        "faithfulness": 0.0294,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 268,
+      "complexity": "aggregation",
+      "question": "For the product 'cash management', what is the total number of distinct companies that produce it, and what is the average number of distinct resources required per producing company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1086,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 269,
+      "complexity": "aggregation",
+      "question": "For the city 'Santa Clara', how many distinct industries are represented by companies located there, and what is the average number of companies per industry?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.2308,
+        "faithfulness": 0.1667,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 270,
+      "complexity": "aggregation",
+      "question": "For the fund 'Canada Pension Plan Investment Board', how many distinct industries are represented by its portfolio companies, and what is the average number of portfolio companies per industry?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.1268,
+        "faithfulness": 0.2381,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 271,
+      "complexity": "aggregation",
+      "question": "For companies that require 'residual fuel oil', what is the total number of distinct companies, and what is the average number of distinct products produced by each of these companies?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1092,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 272,
+      "complexity": "aggregation",
+      "question": "For the 'Consumer Discretionary' sector, what is the total number of news articles published directly covering it, and how many distinct news domains have contributed to this coverage?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1291,
+        "faithfulness": 0.1111,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 273,
+      "complexity": "aggregation",
+      "question": "For companies that produce 'Data center facilities', what is the total number of distinct companies, and what is the maximum number of distinct resources required by any single producing company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1256,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 274,
+      "complexity": "aggregation",
+      "question": "For the 'Cargo Ground Transportation' industry, what is the total number of distinct companies operating within it, and what is the average number of distinct products produced per company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1827,
+        "faithfulness": 0.25,
+        "answer_relevancy": 0.0833,
+        "evidence_coverage": 0.2
+      }
+    },
+    {
+      "index": 275,
+      "complexity": "aggregation",
+      "question": "For the company 'Mondelez International, Inc.', what is the total number of distinct news domains that have published articles about it, and which domain has published the highest number of articles?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1868,
+        "faithfulness": 0.1364,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 276,
+      "complexity": "aggregation",
+      "question": "For the product 'Data center facilities', calculate the average ownership percentage (pct) held by all funds across investments in companies that produce it, and identify how many distinct funds have invested in these companies.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.036,
+        "faithfulness": 0.4783,
+        "answer_relevancy": 0.0857,
+        "evidence_coverage": 0.1724
+      }
+    },
+    {
+      "index": 277,
+      "complexity": "aggregation",
+      "question": "For the 'Consumer Discretionary' sector, what is the total number of news articles published directly about it, and which source country has contributed the highest volume of these articles?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1291,
+        "faithfulness": 0.0909,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 278,
+      "complexity": "aggregation",
+      "question": "For the product 'Data center facilities', what is the maximum ownership percentage (`pct`) held by any single fund across investments in companies that produce it, and which fund holds this stake?",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.0278,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 279,
+      "complexity": "aggregation",
+      "question": "For the 'Consumer Discretionary' sector, rank the news domains that have published articles directly about it by article volume, returning the top three domains and their respective counts.",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.1333,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 280,
+      "complexity": "aggregation",
+      "question": "For the resource 'module testing', what is the earliest and latest publication date recorded in news articles covering it, and how many distinct articles were published between these dates?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0551,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.1026,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 281,
+      "complexity": "aggregation",
+      "question": "For the industry 'Water Utilities', what is the total number of distinct companies operating within it, and which sector does this industry belong to?",
+      "metrics": {
+        "context_recall": 1.0,
+        "context_relevance": 0.1068,
+        "faithfulness": 0.3636,
+        "answer_relevancy": 0.1081,
+        "evidence_coverage": 0.75
+      }
+    },
+    {
+      "index": 282,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', identify the portfolio company in which it holds the highest ownership percentage (`pct`), and report that exact percentage along with the company's ticker.",
+      "metrics": {
+        "context_recall": 0.625,
+        "context_relevance": 0.183,
+        "faithfulness": 0.037,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 283,
+      "complexity": "aggregation",
+      "question": "For the city 'Dublin', rank the news domains that have published articles about its located companies by article volume, returning the top three domains and their respective counts.",
+      "metrics": {
+        "context_recall": 0.1429,
+        "context_relevance": 0.1142,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 284,
+      "complexity": "aggregation",
+      "question": "For the state of 'NJ', which single company has attracted the highest volume of news coverage, and what is that exact article count?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.1078,
+        "faithfulness": 0.1389,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 285,
+      "complexity": "aggregation",
+      "question": "For the 'Industrials' sector, calculate the average ownership percentage (pct) across all fund investments in its operating companies, and determine the minimum stake recorded in this sector.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0242,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 286,
+      "complexity": "aggregation",
+      "question": "Across all news articles directly mentioning the 'Consumer Discretionary' sector, what is the distribution of articles by source country, returning the top three countries by publication volume?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1365,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 287,
+      "complexity": "aggregation",
+      "question": "For the fund 'Temasek Holdings (Private) Ltd', what is the average number of distinct products produced by its portfolio companies, and what is the maximum product count observed for any single portfolio company?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0714,
+        "faithfulness": 0.2105,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 288,
+      "complexity": "aggregation",
+      "question": "For the company 'Quest Diagnostics Incorporated', what is the distribution of associated news articles by language, returning the top three languages by publication volume?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1921,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 289,
+      "complexity": "aggregation",
+      "question": "For the fund 'Canada Pension Plan Investment Board', on which dates were the most news articles published directly mentioning it, and what are the article counts for the top three dates?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.11,
+        "faithfulness": 0.1852,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 290,
+      "complexity": "aggregation",
+      "question": "For companies that produce 'Data center facilities', what is the average ownership percentage (pct) held by investing funds, and what is the maximum single stake recorded across these investments?",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.1233,
+        "faithfulness": 0.1786,
+        "answer_relevancy": 0.0417,
+        "evidence_coverage": 0.0769
+      }
+    },
+    {
+      "index": 291,
+      "complexity": "aggregation",
+      "question": "For the fund 'Aristotle Capital Management, LLC', identify the portfolio company with the lowest recorded ownership percentage (pct), and return the company name alongside that percentage.",
+      "metrics": {
+        "context_recall": 0.1667,
+        "context_relevance": 0.1926,
+        "faithfulness": 0.1481,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 292,
+      "complexity": "aggregation",
+      "question": "Across all news articles mentioning the 'Water Utilities' industry, which source country has published the highest volume of coverage, and what is the exact article count from that country?",
+      "metrics": {
+        "context_recall": 0.3333,
+        "context_relevance": 0.0902,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 293,
+      "complexity": "aggregation",
+      "question": "Within the 'Energy' sector, which industry contains the highest number of operating companies, and what is that exact company count?",
+      "metrics": {
+        "context_recall": 0.4,
+        "context_relevance": 0.1479,
+        "faithfulness": 0.12,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 294,
+      "complexity": "aggregation",
+      "question": "For the resource 'module testing', which fund holds the highest average ownership percentage (pct) across all investments in companies that require this resource, and what is that average?",
+      "metrics": {
+        "context_recall": 0.75,
+        "context_relevance": 0.0,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 295,
+      "complexity": "aggregation",
+      "question": "For the city 'Marlborough', rank the industries represented by its located companies by the total number of distinct persons employed in each industry, returning the top three industries and their respective employee counts.",
+      "metrics": {
+        "context_recall": 0.25,
+        "context_relevance": 0.0924,
+        "faithfulness": 0.0476,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 296,
+      "complexity": "aggregation",
+      "question": "For the 'Energy' sector, calculate the total volume of distinct news articles published about its operating companies, and determine the average number of articles per company.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.0698,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 297,
+      "complexity": "aggregation",
+      "question": "For the fund 'Canada Pension Plan Investment Board', rank its portfolio companies by the total number of distinct persons working for them, returning the top three companies and their respective employee counts.",
+      "metrics": {
+        "context_recall": 0.0,
+        "context_relevance": 0.086,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    },
+    {
+      "index": 298,
+      "complexity": "aggregation",
+      "question": "For the 'Energy' sector, calculate the total number of distinct products produced by its operating companies, and identify the single product manufactured by the highest number of these companies, returning the product name and its corresponding company count.",
+      "metrics": {
+        "context_recall": 0.5,
+        "context_relevance": 0.1129,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "evidence_coverage": 0.0
+      }
+    }
+  ]
+}

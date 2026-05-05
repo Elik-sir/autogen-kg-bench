@@ -1,0 +1,27 @@
+{
+  "results_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\light-rag\\results",
+  "reports_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\light-rag\\results\\eval",
+  "n_files": 1,
+  "n_items": 283,
+  "mean_metrics": {
+    "context_recall": 0.4341,
+    "context_relevance": 0.0188,
+    "faithfulness": 0.4072,
+    "answer_relevancy": 0.2301,
+    "evidence_coverage": 0.5181
+  },
+  "files": [
+    {
+      "source_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\light-rag\\results\\simple.jsonl",
+      "report_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\light-rag\\results\\eval\\simple.eval.json",
+      "n": 283,
+      "mean_metrics": {
+        "context_recall": 0.4341,
+        "context_relevance": 0.0188,
+        "faithfulness": 0.4072,
+        "answer_relevancy": 0.2301,
+        "evidence_coverage": 0.5181
+      }
+    }
+  ]
+}

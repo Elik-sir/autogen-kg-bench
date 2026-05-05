@@ -13,15 +13,12 @@ _VR = Path(__file__).resolve().parent
 load_dotenv(_VR / ".env", override=False)
 
 OPENAI_API_BASE: str = "https://openrouter.ai/api/v1"
-LLM_MODEL: str = "qwen/qwen3-235b-a22b-2507"
-EMBEDDING_MODEL: str = "qwen/qwen3-embedding-8b"
-OPENROUTER_API_KEY: str = ""
-if not (OPENROUTER_API_KEY and OPENROUTER_API_KEY.strip()):
-    OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+LLM_MODEL: str =  os.environ.get("LLM_MODEL", "")
+EMBEDDING_MODEL: str =  os.environ.get("EMBEDDING_MODEL", "")
+
+OPENROUTER_API_KEY: str = os.environ.get("OPENROUTER_API_KEY", "")
 OPENROUTER_HTTP_REFERER: str = ""
 OPENROUTER_APP_TITLE: str = "autogen-kg-bench"
-
-# По умолчанию — тот же корпус, что у light-rag (относительно этой папки)
 CORPUS_FILE: str = "../light-rag/corpus.txt"
 BENCHMARK_FILE: str = ""
 # Пусто → каталог `benchmark_questions_by_type` в корне репозитория (после split-скрипта)
@@ -39,7 +36,7 @@ REBUILD_INDEX: bool = False
 LIMIT_QUESTIONS: int = 0
 
 # Сколько вопросов бенчмарка обрабатывать одновременно (потоки: FAISS + HTTP к LLM/эмбеддингам).
-QUESTION_CONCURRENCY: int = 8
+QUESTION_CONCURRENCY: int = 32
 
 # Зарезервировано под вспомогательные LLM-метрики (пустая строка = тот же LLM_MODEL)
 METRICS_JUDGE_MODEL: str = ""

@@ -15,12 +15,10 @@ load_dotenv(_LIGHT_RAG / ".env", override=False)
 
 # --- API (OpenRouter) ---
 OPENAI_API_BASE: str = "https://openrouter.ai/api/v1"
-LLM_MODEL: str = "qwen/qwen3-235b-a22b-2507"
-EMBEDDING_MODEL: str = "qwen/qwen3-embedding-8b"
+LLM_MODEL: str =  os.environ.get("LLM_MODEL", "")
+EMBEDDING_MODEL: str =  os.environ.get("EMBEDDING_MODEL", "")
+OPENROUTER_API_KEY: str = os.environ.get("OPENROUTER_API_KEY", "")
 EMBEDDING_DIM: int = 4096
-OPENROUTER_API_KEY: str = ""
-if not (OPENROUTER_API_KEY and OPENROUTER_API_KEY.strip()):
-    OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 OPENROUTER_HTTP_REFERER: str = ""
 OPENROUTER_APP_TITLE: str = "autogen-kg-bench"
 
@@ -120,7 +118,7 @@ else:
 # Сколько вопросов опрашивать LightRAG параллельно (asyncio; один экземпляр RAG).
 # Больше — быстее, но сильнее нагрузка на API/хранилище; при сбоях поставьте 1.
 # Env: LIGHTRAG_QUERY_CONCURRENCY
-QUERY_CONCURRENCY: int = 8
+QUERY_CONCURRENCY: int = 32
 
 # Только дорисовать индексацию: вызвать apipeline_process_enqueue_documents без повторного
 # enqueue того же текста (после сбоя документ остаётся FAILED/PENDING в doc_status).

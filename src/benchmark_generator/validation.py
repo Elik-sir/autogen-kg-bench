@@ -99,7 +99,7 @@ def validate_generated_items(
             if not has_precomputed_context:
                 item["ground_truth"] = result_to_ground_truth(question, result)
             complexity = str(item.get("complexity", "")).strip().lower()
-            if complexity.startswith("multi-hop-"):
+            if complexity.startswith("multi-hop-") or complexity == "simple":
                 deterministic_answer = _build_deterministic_answer_for_multi_hop(item)
                 item["answer"] = deterministic_answer or str(item.get("ground_truth", "")).strip()
             else:
@@ -114,9 +114,10 @@ def validate_generated_items(
             seen_normalized_questions.append(normalized_question)
             print(f"[УСПЕХ] Добавлен вопрос ({item['complexity']}): {question}")
             if output_file is not None:
+                from benchmark_generator.pipeline import _save_benchmark_json
+
                 snapshot = [*prefix, *benchmark_dataset]
-                with open(output_file, "w", encoding="utf-8") as f:
-                    json.dump(snapshot, f, ensure_ascii=False, indent=2)
+                _save_benchmark_json(output_file, snapshot)
 
         except Exception as e:
             # Если синтаксическая ошибка в Cypher - бракуем
