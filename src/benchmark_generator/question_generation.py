@@ -198,8 +198,7 @@ MATCH p={path_pattern}
 WHERE elementId(n0) = $anchor_element_id
   AND elementId(n{hop_count}) = $target_element_id
 RETURN
-  DISTINCT coalesce(n{hop_count}.name, n{hop_count}.title, n{hop_count}.ticker, elementId(n{hop_count})) AS target_value,
-  labels(n{hop_count}) AS target_labels
+  DISTINCT coalesce(n{hop_count}.name, n{hop_count}.title, n{hop_count}.ticker, elementId(n{hop_count})) AS target_value
 LIMIT 10
 """.strip()
         params = {
@@ -253,6 +252,30 @@ LIMIT 10
             }
             return mapping.get(rel_type, "indirect relationship signals")
 
+        def _node_key_fact(node: dict[str, Any]) -> str:
+            props = node.get("props") if isinstance(node, dict) else None
+            if not isinstance(props, dict):
+                return ""
+            for key in ("industry", "sector", "country", "region", "city", "date", "year", "category"):
+                value = props.get(key)
+                if value not in (None, ""):
+                    return f"{key}={value}"
+            return ""
+
+        def _path_business_clues(path_nodes: list[dict[str, Any]]) -> list[str]:
+            clues: list[str] = []
+            for node in path_nodes[1:-1]:
+                name = _node_name(node)
+                label = _node_label(node)
+                fact = _node_key_fact(node)
+                if name and name != "the anchor entity":
+                    clues.append(f"{label} {name}")
+                if fact:
+                    clues.append(f"{label} with {fact}")
+                if len(clues) >= 4:
+                    break
+            return clues
+
         def _clean_question(text: str) -> str:
             q = str(text or "").strip()
             q = re.sub(r"^['\"`]+|['\"`]+$", "", q).strip()
@@ -261,6 +284,18 @@ LIMIT 10
             if not q.endswith("?"):
                 q = q.rstrip(".") + "?"
             return q
+
+        def _looks_too_abstract(question_text: str) -> bool:
+            lowered = question_text.lower()
+            banned = (
+                "indirectly connected",
+                "chain of",
+                "intermediate",
+                "through exactly",
+                "relationship chain",
+                "hops",
+            )
+            return any(token in lowered for token in banned)
 
         anchor = nodes[0]
         target = nodes[-1]
@@ -276,6 +311,8 @@ LIMIT 10
             seen_hints.add(hint)
             rel_hints.append(hint)
         hints_text = ", ".join(rel_hints[:3]) if rel_hints else "indirect graph signals"
+        clues = _path_business_clues(nodes)
+        clues_text = "; ".join(clues) if clues else "no extra clues"
 
         existing_block = ""
         existing_list = [str(q).strip() for q in (existing_questions or []) if str(q).strip()]
@@ -284,19 +321,22 @@ LIMIT 10
 
         prompt = f"""
 Write exactly one natural-sounding English benchmark question.
-The question must be answerable by a graph query and must target a {target_label}.
+The question must be answerable by a graph query and must target exactly one {target_label}.
 
 Facts you may use:
 - Anchor entity: {anchor_name}
 - Required reasoning depth: {hop_count} hops
 - Relevant evidence themes: {hints_text}
+- Concrete path clues: {clues_text}
 
 Constraints:
 1) One sentence, English, business-analyst tone.
 2) Do NOT mention graph jargon: graph, node, edge, relationship, hop, cypher, chain.
 3) Do NOT reveal the final target value directly.
-4) Keep the intent aligned with complexity "{complexity}".
-5) Avoid very similar wording to existing questions.
+4) Avoid abstract wording like "indirectly connected", "intermediate firms", or "chain of relationships".
+5) Mention at least one concrete named entity from the facts.
+6) Keep the intent aligned with complexity "{complexity}".
+7) Avoid very similar wording to existing questions.
 
 Existing questions to avoid:
 {existing_block if existing_block else "- (none)"}
@@ -306,11 +346,11 @@ Existing questions to avoid:
             prompt,
         )
         question = _clean_question(response)
-        if question:
+        if question and not _looks_too_abstract(question):
             return question
         return (
-            f"Which {target_label} is indirectly associated with {anchor_name} "
-            f"based on {hints_text}?"
+            f"Which {target_label} is most likely implicated in the same business context as "
+            f"{anchor_name}, considering {hints_text}?"
         )
 
     def generate_aggregation_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
