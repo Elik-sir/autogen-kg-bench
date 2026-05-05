@@ -589,6 +589,77 @@ Existing questions to avoid:
             )
         return out
 
+    def _normalize_subgraph_analytics_question(self, question: str, ctx: dict[str, Any]) -> str:
+        raw = str(question or "").strip()
+        if not raw:
+            return ""
+
+        cleaned = re.sub(r"\s+", " ", raw).strip()
+        cleaned = re.sub(r"^['\"`]+|['\"`]+$", "", cleaned).strip()
+        if cleaned and not cleaned.endswith("?"):
+            cleaned = cleaned.rstrip(".") + "?"
+
+        banned_patterns = (
+            r"^based on (this|the) subgraph\b",
+            r"^based on (this|the) graph\b",
+            r"^in this graph\b",
+            r"^from this graph\b",
+            r"^given this graph\b",
+            r"^analyze (this|the) graph\b",
+            r"^using the graph\b",
+            r"^according to (this|the) topology\b",
+        )
+        contains_graph_jargon = bool(
+            re.search(r"\b(subgraph|graph|node|edge|relationship|topology|hop|path|cypher)\b", cleaned, re.I)
+        )
+        has_banned_start = any(re.search(pattern, cleaned, re.I) for pattern in banned_patterns)
+        if not has_banned_start and not contains_graph_jargon:
+            return cleaned
+
+        anchor_props = ctx.get("anchor_props") if isinstance(ctx, dict) else {}
+        anchor_name = ""
+        if isinstance(anchor_props, dict):
+            for key in ("name", "title", "ticker", "symbol", "id"):
+                value = anchor_props.get(key)
+                if value not in (None, ""):
+                    anchor_name = str(value).strip()
+                    break
+        anchor_name = anchor_name or "the anchor company"
+
+        rewrite_prompt = f"""
+Rewrite the benchmark question into natural business English.
+Keep it difficult and analytical, but remove all graph-meta phrasing.
+
+Constraints:
+1) One sentence question only.
+2) Start naturally; never start with "Based on this subgraph/graph".
+3) Do not use these words: graph, subgraph, node, edge, relationship, topology, hop, path, cypher.
+4) Keep the original analytical intent and entity references.
+5) Mention at least one concrete entity (for example: {anchor_name}).
+
+Original question:
+{cleaned}
+"""
+        rewritten = self.llm.generate_response(
+            "You rewrite benchmark questions into natural analyst language.",
+            rewrite_prompt,
+        )
+        rewritten_clean = re.sub(r"\s+", " ", str(rewritten or "").strip())
+        rewritten_clean = re.sub(r"^['\"`]+|['\"`]+$", "", rewritten_clean).strip()
+        if rewritten_clean and not rewritten_clean.endswith("?"):
+            rewritten_clean = rewritten_clean.rstrip(".") + "?"
+        if rewritten_clean and not re.search(
+            r"\b(subgraph|graph|node|edge|relationship|topology|hop|path|cypher)\b",
+            rewritten_clean,
+            re.I,
+        ):
+            return rewritten_clean
+
+        return (
+            f"If {anchor_name} were suddenly removed from the market context, which cascading impacts would most "
+            f"likely emerge across investor exposure, operational continuity, media narrative, and partner dependencies?"
+        )
+
     def generate_subgraph_deep_analytics_pairs(
         self, schema, num_questions=3, existing_questions=None
     ) -> list[dict[str, Any]]:
@@ -628,6 +699,7 @@ Existing questions to avoid:
                 continue
             question = str(item.get("question", "")).strip()
             target_answer = str(item.get("target_answer", "")).strip()
+            question = self._normalize_subgraph_analytics_question(question, ctx)
             if not question:
                 continue
 

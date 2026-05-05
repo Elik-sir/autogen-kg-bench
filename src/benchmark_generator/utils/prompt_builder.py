@@ -429,12 +429,20 @@ MANDATORY STYLE:
 4) Strictly avoid trivial lookup questions like "Who is connected to X?".
 5) The question must be answerable only from the provided context (no outside knowledge).
 6) Keep output in English.
+7) Write the question as a natural analyst inquiry, not as a meta instruction.
+8) Forbidden starts/patterns in question text: "Based on this subgraph", "Based on the subgraph", "In this graph",
+   "From this graph", "Given this graph", "Analyze the graph", "Using the graph below", "According to the topology".
+9) Do not mention graph jargon in the final question: subgraph, graph, node, edge, relationship, topology, hop, path, cypher.
 
 ALLOWED ANALYTICAL CATEGORIES:
 - Structural Hubs & Bottlenecks: identify central nodes, chokepoints, bridge-like entities.
 - Pattern Recognition & Commonalities: infer shared non-obvious traits among related entities.
 - Impact/Cascading Analysis: "what-if" failure/removal propagation in the dense subgraph.
 - Holistic Summarization: synthesize fragmented signals into one strategic conclusion.
+
+GOOD STYLE EXAMPLE (tone reference only):
+- "If NVIDIA Corp. were to abruptly cease operations, what cascading impacts would most likely occur across investor exposure,
+  technology continuity, media narrative shifts, and partner dependencies, and which entities would be most immediately affected?"
 
 ALREADY GENERATED QUESTIONS (DO NOT REPEAT OR PARAPHRASE):
 {chr(10).join(f"- {q}" for q in (existing_questions or [])[-200:]) if existing_questions else "- (none yet)"}
