@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 from typing import Any
 
@@ -14,9 +15,6 @@ from benchmark_generator.utils.llm_response_parser import parse_qa_pairs_respons
 from benchmark_generator.utils.prompt_builder import (
     build_aggregation_prompts,
     build_cross_branch_prompts,
-    build_multi_hop_2_prompts,
-    build_multi_hop_3_prompts,
-    build_multi_hop_4_prompts,
     build_same_type_common_prompts,
     build_simple_prompts,
     build_subgraph_deep_analytics_prompts,
@@ -33,6 +31,12 @@ class QuestionGenerationEngine:
         self._anchor_order: list[dict[str, Any]] = []
         self._anchor_cursor = 0
         self._multi_hop_path_cursor = 0
+        self._multi_hop_polish = str(os.getenv("BENCHMARK_MULTI_HOP_POLISH", "0")).strip() in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
 
     def _generate_by_prompt_builder(
         self,
@@ -94,13 +98,8 @@ class QuestionGenerationEngine:
     ):
         complexity = f"multi-hop-{hop_count}"
         print(f"Генерация {num_questions} {complexity}-вопросов...")
-        prompt_builders = {
-            2: build_multi_hop_2_prompts,
-            3: build_multi_hop_3_prompts,
-            4: build_multi_hop_4_prompts,
-        }
-        if prompt_builders.get(hop_count) is None:
-            print(f"[ПРОПУСК] Неизвестный hop_count={hop_count}")
+        if hop_count not in (2, 3, 4):
+            print(f"[ПРОПУСК] Неизвестный или неподдерживаемый hop_count={hop_count}")
             return []
 
         out: list[dict[str, Any]] = []
@@ -133,6 +132,12 @@ class QuestionGenerationEngine:
                 existing_questions=existing_questions,
             )
             if not question:
+                continue
+            if not self._passes_multi_hop_question_quality_gate(
+                question=question,
+                path=path,
+                hop_count=hop_count,
+            ):
                 continue
             item: dict[str, Any] = {
                 "question": question,
@@ -188,22 +193,19 @@ class QuestionGenerationEngine:
             pattern_parts.append(f"(n{idx + 1}{label_hint})")
 
         anchor_eid = str((nodes[0] or {}).get("element_id") or "").strip()
-        target_eid = str((nodes[-1] or {}).get("element_id") or "").strip()
-        if not anchor_eid or not target_eid:
+        if not anchor_eid:
             return None
         hop_count = len(rels)
         path_pattern = "".join(pattern_parts)
         cypher = f"""
 MATCH p={path_pattern}
 WHERE elementId(n0) = $anchor_element_id
-  AND elementId(n{hop_count}) = $target_element_id
 RETURN
   DISTINCT coalesce(n{hop_count}.name, n{hop_count}.title, n{hop_count}.ticker, elementId(n{hop_count})) AS target_value
 LIMIT 10
 """.strip()
         params = {
             "anchor_element_id": anchor_eid,
-            "target_element_id": target_eid,
         }
         return cypher, params
 
@@ -222,136 +224,162 @@ LIMIT 10
         if len(nodes) != len(rels) + 1 or len(nodes) < 2:
             return ""
 
-        def _node_label(node: dict[str, Any]) -> str:
-            labels = node.get("labels") if isinstance(node, dict) else None
-            if isinstance(labels, list) and labels:
-                return str(labels[0])
-            return "entity"
-
-        def _node_name(node: dict[str, Any]) -> str:
-            props = node.get("props") if isinstance(node, dict) else None
-            if not isinstance(props, dict):
-                return "the anchor entity"
-            for key in ("name", "title", "ticker", "id", "uuid"):
-                value = props.get(key)
-                if value not in (None, ""):
-                    return str(value)
-            return "the anchor entity"
-
-        def _rel_hint(rel_type: str) -> str:
-            mapping = {
-                "INVESTED_IN": "investment links",
-                "OWNS": "ownership ties",
-                "CEO_OF": "executive leadership ties",
-                "MENTIONED_IN": "news co-mention signals",
-                "OPERATES_IN_INDUSTRY": "industry affiliation",
-                "PRODUCES": "product portfolio relations",
-                "WORKS_AT": "employment links",
-                "SUPPLIES": "supply-chain links",
-                "PARTNERS_WITH": "partnership signals",
-            }
-            return mapping.get(rel_type, "indirect relationship signals")
-
-        def _node_key_fact(node: dict[str, Any]) -> str:
-            props = node.get("props") if isinstance(node, dict) else None
-            if not isinstance(props, dict):
-                return ""
-            for key in ("industry", "sector", "country", "region", "city", "date", "year", "category"):
-                value = props.get(key)
-                if value not in (None, ""):
-                    return f"{key}={value}"
-            return ""
-
-        def _path_business_clues(path_nodes: list[dict[str, Any]]) -> list[str]:
-            clues: list[str] = []
-            for node in path_nodes[1:-1]:
-                name = _node_name(node)
-                label = _node_label(node)
-                fact = _node_key_fact(node)
-                if name and name != "the anchor entity":
-                    clues.append(f"{label} {name}")
-                if fact:
-                    clues.append(f"{label} with {fact}")
-                if len(clues) >= 4:
-                    break
-            return clues
-
-        def _clean_question(text: str) -> str:
-            q = str(text or "").strip()
-            q = re.sub(r"^['\"`]+|['\"`]+$", "", q).strip()
-            if "\n" in q:
-                q = q.splitlines()[0].strip()
-            if not q.endswith("?"):
-                q = q.rstrip(".") + "?"
-            return q
-
-        def _looks_too_abstract(question_text: str) -> bool:
-            lowered = question_text.lower()
-            banned = (
-                "indirectly connected",
-                "chain of",
-                "intermediate",
-                "through exactly",
-                "relationship chain",
-                "hops",
-            )
-            return any(token in lowered for token in banned)
-
         anchor = nodes[0]
         target = nodes[-1]
-        anchor_name = _node_name(anchor)
-        target_label = _node_label(target)
-        rel_types = [str((r or {}).get("type") or "RELATED_TO") for r in rels]
-        rel_hints = []
-        seen_hints: set[str] = set()
-        for rel_type in rel_types:
-            hint = _rel_hint(rel_type)
-            if hint in seen_hints:
-                continue
-            seen_hints.add(hint)
-            rel_hints.append(hint)
-        hints_text = ", ".join(rel_hints[:3]) if rel_hints else "indirect graph signals"
-        clues = _path_business_clues(nodes)
-        clues_text = "; ".join(clues) if clues else "no extra clues"
+        anchor_name = self._node_display_name(anchor)
+        target_label = self._node_primary_label(target)
+        rel_chain = [str((rel or {}).get("type") or "").strip() for rel in rels]
+        if not anchor_name or not rel_chain:
+            return ""
 
+        rel_phrase = ", then ".join(self._humanize_rel_type(rel_type) for rel_type in rel_chain if rel_type)
+        if not rel_phrase:
+            return ""
+        target_phrase = self._target_phrase(target_label)
+        template_question = (
+            f"Which {target_phrase} are connected to {anchor_name} through {rel_phrase}?"
+        )
+        question = self._normalize_question_text(template_question)
+        if not question:
+            return ""
+        if self._multi_hop_polish and self.llm is not None:
+            polished = self._polish_multi_hop_question(
+                question=question,
+                anchor_name=anchor_name,
+                rel_chain=rel_chain,
+                target_label=target_label,
+                complexity=complexity,
+                existing_questions=existing_questions,
+            )
+            if polished:
+                question = polished
+        return question
+
+    def _node_display_name(self, node: dict[str, Any]) -> str:
+        if not isinstance(node, dict):
+            return ""
+        display_name = str(node.get("display_name") or "").strip()
+        if display_name:
+            return display_name
+        props = node.get("props") if isinstance(node.get("props"), dict) else {}
+        for key in ("name", "title", "ticker", "id", "uuid"):
+            value = str(props.get(key) or "").strip()
+            if value:
+                return value
+        return ""
+
+    def _node_primary_label(self, node: dict[str, Any]) -> str:
+        if not isinstance(node, dict):
+            return "Entity"
+        labels = node.get("labels")
+        if isinstance(labels, list) and labels:
+            first = str(labels[0]).strip()
+            if first:
+                return first
+        return "Entity"
+
+    def _humanize_rel_type(self, rel_type: str) -> str:
+        text = str(rel_type or "").strip().replace("_", " ").lower()
+        return text if text else "related to"
+
+    def _target_phrase(self, target_label: str) -> str:
+        label = str(target_label or "Entity").strip()
+        mapping = {
+            "Company": "companies",
+            "NewsArticle": "news articles",
+            "Person": "people",
+            "InstitutionalInvestor": "institutional investors",
+            "Sector": "sectors",
+            "Industry": "industries",
+            "Country": "countries",
+        }
+        return mapping.get(label, f"{label.lower()} entities")
+
+    def _normalize_question_text(self, question: str) -> str:
+        text = str(question or "").strip().strip('"').strip("'")
+        text = re.sub(r"\s+", " ", text)
+        if not text:
+            return ""
+        if not text.endswith("?"):
+            text = text.rstrip(".") + "?"
+        return text
+
+    def _polish_multi_hop_question(
+        self,
+        *,
+        question: str,
+        anchor_name: str,
+        rel_chain: list[str],
+        target_label: str,
+        complexity: str,
+        existing_questions=None,
+    ) -> str:
+        if not question:
+            return ""
         existing_block = ""
-        existing_list = [str(q).strip() for q in (existing_questions or []) if str(q).strip()]
-        if existing_list:
-            existing_block = "\n".join(f"- {q}" for q in existing_list[-50:])
+        if existing_questions:
+            formatted = chr(10).join(f"- {q}" for q in existing_questions[-100:])
+            existing_block = f"\nAlready generated questions (avoid duplicates):\n{formatted}\n"
+        sys_prompt = (
+            "You rewrite benchmark questions for clarity. Keep all facts unchanged and stay concise."
+        )
+        user_prompt = f"""
+Rewrite the question to sound natural and concise.
+Do not add any new entities, dates, or facts.
+Must keep the same anchor entity and relation chain.
+No graph jargon (node, edge, hop, path, cypher, graph).
+Target label: {target_label}
+Complexity: {complexity}
+Anchor entity: {anchor_name}
+Relation chain: {rel_chain}
+{existing_block}
+Question:
+{question}
 
-        prompt = f"""
-Write exactly one natural-sounding English benchmark question.
-The question must be answerable by a graph query and must target exactly one {target_label}.
-
-Facts you may use:
-- Anchor entity: {anchor_name}
-- Required reasoning depth: {hop_count} hops
-- Relevant evidence themes: {hints_text}
-- Concrete path clues: {clues_text}
-
-Constraints:
-1) One sentence, English, business-analyst tone.
-2) Do NOT mention graph jargon: graph, node, edge, relationship, hop, cypher, chain.
-3) Do NOT reveal the final target value directly.
-4) Avoid abstract wording like "indirectly connected", "intermediate firms", or "chain of relationships".
-5) Mention at least one concrete named entity from the facts.
-6) Keep the intent aligned with complexity "{complexity}".
-7) Avoid very similar wording to existing questions.
-
-Existing questions to avoid:
-{existing_block if existing_block else "- (none)"}
+Return only the rewritten question.
 """
-        response = self.llm.generate_response(
-            "You create natural benchmark questions for enterprise graph QA.",
-            prompt,
-        )
-        question = _clean_question(response)
-        if question and not _looks_too_abstract(question):
+        try:
+            response = self.llm.generate_response(sys_prompt, user_prompt)
+        except Exception:
             return question
-        return (
-            f"Which {target_label} is most likely implicated in the same business context as "
-            f"{anchor_name}, considering {hints_text}?"
+        return self._normalize_question_text(response)
+
+    def _passes_multi_hop_question_quality_gate(
+        self,
+        *,
+        question: str,
+        path: dict[str, Any],
+        hop_count: int,
+    ) -> bool:
+        text = str(question or "").strip()
+        if not text:
+            return False
+        if len(text) > 240:
+            return False
+        if len(text.split()) > 38:
+            return False
+        lowered = text.lower()
+        banned_terms = (" node ", " edge ", " hop ", " path ", "cypher", "graph ")
+        padded = f" {lowered} "
+        if any(term in padded for term in banned_terms):
+            return False
+        banned_fragments = (
+            "shared strategic interest alongside",
+            "through a series of",
+            "indirectly linked to",
         )
+        if any(fragment in lowered for fragment in banned_fragments):
+            return False
+        nodes = path.get("nodes") if isinstance(path, dict) else None
+        if not isinstance(nodes, list) or len(nodes) < 2:
+            return False
+        anchor_name = self._node_display_name(nodes[0]).lower()
+        if anchor_name and anchor_name not in lowered:
+            return False
+        rels = path.get("relationships") if isinstance(path, dict) else None
+        if not isinstance(rels, list) or len(rels) != hop_count:
+            return False
+        return True
 
     def generate_aggregation_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} aggregation-вопросов...")

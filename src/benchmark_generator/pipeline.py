@@ -154,7 +154,9 @@ def run_generation_pipeline(
         print(f"- {type_name}: {per_type_targets[type_name]}")
 
     jobs = []
+    generator_fn_by_type = {}
     for type_name, generator_fn, batch_size in generation_plan:
+        generator_fn_by_type[type_name] = generator_fn
         target_for_type = per_type_targets[type_name]
         if target_for_type <= 0:
             continue
@@ -180,6 +182,60 @@ def run_generation_pipeline(
         for future in concurrent.futures.as_completed(futures):
             type_name, collected_items = future.result()
             type_results[type_name] = collected_items
+
+    def _count_for_type(items, type_name: str) -> int:
+        return sum(1 for item in (items or []) if str(item.get("complexity", "")).strip() == type_name)
+
+    multihop_shortfall = 0
+    for short_type in ("multi-hop-3", "multi-hop-4"):
+        target = int(per_type_targets.get(short_type, 0))
+        collected = _count_for_type(type_results.get(short_type, []), short_type)
+        if collected < target:
+            multihop_shortfall += target - collected
+    if multihop_shortfall > 0 and int(per_type_targets.get("multi-hop-2", 0)) > 0:
+        print(
+            f"[FALLBACK] Недобор multi-hop-3/4 = {multihop_shortfall}. "
+            "Пытаемся компенсировать вопросами multi-hop-2."
+        )
+        mh2_generator = generator_fn_by_type.get("multi-hop-2")
+        if mh2_generator is not None:
+            mh2_items = list(type_results.get("multi-hop-2", []))
+            seen_exact = {
+                normalize_question_text(str(item.get("question", "")).strip())
+                for item in mh2_items
+                if str(item.get("question", "")).strip()
+            }
+            seen_normalized = [q for q in seen_exact if q]
+            added = 0
+            attempts = 0
+            max_attempts = max(multihop_shortfall * 6, 14)
+            while added < multihop_shortfall and attempts < max_attempts:
+                attempts += 1
+                remaining = multihop_shortfall - added
+                request_n = min(3, remaining)
+                existing_questions = [
+                    str(item.get("question", "")).strip()
+                    for item in mh2_items
+                    if str(item.get("question", "")).strip()
+                ]
+                generated = mh2_generator(request_n, existing_questions=existing_questions)
+                if isinstance(generated, dict):
+                    generated = [generated]
+                valid = validate_fn(
+                    generated_items=generated or [],
+                    seen_exact_questions=seen_exact,
+                    seen_normalized_questions=seen_normalized,
+                    output_file=None,
+                    existing_benchmark=mh2_items,
+                )
+                mh2_items.extend(valid)
+                added_now = _count_for_type(valid, "multi-hop-2")
+                added += added_now
+                print(
+                    f"[FALLBACK-ПРОГРЕСС] multi-hop-2: +{added_now}, "
+                    f"итого {added}/{multihop_shortfall} (попытка {attempts}/{max_attempts})"
+                )
+            type_results["multi-hop-2"] = mh2_items
 
     seen_exact_questions = set()
     seen_normalized_questions = []

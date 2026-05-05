@@ -155,10 +155,13 @@ def _extract_unique_paths_for_anchor(
         element_id: elementId(n),
         node_id: null,
         labels: labels(n),
-        props: properties(n)
+        props: properties(n),
+        display_name: coalesce(n.name, n.title, n.ticker, n.id, n.uuid, elementId(n))
       }}] AS nodes,
       [r IN relationships(p) | {{
-        type: type(r)
+        type: type(r),
+        start_element_id: elementId(startNode(r)),
+        end_element_id: elementId(endNode(r))
       }}] AS relationships
     """
     rows = db_manager.run_query(
@@ -178,6 +181,21 @@ def _extract_unique_paths_for_anchor(
             continue
         if len(nodes) != safe_hop_count + 1:
             continue
+        for idx, rel in enumerate(rels):
+            if not isinstance(rel, dict):
+                continue
+            left = nodes[idx] if idx < len(nodes) else {}
+            right = nodes[idx + 1] if idx + 1 < len(nodes) else {}
+            left_id = str((left or {}).get("element_id") or "").strip()
+            right_id = str((right or {}).get("element_id") or "").strip()
+            start_id = str(rel.get("start_element_id") or "").strip()
+            end_id = str(rel.get("end_element_id") or "").strip()
+            if start_id == left_id and end_id == right_id:
+                rel["direction_hint"] = "outgoing"
+            elif start_id == right_id and end_id == left_id:
+                rel["direction_hint"] = "incoming"
+            else:
+                rel["direction_hint"] = "undirected"
         out.append({"nodes": nodes, "relationships": rels})
     return out
 

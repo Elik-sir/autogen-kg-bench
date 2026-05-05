@@ -31,6 +31,34 @@ def _build_deterministic_answer_for_multi_hop(item: dict) -> str:
     return "; ".join(deduped)
 
 
+def _is_balanced_multi_hop_question(question: str) -> tuple[bool, str]:
+    text = str(question or "").strip()
+    if not text:
+        return False, "empty"
+    if len(text) > 240:
+        return False, "too_long"
+    if len(text.split()) > 40:
+        return False, "too_wordy"
+    lowered = text.lower()
+    padded = f" {lowered} "
+    banned_terms = (" node ", " edge ", " hop ", " path ", "cypher", "graph ")
+    if any(term in padded for term in banned_terms):
+        return False, "graph_jargon"
+    banned_fragments = (
+        "through a series of",
+        "shared strategic interest alongside",
+        "indirectly linked to",
+    )
+    if any(fragment in lowered for fragment in banned_fragments):
+        return False, "story_like"
+    comma_count = text.count(",")
+    if comma_count > 4:
+        return False, "overloaded_sentence"
+    if "?" not in text:
+        return False, "not_question"
+    return True, ""
+
+
 def validate_generated_items(
     *,
     db,
@@ -74,6 +102,13 @@ def validate_generated_items(
                 print(f"[ПРОПУСК] Тривиальный запрос (WHERE/RETURN одного поля): {question}")
                 continue
 
+            complexity = str(item.get("complexity", "")).strip().lower()
+            if complexity.startswith("multi-hop-"):
+                is_ok, reason = _is_balanced_multi_hop_question(question)
+                if not is_ok:
+                    print(f"[ПРОПУСК] Низкое качество multi-hop вопроса ({reason}): {question}")
+                    continue
+
             result = []
             if cypher_query:
                 if not debug_only_cypher:
@@ -98,7 +133,6 @@ def validate_generated_items(
             # Если ground_truth уже подготовлен заранее, используем его.
             if not has_precomputed_context:
                 item["ground_truth"] = result_to_ground_truth(question, result)
-            complexity = str(item.get("complexity", "")).strip().lower()
             if complexity.startswith("multi-hop-"):
                 deterministic_answer = _build_deterministic_answer_for_multi_hop(item)
                 item["answer"] = deterministic_answer or str(item.get("ground_truth", "")).strip()

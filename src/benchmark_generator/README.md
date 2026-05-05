@@ -81,6 +81,7 @@ src/benchmark_generator/
 - Prompt/context слой: `question_generation.py` -> `utils/*`, `prompt_settings.py`
 
 Такое разделение сделано, чтобы:
+
 - изолировать бизнес-шаги (генерация, валидация, orchestration),
 - упростить точечные правки и тесты,
 - избежать “god-file” с неявными связями.
