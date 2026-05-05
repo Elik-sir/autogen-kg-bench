@@ -1,0 +1,103 @@
+[
+  {
+    "complexity": "simple",
+    "question": "What is the headquarters of Microsoft Corp.?",
+    "cypher": "MATCH (c:Company {name: 'Microsoft Corp.'}) RETURN c.headquarters LIMIT 10",
+    "ground_truth": "None",
+    "answer": "No data for this query."
+  },
+  {
+    "complexity": "multi-hop-2",
+    "question": "Which technology does Pfizer Inc. indirectly leverage through its use of Microsoft Corp.'s services?",
+    "cypher": "MATCH (c:Company {name: 'Pfizer Inc.'})-[:USES_SERVICE]->(m:Company {name: 'Microsoft Corp.'})-[:DEVELOPES]->(t:Technology) RETURN t.name LIMIT 10",
+    "ground_truth": "Generative AI",
+    "answer": "Generative AI"
+  },
+  {
+    "complexity": "multi-hop-2",
+    "question": "Which technology is developed by a company in which BlackRock Inc. has invested?",
+    "cypher": "MATCH (ii:InstitutionalInvestor {name: 'BlackRock Inc.'})-[:INVESTED_IN]->(c:Company)-[:DEVELOPES]->(t:Technology) RETURN t.name LIMIT 10",
+    "ground_truth": "Electric Vehicles; Generative AI; Generative AI",
+    "answer": "Electric Vehicles; Generative AI; Generative AI"
+  },
+  {
+    "complexity": "multi-hop-3",
+    "question": "Which technology is developed by a company that partners with a company using services from Pfizer Inc.?",
+    "cypher": "MATCH (c1:Company {ticker: 'PFE'})-[:USES_SERVICE]->(c2:Company)-[p:PARTNERS_WITH]->(c3:Company)-[:DEVELOPES]->(t:Technology) RETURN t.name LIMIT 10",
+    "ground_truth": "Generative AI",
+    "answer": "Generative AI"
+  },
+  {
+    "complexity": "multi-hop-3",
+    "question": "Which technology is developed by a company that partners with the company led by Satya Nadella?",
+    "cypher": "MATCH (p:Person {name: 'Satya Nadella'})-[:CEO_OF]->(c1:Company)-[:PARTNERS_WITH]->(c2:Company)-[:DEVELOPES]->(t:Technology) RETURN t.name LIMIT 10",
+    "ground_truth": "Generative AI",
+    "answer": "Generative AI"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Which institutional investor has the highest number of news articles mentioning them, and how many articles are there?",
+    "cypher": "MATCH (ii:InstitutionalInvestor)-[:MENTIONED_IN]->(na:NewsArticle) RETURN ii.name, COUNT(na) AS article_count ORDER BY article_count DESC LIMIT 1",
+    "ground_truth": "BlackRock Inc., 1",
+    "answer": "BlackRock Inc., 1"
+  },
+  {
+    "complexity": "cross-branch",
+    "question": "What is the sentiment of the news article that mentions a company which both develops a technology related to artificial intelligence and competes with another company in the technology sector?",
+    "cypher": "MATCH (c:Company)-[:DEVELOPES]->(:Technology {name: 'Generative AI'}), (c)-[:COMPETES_WITH]->(:Company)-[:BELONGS_TO]->(:Sector {name: 'Technology'}), (c)-[:MENTIONED_IN]->(n:NewsArticle) RETURN n.sentiment LIMIT 10",
+    "ground_truth": "positive; positive; positive; positive; positive",
+    "answer": "positive"
+  },
+  {
+    "complexity": "subgraph-deep-analytics",
+    "question": "Which recent strategic development involving Microsoft highlights its focus on strengthening its position in the AI market, and which key partner is directly involved in this initiative?",
+    "answer": "Microsoft's recent strategic development involving a major AI infrastructure partnership highlights its focus on strengthening its position in the AI market. The key partner directly involved in this initiative is NVIDIA Corp.",
+    "analysis_focus": [
+      "MENTIONED_IN",
+      "PARTNERS_WITH",
+      "DEVELOPES"
+    ],
+    "cypher": "MATCH (c)\nWHERE elementId(c) = $anchor_id\nOPTIONAL MATCH (c)-[r1]-(n1)\nWITH c, collect(DISTINCT {\n  rel_type: type(r1),\n  node_labels: labels(n1),\n  node_props: properties(n1)\n})[..20] AS hop1\nOPTIONAL MATCH (c)-[r_a]-(mid)-[r_b]-(n2)\nWITH c, hop1, collect(DISTINCT {\n  rel_type_1: type(r_a),\n  mid_labels: labels(mid),\n  mid_props: properties(mid),\n  rel_type_2: type(r_b),\n  node2_labels: labels(n2),\n  node2_props: properties(n2)\n})[..30] AS hop2\nRETURN properties(c) AS anchor_props, labels(c) AS anchor_labels, hop1, hop2",
+    "params": {
+      "anchor_id": "4:51551c3b-4f01-46b1-b81e-86b8bf366bd1:3"
+    },
+    "debug_only_cypher": true,
+    "ground_truth": "KEY CONTEXT SIGNALS:\n- anchor: {'ticker': 'MSFT', 'name': 'Microsoft Corp.'}\n- signal: BELONGS_TO -> {'name': 'Technology'}\n- signal: CEO_OF -> {'name': 'Satya Nadella'}\n- signal: COMPETES_WITH -> {'ticker': 'AAPL', 'name': 'Apple Inc.'}\n- signal: DEVELOPES -> {'name': 'Generative AI'}\n- signal: INVESTED_IN -> {'name': 'Vanguard Group'}\n- signal: INVESTED_IN -> {'name': 'BlackRock Inc.'}\n- signal: MENTIONED_IN -> {'sentiment': 'positive', 'title': 'Microsoft and NVIDIA announce major AI infrastructure partnership', 'date': '2024-03-15'}\n- signal: PARTNERS_WITH -> {'ticker': 'NVDA', 'name': 'NVIDIA Corp.'}\n- signal: USES_SERVICE -> {'ticker': 'PFE', 'name': 'Pfizer Inc.'}\n- chain: BELONGS_TO -> BELONGS_TO -> {'ticker': 'TSLA', 'name': 'Tesla Inc.'}\n- chain: BELONGS_TO -> BELONGS_TO -> {'ticker': 'NVDA', 'name': 'NVIDIA Corp.'}\n- chain: BELONGS_TO -> BELONGS_TO -> {'ticker': 'AAPL', 'name': 'Apple Inc.'}\n- chain: CEO_OF -> MENTIONED_IN -> {'sentiment': 'positive', 'title': 'Microsoft and NVIDIA announce major AI infrastructure partnership', 'date': '2024-03-15'}\n- chain: COMPETES_WITH -> BELONGS_TO -> {'name': 'Technology'}",
+    "subgraph_context": "ANCHOR:\n- labels: ['Company']\n- props: { ticker='MSFT', name='Microsoft Corp.', market_cap_bln=3100 }\n\nHOP1 RELATIONS:\n- (['Company']) -[:BELONGS_TO]- (['Sector']) { name='Technology', weight_in_sp500=29.5 }\n- (['Company']) -[:CEO_OF]- (['Person']) { name='Satya Nadella', age=56 }\n- (['Company']) -[:COMPETES_WITH]- (['Company']) { ticker='AAPL', name='Apple Inc.', market_cap_bln=3000 }\n- (['Company']) -[:DEVELOPES]- (['Technology']) { maturity='High Growth', name='Generative AI' }\n- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor']) { aum_trln=8.0, name='Vanguard Group' }\n- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor']) { aum_trln=10.0, name='BlackRock Inc.' }\n- (['Company']) -[:MENTIONED_IN]- (['NewsArticle']) { id='N001', sentiment='positive', title='Microsoft and NVIDIA announce major AI infrastructure partnership', date='2024-03-15' }\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) { ticker='NVDA', name='NVIDIA Corp.', market_cap_bln=2200 }\n- (['Company']) -[:USES_SERVICE]- (['Company']) { ticker='PFE', name='Pfizer Inc.', market_cap_bln=150, headquarters='New York, NY' }\n\nHOP2 RELATIONS:\n- (['Company']) -[:BELONGS_TO]- (['Sector']) -[:BELONGS_TO]- (['Company'])\n- (['Company']) -[:BELONGS_TO]- (['Sector']) -[:BELONGS_TO]- (['Company'])\n- (['Company']) -[:BELONGS_TO]- (['Sector']) -[:BELONGS_TO]- (['Company'])\n- (['Company']) -[:CEO_OF]- (['Person']) -[:MENTIONED_IN]- (['NewsArticle'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:BELONGS_TO]- (['Sector'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:CEO_OF]- (['Person'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor'])\n- (['Company']) -[:DEVELOPES]- (['Technology']) -[:DEVELOPES]- (['Company'])\n- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor']) -[:INVESTED_IN]- (['Company'])\n- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor']) -[:INVESTED_IN]- (['Company'])\n- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor']) -[:INVESTED_IN]- (['Company'])\n- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor']) -[:INVESTED_IN]- (['Company'])\n- (['Company']) -[:MENTIONED_IN]- (['NewsArticle']) -[:MENTIONED_IN]- (['Person'])\n- (['Company']) -[:MENTIONED_IN]- (['NewsArticle']) -[:MENTIONED_IN]- (['Company'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:BELONGS_TO]- (['Sector'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:CEO_OF]- (['Person'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:COMPETES_WITH]- (['Company'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:DEVELOPES]- (['Technology'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:MENTIONED_IN]- (['NewsArticle'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:SUPPLIES_FROM]- (['Company'])\n- (['Company']) -[:USES_SERVICE]- (['Company']) -[:BELONGS_TO]- (['Sector'])\n- (['Company']) -[:USES_SERVICE]- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor'])\n- (['Company']) -[:USES_SERVICE]- (['Company']) -[:PRODUCES]- (['Product'])"
+  },
+  {
+    "complexity": "subgraph-deep-analytics",
+    "question": "Which major technology company is both a partner and indirect industry peer to NVIDIA, sharing a competitive landscape shaped by AI development and executive leadership connections?",
+    "answer": "Microsoft Corp.",
+    "analysis_focus": [
+      "PARTNERS_WITH",
+      "COMPETES_WITH",
+      "COMPETES_WITH -> CEO_OF"
+    ],
+    "cypher": "MATCH (c)\nWHERE elementId(c) = $anchor_id\nOPTIONAL MATCH (c)-[r1]-(n1)\nWITH c, collect(DISTINCT {\n  rel_type: type(r1),\n  node_labels: labels(n1),\n  node_props: properties(n1)\n})[..20] AS hop1\nOPTIONAL MATCH (c)-[r_a]-(mid)-[r_b]-(n2)\nWITH c, hop1, collect(DISTINCT {\n  rel_type_1: type(r_a),\n  mid_labels: labels(mid),\n  mid_props: properties(mid),\n  rel_type_2: type(r_b),\n  node2_labels: labels(n2),\n  node2_props: properties(n2)\n})[..30] AS hop2\nRETURN properties(c) AS anchor_props, labels(c) AS anchor_labels, hop1, hop2",
+    "params": {
+      "anchor_id": "4:51551c3b-4f01-46b1-b81e-86b8bf366bd1:4"
+    },
+    "debug_only_cypher": true,
+    "ground_truth": "KEY CONTEXT SIGNALS:\n- anchor: {'ticker': 'NVDA', 'name': 'NVIDIA Corp.'}\n- signal: BELONGS_TO -> {'name': 'Technology'}\n- signal: CEO_OF -> {'name': 'Jensen Huang'}\n- signal: COMPETES_WITH -> {'ticker': 'TSLA', 'name': 'Tesla Inc.'}\n- signal: DEVELOPES -> {'name': 'Generative AI'}\n- signal: INVESTED_IN -> {'name': 'BlackRock Inc.'}\n- signal: MENTIONED_IN -> {'sentiment': 'positive', 'title': 'Microsoft and NVIDIA announce major AI infrastructure partnership', 'date': '2024-03-15'}\n- signal: PARTNERS_WITH -> {'ticker': 'MSFT', 'name': 'Microsoft Corp.'}\n- signal: SUPPLIES_FROM -> {'ticker': 'TSLA', 'name': 'Tesla Inc.'}\n- chain: BELONGS_TO -> BELONGS_TO -> {'ticker': 'TSLA', 'name': 'Tesla Inc.'}\n- chain: BELONGS_TO -> BELONGS_TO -> {'ticker': 'MSFT', 'name': 'Microsoft Corp.'}\n- chain: BELONGS_TO -> BELONGS_TO -> {'ticker': 'AAPL', 'name': 'Apple Inc.'}\n- chain: COMPETES_WITH -> BELONGS_TO -> {'name': 'Technology'}\n- chain: COMPETES_WITH -> CEO_OF -> {'name': 'Elon Musk'}\n- chain: COMPETES_WITH -> DEVELOPES -> {'name': 'Electric Vehicles'}",
+    "subgraph_context": "ANCHOR:\n- labels: ['Company']\n- props: { ticker='NVDA', name='NVIDIA Corp.', market_cap_bln=2200 }\n\nHOP1 RELATIONS:\n- (['Company']) -[:BELONGS_TO]- (['Sector']) { name='Technology', weight_in_sp500=29.5 }\n- (['Company']) -[:CEO_OF]- (['Person']) { name='Jensen Huang', age=61 }\n- (['Company']) -[:COMPETES_WITH]- (['Company']) { ticker='TSLA', name='Tesla Inc.', market_cap_bln=550, headquarters='Austin, TX' }\n- (['Company']) -[:DEVELOPES]- (['Technology']) { maturity='High Growth', name='Generative AI' }\n- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor']) { aum_trln=10.0, name='BlackRock Inc.' }\n- (['Company']) -[:MENTIONED_IN]- (['NewsArticle']) { id='N001', sentiment='positive', title='Microsoft and NVIDIA announce major AI infrastructure partnership', date='2024-03-15' }\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) { ticker='MSFT', name='Microsoft Corp.', market_cap_bln=3100 }\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) { ticker='TSLA', name='Tesla Inc.', market_cap_bln=550, headquarters='Austin, TX' }\n\nHOP2 RELATIONS:\n- (['Company']) -[:BELONGS_TO]- (['Sector']) -[:BELONGS_TO]- (['Company'])\n- (['Company']) -[:BELONGS_TO]- (['Sector']) -[:BELONGS_TO]- (['Company'])\n- (['Company']) -[:BELONGS_TO]- (['Sector']) -[:BELONGS_TO]- (['Company'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:BELONGS_TO]- (['Sector'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:CEO_OF]- (['Person'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:DEVELOPES]- (['Technology'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:SUPPLIES_FROM]- (['Company'])\n- (['Company']) -[:DEVELOPES]- (['Technology']) -[:DEVELOPES]- (['Company'])\n- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor']) -[:INVESTED_IN]- (['Company'])\n- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor']) -[:INVESTED_IN]- (['Company'])\n- (['Company']) -[:MENTIONED_IN]- (['NewsArticle']) -[:MENTIONED_IN]- (['Person'])\n- (['Company']) -[:MENTIONED_IN]- (['NewsArticle']) -[:MENTIONED_IN]- (['Company'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:BELONGS_TO]- (['Sector'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:CEO_OF]- (['Person'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:COMPETES_WITH]- (['Company'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:DEVELOPES]- (['Technology'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:MENTIONED_IN]- (['NewsArticle'])\n- (['Company']) -[:PARTNERS_WITH]- (['Company']) -[:USES_SERVICE]- (['Company'])\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) -[:BELONGS_TO]- (['Sector'])\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) -[:CEO_OF]- (['Person'])\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) -[:COMPETES_WITH]- (['Company'])\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) -[:DEVELOPES]- (['Technology'])\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor'])"
+  },
+  {
+    "complexity": "subgraph-deep-analytics",
+    "question": "Which major technology company competes with Tesla, shares a key institutional investor with it, and is led by a CEO with a different name from Elon Musk, while also being involved in developing generative AI?",
+    "answer": "NVIDIA Corp.",
+    "analysis_focus": [
+      "COMPETES_WITH",
+      "INVESTED_IN",
+      "CEO_OF",
+      "DEVELOPES"
+    ],
+    "cypher": "MATCH (c)\nWHERE elementId(c) = $anchor_id\nOPTIONAL MATCH (c)-[r1]-(n1)\nWITH c, collect(DISTINCT {\n  rel_type: type(r1),\n  node_labels: labels(n1),\n  node_props: properties(n1)\n})[..20] AS hop1\nOPTIONAL MATCH (c)-[r_a]-(mid)-[r_b]-(n2)\nWITH c, hop1, collect(DISTINCT {\n  rel_type_1: type(r_a),\n  mid_labels: labels(mid),\n  mid_props: properties(mid),\n  rel_type_2: type(r_b),\n  node2_labels: labels(n2),\n  node2_props: properties(n2)\n})[..30] AS hop2\nRETURN properties(c) AS anchor_props, labels(c) AS anchor_labels, hop1, hop2",
+    "params": {
+      "anchor_id": "4:51551c3b-4f01-46b1-b81e-86b8bf366bd1:23"
+    },
+    "debug_only_cypher": true,
+    "ground_truth": "KEY CONTEXT SIGNALS:\n- anchor: {'ticker': 'TSLA', 'name': 'Tesla Inc.'}\n- signal: BELONGS_TO -> {'name': 'Technology'}\n- signal: CEO_OF -> {'name': 'Elon Musk'}\n- signal: COMPETES_WITH -> {'ticker': 'NVDA', 'name': 'NVIDIA Corp.'}\n- signal: DEVELOPES -> {'name': 'Electric Vehicles'}\n- signal: INVESTED_IN -> {'name': 'BlackRock Inc.'}\n- signal: SUPPLIES_FROM -> {'ticker': 'NVDA', 'name': 'NVIDIA Corp.'}\n- chain: BELONGS_TO -> BELONGS_TO -> {'ticker': 'NVDA', 'name': 'NVIDIA Corp.'}\n- chain: BELONGS_TO -> BELONGS_TO -> {'ticker': 'MSFT', 'name': 'Microsoft Corp.'}\n- chain: BELONGS_TO -> BELONGS_TO -> {'ticker': 'AAPL', 'name': 'Apple Inc.'}\n- chain: COMPETES_WITH -> BELONGS_TO -> {'name': 'Technology'}\n- chain: COMPETES_WITH -> CEO_OF -> {'name': 'Jensen Huang'}\n- chain: COMPETES_WITH -> DEVELOPES -> {'name': 'Generative AI'}\n- chain: COMPETES_WITH -> INVESTED_IN -> {'name': 'BlackRock Inc.'}\n- chain: COMPETES_WITH -> PARTNERS_WITH -> {'ticker': 'MSFT', 'name': 'Microsoft Corp.'}",
+    "subgraph_context": "ANCHOR:\n- labels: ['Company']\n- props: { ticker='TSLA', name='Tesla Inc.', market_cap_bln=550, headquarters='Austin, TX' }\n\nHOP1 RELATIONS:\n- (['Company']) -[:BELONGS_TO]- (['Sector']) { name='Technology', weight_in_sp500=29.5 }\n- (['Company']) -[:CEO_OF]- (['Person']) { name='Elon Musk', age=52 }\n- (['Company']) -[:COMPETES_WITH]- (['Company']) { ticker='NVDA', name='NVIDIA Corp.', market_cap_bln=2200 }\n- (['Company']) -[:DEVELOPES]- (['Technology']) { maturity='Mainstream', name='Electric Vehicles' }\n- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor']) { aum_trln=10.0, name='BlackRock Inc.' }\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) { ticker='NVDA', name='NVIDIA Corp.', market_cap_bln=2200 }\n\nHOP2 RELATIONS:\n- (['Company']) -[:BELONGS_TO]- (['Sector']) -[:BELONGS_TO]- (['Company'])\n- (['Company']) -[:BELONGS_TO]- (['Sector']) -[:BELONGS_TO]- (['Company'])\n- (['Company']) -[:BELONGS_TO]- (['Sector']) -[:BELONGS_TO]- (['Company'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:BELONGS_TO]- (['Sector'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:CEO_OF]- (['Person'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:DEVELOPES]- (['Technology'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:PARTNERS_WITH]- (['Company'])\n- (['Company']) -[:COMPETES_WITH]- (['Company']) -[:SUPPLIES_FROM]- (['Company'])\n- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor']) -[:INVESTED_IN]- (['Company'])\n- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor']) -[:INVESTED_IN]- (['Company'])\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) -[:BELONGS_TO]- (['Sector'])\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) -[:CEO_OF]- (['Person'])\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) -[:COMPETES_WITH]- (['Company'])\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) -[:DEVELOPES]- (['Technology'])\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) -[:INVESTED_IN]- (['InstitutionalInvestor'])\n- (['Company']) -[:SUPPLIES_FROM]- (['Company']) -[:PARTNERS_WITH]- (['Company'])"
+  }
+]

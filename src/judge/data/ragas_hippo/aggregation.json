@@ -1,0 +1,361 @@
+{
+  "summary": {
+    "faithfulness": 0.8193548387096774,
+    "answer_relevancy": 0.07732660298119579
+  },
+  "rows": [
+    {
+      "index": 0,
+      "scores": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "1",
+      "question": "Rank the top 3 investment funds by their ownership percentage in Ameriprise Financial, Inc. (ticker: AMP), returning the fund name and the exact ownership percentage.",
+      "answer": "По представленному контексту невозможно определить топ-3 инвестиционных фонда по доле владения в Ameriprise Financial, Inc. (AMP), так как приведённые данные отражают позиции различных холдеров, но не содержат полного списка фондов с их долями для ранжирования. Кроме того, Ameriprise Financial, Inc. сам является холдером, а не объектом анализа по сторонним фондам. Ответить на вопрос с использованием доступного контекста нельзя.",
+      "ground_truth": "Vanguard Group Inc, 0.1331; JPMORGAN CHASE & CO, 0.1034; Blackrock Inc., 0.0968"
+    },
+    {
+      "index": 1,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "2",
+      "question": "How many news articles have been published about AT&T Inc.?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "15"
+    },
+    {
+      "index": 2,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "3",
+      "question": "Which industry has the highest number of companies operating within it?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Health Care Equipment, 17"
+    },
+    {
+      "index": 3,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "4",
+      "question": "What is the average ownership percentage held by Boston Partners across all its portfolio companies?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "0.03636"
+    },
+    {
+      "index": 4,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "5",
+      "question": "How many distinct individuals are recorded as working for Ameriprise Financial, Inc.?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "10"
+    },
+    {
+      "index": 5,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "6",
+      "question": "What are the earliest and most recent publication dates for news articles covering the Energy sector?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "2026-04-20, 2026-04-20"
+    },
+    {
+      "index": 6,
+      "scores": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "7",
+      "question": "Which three funds have the largest number of owned companies in the database?",
+      "answer": "По представленному контексту ответить на вопрос невозможно, так как в данных указаны владения только на одну дату (2025-09-30) для нескольких компаний, но нет информации о количестве различных компаний, которыми владеют фонды. Следовательно, определить, какие три фонда имеют наибольшее число принадлежащих компаний, нельзя.",
+      "ground_truth": "Blackrock Inc., 500; Vanguard Group Inc, 500; State Street Corporation, 461"
+    },
+    {
+      "index": 7,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "8",
+      "question": "Which companies have been featured in the most news coverage, and what are their respective article counts? Provide the top 3.",
+      "answer": "По представленному контексту ответ дать нельзя.",
+      "ground_truth": "Alphabet Inc., 34; Bank of America Corporation, 20; Ameriprise Financial, Inc., 20"
+    },
+    {
+      "index": 8,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "9",
+      "question": "What is the average ownership stake that Aristotle Capital Management, LLC maintains across its invested companies?",
+      "answer": "По представленному контексту невозможно определить среднюю долю владения компании Aristotle Capital Management, LLC в её инвестиционных активах в целом, так как приведённые данные относятся только к одной компании (или одному случаю), а не ко всем инвестициям Aristotle Capital Management, LLC. Среднюю долю владения рассчитать нельзя.",
+      "ground_truth": "0.049866666000000004"
+    },
+    {
+      "index": 9,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.7846494638581584
+      },
+      "item_id": "10",
+      "question": "Rank the companies by the number of recorded personnel working for them, and return the top 2 organizations with their headcounts.",
+      "answer": "Based on the provided context, the only company with a specified number of employees is ADP, with 44,500 employees in 2023. The employee count for Paychex is not provided in the context. Therefore, ranking the companies by the number of personnel cannot be fully completed.\n\nTop 1 organization with headcount:\n- ADP: 44,500 employees\n\nThe second organization cannot be determined due to insufficient data.",
+      "ground_truth": "Fox Corporation, 20; News Corporation, 20"
+    },
+    {
+      "index": 10,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "11",
+      "question": "How many news articles have been published that specifically reference the Information Technology sector?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "2"
+    },
+    {
+      "index": 11,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "12",
+      "question": "What are the minimum and maximum ownership percentages recorded among all funds holding shares in Ameriprise Financial, Inc.?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "0.0306, 0.1331"
+    },
+    {
+      "index": 12,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "13",
+      "question": "What is the total number of resources required by AT&T Inc. according to the operational data?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "8"
+    },
+    {
+      "index": 13,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "14",
+      "question": "How many distinct industries are currently classified under the 'Energy' sector in the corporate taxonomy?",
+      "answer": "По представленному контексту невозможно определить, сколько отраслей классифицировано в секторе 'Energy' в корпоративной таксономии.",
+      "ground_truth": "5"
+    },
+    {
+      "index": 14,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "15",
+      "question": "What is the maximum single-asset ownership percentage (`pct`) that 'Blackhill Capital, Inc.' maintains across its investment portfolio?",
+      "answer": "По представленному контексту ответить на вопрос невозможно.",
+      "ground_truth": "0.0645"
+    },
+    {
+      "index": 15,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "16",
+      "question": "Calculate the average number of distinct operational resources required per company operating within the 'Water Utilities' industry.",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "1.0"
+    },
+    {
+      "index": 16,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "17",
+      "question": "Identify the top 3 products by the volume of corporate producers, returning each product's name alongside its producer count.",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "natural gas, 26; electricity, 18; software, 9"
+    },
+    {
+      "index": 17,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9045543537571555
+      },
+      "item_id": "18",
+      "question": "What is the cumulative sum of ownership percentages (`pct`) allocated by 'Boston Partners' across all its recorded equity positions?",
+      "answer": "To calculate the cumulative sum of ownership percentages (`pctHeld`) allocated by 'Boston Partners' across all its recorded equity positions, we sum the `pctHeld` values from each entry where the holder is \"Boston Partners\":\n\n- First entry: 0.0332\n- Second entry: 0.0434\n- Third entry: 0.02\n- Fourth entry: 0.03\n- Fifth entry: 0.0552\n\nCumulative sum:\n0.0332 + 0.0434 + 0.02 + 0.03 + 0.0552 = **0.1818**\n\nThus, the cumulative sum of ownership percentages is **0.1818** (or 18.18%).\n\n**Answer:** 0.1818",
+      "ground_truth": "0.1818"
+    },
+    {
+      "index": 18,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "19",
+      "question": "Count the number of distinct personnel employed by 'Ameriprise Financial, Inc.' who hold executive titles containing the word 'Chief'.",
+      "answer": "По представленному контексту невозможно определить, какие из указанных сотрудников работают в 'Ameriprise Financial, Inc.', так как принадлежность персонала к этой компании не указана. Следовательно, ответ дать нельзя.",
+      "ground_truth": "4"
+    },
+    {
+      "index": 19,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "20",
+      "question": "How many news articles list 'United Kingdom' as their sourcecountry, and what is the earliest publication date among them?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "1819, 2026-01-20"
+    },
+    {
+      "index": 20,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "21",
+      "question": "For 'AT&T Inc.', how many distinct products does it produce, and what is the maximum character length of those product names?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "19, 47"
+    },
+    {
+      "index": 21,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "22",
+      "question": "Which sector encompasses the largest number of distinct industries, and what is that industry count?",
+      "answer": "По представленному контексту ответ дать нельзя.",
+      "ground_truth": "Industrials, 20"
+    },
+    {
+      "index": 22,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.7079208748017556
+      },
+      "item_id": "23",
+      "question": "Calculate the total number of distinct cities that are located within the state of 'NJ'.",
+      "answer": "В контексте упомянуты следующие города в штате Нью-Джерси (NJ):\n\n1. Parsippany  \n2. Princeton  \n3. Ewing  \n\nВсе три города различны.\n\n**Ответ: 3**",
+      "ground_truth": "14"
+    },
+    {
+      "index": 23,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "24",
+      "question": "Among all individuals working for 'American International Group, I', what is the most frequently occurring job title, and how many people hold it?",
+      "answer": "По представленному контексту ответ дать нельзя.",
+      "ground_truth": "Executive VP & Chief Information Officer, 1"
+    },
+    {
+      "index": 24,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "25",
+      "question": "Which news domain has published the highest number of articles about 'AT&T Inc.', and what is that article count?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "dailypolitical.com, 3"
+    },
+    {
+      "index": 25,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "26",
+      "question": "What is the total number of distinct resources required by companies that produce 'Data center facilities'?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "3"
+    },
+    {
+      "index": 26,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "27",
+      "question": "Calculate the total count of distinct resources required by all companies operating within the 'Oil & Gas Refining & Marketing' industry.",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "26"
+    },
+    {
+      "index": 27,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "28",
+      "question": "What is the maximum recorded ownership percentage (`pct`) for any fund holding equity in companies that produce 'Data center facilities'?",
+      "answer": "По представленному контексту ответить на вопрос невозможно, так как в нём отсутствует информация о компаниях, производящих «Data center facilities», и их принадлежности к конкретным фондам.",
+      "ground_truth": "0.1359"
+    },
+    {
+      "index": 28,
+      "scores": {
+        "faithfulness": 0.4,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "29",
+      "question": "Rank the top 3 states by the number of distinct cities located within them, returning each state's name alongside its city count.",
+      "answer": "По представленному контексту невозможно точно определить количество уникальных городов в каждом штате, так как данные фрагментарны и не содержат полного и однозначного списка городов с указанием их принадлежности к штатам. Ответ дать нельзя.",
+      "ground_truth": "CA, 32; NJ, 14; TX, 13"
+    },
+    {
+      "index": 29,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "30",
+      "question": "For companies classified under the 'Consumer Discretionary' sector, what is the average number of news articles published about each organization?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "13.204081632653065"
+    },
+    {
+      "index": 30,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "31",
+      "question": "Identify the minimum number of recorded personnel working for any single company that operates in the 'Water Utilities' industry.",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "10"
+    }
+  ],
+  "meta": {
+    "llm_model": "qwen/qwen3.6-plus",
+    "embedding_model": "text-embedding-3-small",
+    "metrics": "default",
+    "answer_relevancy_strictness": 1,
+    "llm_max_tokens": 4096,
+    "ragas_max_workers": 4,
+    "ragas_run_max_retries": 10,
+    "question_type": "aggregation",
+    "input": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\aggregation.jsonl",
+    "input_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results"
+  }
+}

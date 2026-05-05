@@ -3,7 +3,7 @@ from __future__ import annotations
 import random
 from typing import Any
 
-from utils.prompt_builder import USEFUL_ENTITY_KEYS
+from benchmark_generator.prompt_settings import USEFUL_ENTITY_KEYS
 
 _SCAN_LIMIT = 400
 _HOP1_LIMIT = 28
@@ -54,7 +54,7 @@ def _format_hop1(rows: list[dict[str, Any]]) -> str:
         props = _useful_props(row.get("node_props"))
         if not props and not labels:
             continue
-        lines.append(f"  — via {rt}: {list(labels)} {props}")
+        lines.append(f"  - via {rt}: {list(labels)} {props}")
     return "\n".join(lines) if lines else "  (no neighbors in sample)"
 
 
@@ -77,7 +77,7 @@ def _shortest_path_hint(
     rts = rows[0].get("rel_types") or []
     if hops is None:
         return None
-    return f"{int(hops)} hops: {' → '.join(str(t) for t in rts)}"
+    return f"{int(hops)} hops: {' -> '.join(str(t) for t in rts)}"
 
 
 def _pick_best_rows(
@@ -120,7 +120,7 @@ def find_same_type_common_contexts(
 ) -> list[dict[str, Any]]:
     """
     Пары узлов одной метки без прямого ребра между ними, но с общей сущностью `common`
-    в пределах 1–3 шагов от каждого (в т.ч. только через цепочки 2–3 hop, без общего 1-hop соседа).
+    в пределах 1-3 шагов от каждого (в т.ч. только через цепочки 2-3 hop, без общего 1-hop соседа).
     """
     q = """
     MATCH (a)-[ra*1..3]-(common)

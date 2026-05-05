@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "input_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\hippo-rag\\results",
+    "output_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\hippo-rag\\results\\extended_metrics",
+    "types": [
+      "simple",
+      "multi-hop",
+      "aggregation",
+      "cross-branch",
+      "subgraph-deep-analytics"
+    ],
+    "sentence_transformer_model": "all-MiniLM-L6-v2",
+    "alpha": 0.5,
+    "llm_model": "qwen/qwen3.6-plus"
+  },
+  "by_type": {
+    "simple": {
+      "n": 30,
+      "summary": {
+        "rouge_l": 0.421459557204561,
+        "ss": 0.5722411217022991,
+        "fc": 0.41111111111111115,
+        "ac": 0.5626847720747354,
+        "fs": 0.5222222222222223,
+        "cov": 0.3113636363636364
+      }
+    },
+    "multi-hop": {
+      "n": 30,
+      "summary": {
+        "rouge_l": 0.15457517541269017,
+        "ss": 0.3858519470890171,
+        "fc": 0.09598214285714285,
+        "ac": 0.35527974039957105,
+        "fs": 0.16071428571428573,
+        "cov": 0.04307692307692308
+      }
+    },
+    "aggregation": {
+      "n": 31,
+      "summary": {
+        "rouge_l": 0.17029836123433803,
+        "ss": 0.41989964681148784,
+        "fc": 0.5714285714285714,
+        "ac": 0.4346346772318478,
+        "fs": 0.5,
+        "cov": 0.2
+      }
+    },
+    "cross-branch": {
+      "n": 1,
+      "summary": {
+        "rouge_l": 0.16246498599439774,
+        "ss": 0.5113222370039022,
+        "fc": 0.0,
+        "ac": 0.2556611185019511,
+        "fs": 0.0,
+        "cov": 0.0
+      }
+    },
+    "subgraph-deep-analytics": {
+      "n": 33,
+      "summary": {
+        "rouge_l": 0.23171503219314946,
+        "ss": 0.5321020166226647,
+        "fc": 0.3374560153112265,
+        "ac": 0.43477901596694557,
+        "fs": 0.23683531263745167,
+        "cov": 0.5308982879972625
+      }
+    }
+  },
+  "aggregate_summary": {
+    "rouge_l": 0.24295481780120276,
+    "ss": 0.47864295920357963,
+    "fc": 0.3525050547088304,
+    "ac": 0.44492783211062104,
+    "fs": 0.35042928444104915,
+    "cov": 0.2748228822970116
+  }
+}

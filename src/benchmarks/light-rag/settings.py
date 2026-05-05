@@ -45,6 +45,8 @@ LLM_INDEX_MAX_ATTEMPTS: int = int(os.getenv("LIGHTRAG_INDEX_MAX_ATTEMPTS", "80")
 CORPUS_FILE: str = "corpus.txt"
 # Пусто = graphrag_benchmark.json в корне репозитория
 BENCHMARK_FILE: str = ""
+# Пусто → `benchmark_questions_by_type` в корне репо (вопросы по типам по очереди)
+BENCHMARK_QUESTIONS_DIR: str = ""
 OUTPUT_FILE: str = "benchmark_data.jsonl"
 WORKING_DIR: str = ".lightrag_data"
 
@@ -78,9 +80,47 @@ NEO4J_IMPORT_REL_TYPE_MODE: str = os.getenv(
 ).strip().lower() or "lightrag"
 
 # --- Запуск бенчмарка ---
-QUERY_MODE: str = "naive"
+QUERY_MODE: str = "hybrid"
 REBUILD_CACHE: bool = False
 LIMIT_QUESTIONS: int = 0
+
+# Параметры retrieval (LightRAG ``QueryParam``): уже по умолчанию **урезанный** бюджет
+# (меньше top_k / chunk_top_k / max_*_tokens), чтобы короче были промпт и поле ``contexts``
+# для RAGAS faithfulness. Вернуть типичные лимиты библиотеки: ``LIGHTRAG_QUERY_FULL_BUDGET=1``.
+# Отдельные env: LIGHTRAG_QUERY_TOP_K, LIGHTRAG_QUERY_CHUNK_TOP_K, LIGHTRAG_QUERY_MAX_ENTITY_TOKENS,
+# LIGHTRAG_QUERY_MAX_RELATION_TOKENS, LIGHTRAG_QUERY_MAX_TOTAL_TOKENS (имеют приоритет, если не FULL_BUDGET).
+
+
+def _query_int(name: str, default: int) -> int:
+    raw = os.getenv(name, "").strip()
+    if not raw:
+        return default
+    try:
+        v = int(raw)
+    except ValueError:
+        return default
+    return v if v > 0 else default
+
+
+USE_FULL_QUERY_BUDGET: bool = False
+
+if USE_FULL_QUERY_BUDGET:
+    QUERY_TOP_K = 40
+    QUERY_CHUNK_TOP_K = 20
+    QUERY_MAX_ENTITY_TOKENS = 6000
+    QUERY_MAX_RELATION_TOKENS = 8000
+    QUERY_MAX_TOTAL_TOKENS = 30000
+else:
+    QUERY_TOP_K = _query_int("LIGHTRAG_QUERY_TOP_K", 15)
+    QUERY_CHUNK_TOP_K = _query_int("LIGHTRAG_QUERY_CHUNK_TOP_K", 8)
+    QUERY_MAX_ENTITY_TOKENS = _query_int("LIGHTRAG_QUERY_MAX_ENTITY_TOKENS", 3000)
+    QUERY_MAX_RELATION_TOKENS = _query_int("LIGHTRAG_QUERY_MAX_RELATION_TOKENS", 3000)
+    QUERY_MAX_TOTAL_TOKENS = _query_int("LIGHTRAG_QUERY_MAX_TOTAL_TOKENS", 12000)
+
+# Сколько вопросов опрашивать LightRAG параллельно (asyncio; один экземпляр RAG).
+# Больше — быстее, но сильнее нагрузка на API/хранилище; при сбоях поставьте 1.
+# Env: LIGHTRAG_QUERY_CONCURRENCY
+QUERY_CONCURRENCY: int = 8
 
 # Только дорисовать индексацию: вызвать apipeline_process_enqueue_documents без повторного
 # enqueue того же текста (после сбоя документ остаётся FAILED/PENDING в doc_status).
@@ -101,10 +141,6 @@ QUERY_ONLY: bool = os.getenv("LIGHTRAG_QUERY_ONLY", "").strip().lower() in (
 # Корень пакета (папка light-rag)
 LIGHT_RAG_DIR: Path = _LIGHT_RAG
 
-# --- LLM-as-judge (main.py accuracy, cde_metrics.py): пусто = тот же LLM_MODEL ---
+# --- LLM-as-judge (cde_metrics.py и др.): пусто = тот же LLM_MODEL ---
 METRICS_JUDGE_MODEL: str = ""
 METRICS_API_DELAY_SEC: float = 0.0
-# Вызов судьи после прогона; отключить: LIGHTRAG_ENABLE_LLM_JUDGE=0
-ENABLE_LLM_ACCURACY: bool = os.getenv(
-    "LIGHTRAG_ENABLE_LLM_JUDGE", "1"
-).strip().lower() not in ("0", "false", "no")

@@ -1,0 +1,212 @@
+[
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker for AT&T Inc.?",
+    "cypher": "MATCH (c:Company {name: \"AT&T Inc.\"}) RETURN c.ticker LIMIT 10",
+    "ground_truth": "T",
+    "answer": "T"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the business description of Ameriprise Financial, Inc.?",
+    "cypher": "MATCH (c:Company {name: \"Ameriprise Financial, Inc.\"}) RETURN c.description LIMIT 10",
+    "ground_truth": "Ameriprise Financial, Inc., together with its subsidiaries, operates as a diversified financial services company in the United States and internationally. The company offers financial planning and advice services to individual and institutional clients. It operates through Advice & Wealth Management, Asset Management, and Retirement & Protection Solutions segments. The Advice & Wealth Management segment provides financial planning and advice; brokerage products and services for retail and institutional clients; discretionary and non-discretionary investment advisory accounts; mutual funds; ins",
+    "answer": "Ameriprise Financial, Inc., together with its subsidiaries, operates as a diversified financial services company in the United States and internationally. The company offers financial planning and advice services to individual and institutional clients. It operates through Advice & Wealth Management, Asset Management, and Retirement & Protection Solutions segments."
+  },
+  {
+    "complexity": "simple",
+    "question": "What are the headlines of news articles about AT&T Inc.?",
+    "cypher": "MATCH (c:Company {name: \"AT&T Inc.\"})<-[:NEWS_ABOUT_COMPANY]-(n:News) RETURN n.headline LIMIT 10",
+    "ground_truth": "What Going On With AT & T Stock Thursday ? - AT & T ( NYSE : T ) ; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Hazleton Standard Speaker; Amazon - Globalstar deal is poised to boost Apple satellite ambitions; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Boulder Daily Camera; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Akron News - Reporter; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Colorado Hometown Weekly; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – The Mercury; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Sentinel and Enterprise; Morgan Stanley Begins Coverage on AT & T ( NYSE : T ) ; AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley",
+    "answer": "What Going On With AT & T Stock Thursday ?\nMorgan Stanley Begins Coverage on AT & T ( NYSE : T )\nAT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company does Mr. John C. Griffith work for?",
+    "cypher": "MATCH (p:Person {name: \"Mr. John C. Griffith\"})-[:WORKS_FOR]->(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "American Water Works Company, I",
+    "answer": "American Water Works Company, I"
+  },
+  {
+    "complexity": "simple",
+    "question": "In which industry does West Pharmaceutical Services, I operate?",
+    "cypher": "MATCH (c:Company {name: \"West Pharmaceutical Services, I\"})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.name LIMIT 10",
+    "ground_truth": "Health Care Supplies",
+    "answer": "Health Care Supplies"
+  },
+  {
+    "complexity": "simple",
+    "question": "On what dates were news articles published about Aristotle Capital Management, LLC?",
+    "cypher": "MATCH (f:Fund {name: \"Aristotle Capital Management, LLC\"})<-[:NEWS_ABOUT_FUND]-(n:News) RETURN n.date LIMIT 10",
+    "ground_truth": "2026-02-04; 2026-02-04; 2026-03-15; 2026-03-16; 2026-04-03",
+    "answer": "2026-02-04; 2026-02-04; 2026-03-15; 2026-03-16; 2026-04-03"
+  },
+  {
+    "complexity": "simple",
+    "question": "In which state is the city of Dublin located?",
+    "cypher": "MATCH (c:City {name: \"Dublin\"})-[:IN_STATE]->(s:State) RETURN s.name LIMIT 10",
+    "ground_truth": "CA; OH",
+    "answer": "CA; OH"
+  },
+  {
+    "complexity": "simple",
+    "question": "What products does AT&T Inc. produce?",
+    "cypher": "MATCH (c:Company {name: \"AT&T Inc.\"})-[:PRODUCES]->(p:Product) RETURN p.name LIMIT 10",
+    "ground_truth": "handsets; wireless computing devices; wireless voice and data communications services; carrying cases/protective covers; wireless data cards; wireless chargers; AT&T Dedicated Internet; hosted and managed professional services; fiber ethernet and broadband; fixed wireless",
+    "answer": "handsets; wireless computing devices; wireless voice and data communications services; carrying cases/protective covers; wireless data cards; wireless chargers; AT&T Dedicated Internet; hosted and managed professional services; fiber ethernet and broadband; fixed wireless"
+  },
+  {
+    "complexity": "simple",
+    "question": "To which sector does the Water Utilities industry belong?",
+    "cypher": "MATCH (i:Industry {name: \"Water Utilities\"})-[:PART_OF]->(s:Sector) RETURN s.name LIMIT 10",
+    "ground_truth": "Utilities",
+    "answer": "Utilities"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the domain of the news article titled \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"?",
+    "cypher": "MATCH (n:News {headline: \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"}) RETURN n.domain LIMIT 10",
+    "ground_truth": "themarketsdaily.com",
+    "answer": "themarketsdaily.com"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the job title of Mr. John C. Griffith at his employer?",
+    "cypher": "MATCH (p:Person {name: 'Mr. John C. Griffith'})-[r:WORKS_FOR]->(c:Company) RETURN r.title LIMIT 10",
+    "ground_truth": "CEO, President & Director",
+    "answer": "CEO, President & Director"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the source country of the news article titled '4 banks cutting mortgage rates in boost for buyers - full list'?",
+    "cypher": "MATCH (n:News {headline: '4 banks cutting mortgage rates in boost for buyers - full list'}) RETURN n.sourcecountry LIMIT 10",
+    "ground_truth": "United Kingdom",
+    "answer": "United Kingdom"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which sector does the Personal Care Products industry belong to?",
+    "cypher": "MATCH (i:Industry {name: 'Personal Care Products'})-[:PART_OF]->(s:Sector) RETURN s.name LIMIT 10",
+    "ground_truth": "Consumer Staples",
+    "answer": "Consumer Staples"
+  },
+  {
+    "complexity": "simple",
+    "question": "In which industry does Ameriprise Financial, Inc. operate?",
+    "cypher": "MATCH (c:Company {name: 'Ameriprise Financial, Inc.'})-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.name LIMIT 10",
+    "ground_truth": "Asset Management & Custody Banks",
+    "answer": "Asset Management & Custody Banks"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the domain of the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+    "cypher": "MATCH (n:News {headline: 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'}) RETURN n.domain LIMIT 10",
+    "ground_truth": "themarketsdaily.com",
+    "answer": "themarketsdaily.com"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company employs Ms. Kellye L. Walker J.D.?",
+    "cypher": "MATCH (p:Person {name: 'Ms. Kellye L. Walker J.D.'})-[:WORKS_FOR]->(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "Deere & Company",
+    "answer": "Ms. Kellye L. Walker J.D., Deere & Company"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company employs Mr. Tamer K. Abuaita?",
+    "cypher": "MATCH (p:Person {name: 'Mr. Tamer K. Abuaita'})-[:WORKS_FOR]->(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "Stanley Black & Decker, Inc.",
+    "answer": "Mr. Tamer K. Abuaita, Stanley Black & Decker, Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "What resources are required by West Pharmaceutical Services, I?",
+    "cypher": "MATCH (c:Company {name: 'West Pharmaceutical Services, I'})-[:REQUIRES]->(r:Resource) RETURN r.name LIMIT 10",
+    "ground_truth": "advanced reconstitution, mixing, and transfer technologies; regulatory expertise; components for syringes and cartridges; after-sales technical support services; raw materials for stoppers and seals; cyclic olefin polymer for Crystal Zenith",
+    "answer": "advanced reconstitution, mixing, and transfer technologies; regulatory expertise; components for syringes and cartridges; after-sales technical support services; raw materials for stoppers and seals; cyclic olefin polymer for Crystal Zenith"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which industry is discussed in the news article titled '4 banks cutting mortgage rates in boost for buyers - full list'?",
+    "cypher": "MATCH (n:News {headline: '4 banks cutting mortgage rates in boost for buyers - full list'})-[:NEWS_ABOUT_INDUSTRY]->(i:Industry) RETURN i.name LIMIT 10",
+    "ground_truth": "Consumer Finance",
+    "answer": "Consumer Finance"
+  },
+  {
+    "complexity": "simple",
+    "question": "Which company produces the product named Haoyuan?",
+    "cypher": "MATCH (p:Product {name: 'Haoyuan'})<-[:PRODUCES]-(c:Company) RETURN c.name LIMIT 10",
+    "ground_truth": "Revvity, Inc.",
+    "answer": "Revvity, Inc."
+  },
+  {
+    "complexity": "simple",
+    "question": "Which country contains the state of NJ?",
+    "cypher": "MATCH (s:State {name: 'NJ'})-[:IN_COUNTRY]->(c:Country) RETURN c.name LIMIT 10",
+    "ground_truth": "United States",
+    "answer": "United States"
+  },
+  {
+    "complexity": "simple",
+    "question": "To which sector does the Real Estate Services industry belong?",
+    "cypher": "MATCH (i:Industry {name: 'Real Estate Services'})-[:PART_OF]->(s:Sector) RETURN s.name LIMIT 10",
+    "ground_truth": "Real Estate",
+    "answer": "Real Estate"
+  },
+  {
+    "complexity": "simple",
+    "question": "On what date was the news article about Lingotto Investment Management LLP published?",
+    "cypher": "MATCH (f:Fund {name: 'Lingotto Investment Management LLP'})<-[:NEWS_ABOUT_FUND]-(n:News) RETURN n.date LIMIT 10",
+    "ground_truth": "2026-01-30; 2026-02-11; 2026-03-01; 2026-03-04; 2026-03-09; 2026-04-04",
+    "answer": "2026-01-30; 2026-02-11; 2026-03-01; 2026-03-04; 2026-03-09; 2026-04-04"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the language of the news article with the headline \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+    "cypher": "MATCH (n:News {headline: \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"}) RETURN n.language LIMIT 10",
+    "ground_truth": "English",
+    "answer": "English"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the wiki summary for the company with the ticker \"WST\"?",
+    "cypher": "MATCH (c:Company {ticker: \"WST\"}) RETURN c.wiki_summary LIMIT 10",
+    "ground_truth": "The pharmaceutical industry is a medical industry that discovers, develops, produces, and markets pharmaceutical goods such as medications. Medications are then administered to (or self-administered by) patients for curing or preventing disease or for alleviating symptoms of illness or injury. \nGeneric drugs are typically not protected by patents, whereas branded drugs are covered by patents. The industry's various subdivisions include distinct areas, such as manufacturing biologics and total synthesis. The industry is subject to a variety of laws and regulations that govern the patenting, efficacy testing, safety evaluation, and marketing of these drugs.\nThe global pharmaceutical market was valued at approximately US$1.48 trillion in 2022, reflecting steady growth from 2020 and continuing expansion despite the impacts of the COVID-19 pandemic. The sector showed a compound annual growth rate (CAGR) of 1.8% in 2021, including the effects of the COVID-19 pandemic.\nIn historical terms, th",
+    "answer": "No data for this query."
+  },
+  {
+    "complexity": "simple",
+    "question": "Which city is located in the state named \"NH\"?",
+    "cypher": "MATCH (c:City)-[:IN_STATE]->(s:State {name: \"NH\"}) RETURN c.name LIMIT 10",
+    "ground_truth": "Portsmouth",
+    "answer": "Portsmouth"
+  },
+  {
+    "complexity": "simple",
+    "question": "When was the record for Ameriprise Financial, Inc. last updated?",
+    "cypher": "MATCH (c:Company {name: \"Ameriprise Financial, Inc.\"}) RETURN c.last_updated LIMIT 10",
+    "ground_truth": "2026-03-23",
+    "answer": "2026-03-23"
+  },
+  {
+    "complexity": "simple",
+    "question": "What search query was used to collect the news article titled \"4 banks cutting mortgage rates in boost for buyers - full list\"?",
+    "cypher": "MATCH (n:News {headline: \"4 banks cutting mortgage rates in boost for buyers - full list\"}) RETURN n.query LIMIT 10",
+    "ground_truth": "\"Consumer Finance\" AND (industry OR market OR companies)",
+    "answer": "\"Consumer Finance\" AND (industry OR market OR companies)"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the stock ticker of the company that produces the product \"Data center facilities\"?",
+    "cypher": "MATCH (c:Company)-[:PRODUCES]->(p:Product {name: \"Data center facilities\"}) RETURN c.ticker LIMIT 10",
+    "ground_truth": "AMT",
+    "answer": "AMT"
+  },
+  {
+    "complexity": "simple",
+    "question": "What is the URL for the news article with the headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+    "cypher": "MATCH (n:News {headline: \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"}) RETURN n.url LIMIT 10",
+    "ground_truth": "https://www.themarketsdaily.com/2026/04/19/comparing-principal-financial-group-nasdaqpfg-hamilton-insurance-group-nysehg.html",
+    "answer": "https://www.themarketsdaily.com/2026/04/19/comparing-principal-financial-group-nasdaqpfg-hamilton-insurance-group-nysehg.html"
+  }
+]

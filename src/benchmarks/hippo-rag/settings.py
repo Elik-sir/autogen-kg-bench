@@ -38,6 +38,7 @@ OPENROUTER_APP_TITLE: str = os.getenv(
 # По умолчанию — тот же корпус, что у light-rag
 CORPUS_FILE: str = "../light-rag/corpus.txt"
 BENCHMARK_FILE: str = ""
+BENCHMARK_QUESTIONS_DIR: str = ""
 OUTPUT_FILE: str = "benchmark_data.jsonl"
 WORKING_DIR: str = ".hipporag_data"
 
@@ -45,11 +46,8 @@ LIMIT_QUESTIONS: int = 0
 REBUILD_INDEX: bool = False
 RETRIEVAL_K: int = 5
 
-# LLM-as-judge
+# Зарезервировано под вспомогательные LLM-метрики
 METRICS_JUDGE_MODEL: str = ""
 METRICS_API_DELAY_SEC: float = 0.0
-ENABLE_LLM_ACCURACY: bool = os.getenv(
-    "HIPPORAG_ENABLE_LLM_JUDGE", "1"
-).strip().lower() not in ("0", "false", "no")
 
 HIPPO_RAG_DIR: Path = _HIPPO

@@ -10,211 +10,36 @@ HippoRAG: индексация корпуса и прогон graphrag_benchmark
 from __future__ import annotations
 
 import json
-import os
-import re
 import shutil
 import sys
-import time
 from pathlib import Path
-from typing import Any
 
 _SRC = Path(__file__).resolve().parent.parent.parent
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 import settings  # noqa: E402
+from bench_utils import (  # noqa: E402
+    _extract_answer_from_result,
+    _extract_contexts_from_rag_qa,
+    _prepare_hipporag_env,
+    _resolve_output_path,
+    _resolve_working_dir,
+    _write_results,
+    recall_overlap,
+)
+from utils.benchmark_by_type import (  # noqa: E402
+    build_benchmark_plan,
+    output_suffix_from_setting,
+    results_subdir,
+)
 
 REPO_ROOT = settings.HIPPO_RAG_DIR.parent.parent.parent
 
 
-def _tokenize(s: str) -> set[str]:
-    s = s.lower()
-    return set(re.findall(r"[\w\.\-]+", s, re.UNICODE)) - {""}
-
-
-def recall_overlap(ground_truth: str, answer: str) -> float:
-    if not ground_truth.strip():
-        return 1.0
-    g = _tokenize(ground_truth)
-    if not g:
-        return 0.0
-    a = _tokenize(answer) if answer else set()
-    return len(g & a) / len(g)
-
-
-def _resolve_benchmark_path() -> Path:
-    s = settings.BENCHMARK_FILE
-    if not (s and str(s).strip()):
-        return (REPO_ROOT / "graphrag_benchmark.json").resolve()
-    p = Path(s).expanduser()
-    if p.is_absolute():
-        return p.resolve()
-    a = (settings.HIPPO_RAG_DIR / p).resolve()
-    if a.is_file():
-        return a
-    b = (REPO_ROOT / p).resolve()
-    if b.is_file():
-        return b
-    return a
-
-
-def _resolve_output_path() -> Path:
-    s = settings.OUTPUT_FILE
-    if s and str(s).strip():
-        p = Path(s).expanduser()
-        return p if p.is_absolute() else (settings.HIPPO_RAG_DIR / p).resolve()
-    return (REPO_ROOT / "hipporag_benchmark_results.json").resolve()
-
-
-def _resolve_working_dir() -> Path:
-    p = Path(settings.WORKING_DIR).expanduser()
-    if p.is_absolute():
-        return p.resolve()
-    return (settings.HIPPO_RAG_DIR / p).resolve()
-
-
-def _write_results(path: Path, summary: dict, items: list[dict]) -> None:
+def _write_json(path: Path, obj: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    if path.suffix.lower() == ".jsonl":
-        lines = [json.dumps({"kind": "summary", **summary}, ensure_ascii=False)]
-        lines += [json.dumps({"kind": "item", **it}, ensure_ascii=False) for it in items]
-        path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    else:
-        path.write_text(
-            json.dumps({"summary": summary, "items": items}, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
-
-
-def _ideal_for_llm_judge(row: dict) -> str | None:
-    if row.get("scoring_reference") == "answer":
-        ideal = row.get("ideal_for_scoring")
-        if ideal is not None and str(ideal).strip():
-            return str(ideal).strip()
-        return None
-    gt = row.get("ground_truth")
-    if gt is None or not str(gt).strip():
-        return None
-    return str(gt).strip()
-
-
-def _run_llm_accuracy_judge(results: list[dict], summary: dict) -> None:
-    if not getattr(settings, "ENABLE_LLM_ACCURACY", True):
-        summary["llm_accuracy"] = {"skipped": True, "reason": "ENABLE_LLM_ACCURACY=false"}
-        return
-    key = (settings.OPENAI_API_KEY or "").strip()
-    if not key:
-        summary["llm_accuracy"] = {"skipped": True, "reason": "no OPENAI_API_KEY"}
-        return
-
-    from llm_accuracy import judge_correct, judge_model, openai_client  # noqa: WPS433
-
-    delay = float(getattr(settings, "METRICS_API_DELAY_SEC", 0.0))
-    model = judge_model()
-    try:
-        client = openai_client()
-    except Exception as e:  # noqa: BLE001
-        summary["llm_accuracy"] = {"skipped": True, "reason": str(e)}
-        return
-
-    summary["llm_judge_model"] = model
-    n_scored = 0
-    n_correct = 0
-    n_skipped_empty_ideal = 0
-
-    for r in results:
-        ideal = _ideal_for_llm_judge(r)
-        if not ideal:
-            n_skipped_empty_ideal += 1
-            continue
-        q = str(r.get("question", ""))
-        ans = str(r.get("answer", ""))
-        try:
-            ok = judge_correct(client, model, q, ideal, ans)
-            r["llm_accuracy_correct"] = ok
-            r["llm_accuracy_error"] = None
-            n_scored += 1
-            if ok:
-                n_correct += 1
-            print(f"  [judge] #{r.get('index')} accuracy {'✓' if ok else '✗'}", flush=True)
-        except Exception as ex:  # noqa: BLE001
-            r["llm_accuracy_correct"] = None
-            r["llm_accuracy_error"] = str(ex)
-            print(f"  [judge] #{r.get('index')} error: {ex}", flush=True)
-        if delay > 0:
-            time.sleep(delay)
-
-    acc = round(n_correct / n_scored, 4) if n_scored else None
-    summary["llm_accuracy"] = {
-        "mean_accuracy": acc,
-        "n_judged": n_scored,
-        "n_correct": n_correct,
-        "n_skipped_empty_ideal": n_skipped_empty_ideal,
-    }
-
-
-def _prepare_hipporag_env() -> None:
-    """Ключ и заголовки для OpenAI-совместимых клиентов (OpenRouter) внутри hipporag."""
-    key = (settings.OPENAI_API_KEY or "").strip()
-    if not key:
-        key = (os.environ.get("OPENROUTER_API_KEY", "") or "").strip()
-    os.environ["OPENAI_API_KEY"] = key
-    if not (os.environ.get("OPENROUTER_API_KEY", "") or "").strip():
-        os.environ["OPENROUTER_API_KEY"] = key
-    os.environ.setdefault("OPENAI_BASE_URL", settings.OPENAI_API_BASE)
-    if settings.OPENROUTER_HTTP_REFERER.strip():
-        os.environ["OPENROUTER_HTTP_REFERER"] = settings.OPENROUTER_HTTP_REFERER.strip()
-    if settings.OPENROUTER_APP_TITLE.strip():
-        os.environ["OPENROUTER_APP_TITLE"] = settings.OPENROUTER_APP_TITLE.strip()
-
-
-def _extract_answer_from_result(raw: Any) -> str:
-    if raw is None:
-        return ""
-    if isinstance(raw, str):
-        return raw.strip()
-    # HippoRAG.rag_qa возвращает (solutions, llm_messages, metadata[, ...]) — не str(dict).
-    if isinstance(raw, tuple) and raw:
-        solutions = raw[0]
-        messages = raw[1] if len(raw) > 1 else None
-        if isinstance(solutions, list) and solutions:
-            sol0 = solutions[0]
-            if hasattr(sol0, "answer"):
-                ans = getattr(sol0, "answer", None)
-                if ans is not None and str(ans).strip():
-                    return str(ans).strip()
-        if isinstance(messages, list) and messages:
-            msg = messages[0]
-            if isinstance(msg, str) and msg.strip():
-                parts = msg.split("Answer:", 1)
-                if len(parts) > 1:
-                    return parts[1].strip()
-                return msg.strip()
-        return ""
-    if isinstance(raw, list):
-        if not raw:
-            return ""
-        first = raw[0]
-        if hasattr(first, "answer"):
-            ans = getattr(first, "answer", None)
-            if ans is not None and str(ans).strip():
-                return str(ans).strip()
-        if isinstance(first, str):
-            return first.strip()
-        if isinstance(first, dict):
-            for key in ("answer", "response", "generated_text", "text", "prediction"):
-                val = first.get(key)
-                if val is not None and str(val).strip():
-                    return str(val).strip()
-            return json.dumps(first, ensure_ascii=False)
-        return str(first).strip()
-    if isinstance(raw, dict):
-        for key in ("answer", "response", "generated_text", "text", "prediction"):
-            val = raw.get(key)
-            if val is not None and str(val).strip():
-                return str(val).strip()
-        return json.dumps(raw, ensure_ascii=False)
-    return str(raw).strip()
+    path.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def run() -> int:
@@ -237,15 +62,39 @@ def run() -> int:
             return 2
         raise
 
-    bench_path = _resolve_benchmark_path()
-    if not bench_path.is_file():
-        print(f"Файл бенчмарка не найден: {bench_path}", file=sys.stderr)
-        return 1
-    with open(bench_path, encoding="utf-8") as f:
-        items: list[dict] = json.load(f)
+    plan = build_benchmark_plan(
+        repo_root=REPO_ROOT,
+        benchmark_pkg_dir=settings.HIPPO_RAG_DIR,
+        benchmark_file_setting=settings.BENCHMARK_FILE,
+        benchmark_questions_dir_setting=getattr(settings, "BENCHMARK_QUESTIONS_DIR", ""),
+    )
+    if plan.mode == "single":
+        bench_path = plan.single_path
+        assert bench_path is not None
+        if not bench_path.is_file():
+            print(f"Файл бенчмарка не найден: {bench_path}", file=sys.stderr)
+            return 1
+        with open(bench_path, encoding="utf-8") as f:
+            all_benchmark_items: list[dict] = json.load(f)
+        batches: list[tuple[str | None, Path, list[dict]]] = [(None, bench_path, all_benchmark_items)]
+    else:
+        batches = [(c, p, its) for c, p, its in plan.multi_parts]
+        if not batches:
+            print("Нет файлов в benchmark_questions_by_type и нет graphrag_benchmark.json.", file=sys.stderr)
+            return 1
+        bench_path = batches[0][1]
+
     limit = int(settings.LIMIT_QUESTIONS)
-    if limit and limit > 0:
-        items = items[:limit]
+    remaining = limit if limit and limit > 0 else 0
+    run_total = 0
+    _rem = remaining
+    for _, _, raw in batches:
+        if _rem > 0:
+            c = min(len(raw), _rem)
+            run_total += c
+            _rem -= c
+        else:
+            run_total += len(raw)
 
     try:
         docs = load_corpus_chunks()
@@ -285,63 +134,125 @@ def run() -> int:
     )
     rag.index(docs=docs)
 
+    def run_chunk(chunk: list[dict]) -> list[dict]:
+        rows: list[dict] = []
+        n = len(chunk)
+        for i, it in enumerate(chunk, 1):
+            q = str(it.get("question", ""))
+            ground_truth = it.get("ground_truth")
+            complexity = str(it.get("complexity", "") or "")
+            is_subgraph_deep = complexity == "subgraph-deep-analytics"
+            benchmark_answer = str(it.get("answer") or "").strip()
+            reference = (
+                benchmark_answer
+                if is_subgraph_deep
+                else (str(ground_truth).strip() if ground_truth is not None else "")
+            )
+            try:
+                qa_raw = rag.rag_qa(queries=[q])
+                answer = _extract_answer_from_result(qa_raw)
+                contexts = _extract_contexts_from_rag_qa(
+                    qa_raw, int(getattr(rag.global_config, "qa_top_k", 5))
+                )
+            except Exception as e:  # noqa: BLE001
+                answer = f"[error] {e}"
+                contexts = []
+
+            row = {
+                "index": i,
+                "complexity": complexity,
+                "scoring_reference": "answer" if is_subgraph_deep else "ground_truth",
+                "recall_on_ground_truth_tokens": round(recall_overlap(reference, str(answer)), 4),
+                "question": q,
+                "ground_truth": ground_truth,
+                "answer": answer,
+                "contexts": contexts,
+            }
+            if is_subgraph_deep:
+                row["ideal_for_scoring"] = benchmark_answer
+            rows.append(row)
+            sc = row["recall_on_ground_truth_tokens"]
+            ref_tag = row["scoring_reference"]
+            print(
+                f"  [{i}/{n}] recall@{ref_tag}={sc:.3f}  {q[:70]}…"
+                if len(q) > 70
+                else f"  [{i}/{n}] recall@{ref_tag}={sc:.3f}  {q}"
+            )
+        return rows
+
+    print(f"Вопросов в прогоне: {run_total}")
     results: list[dict] = []
-    print(f"Вопросов в прогоне: {len(items)}")
-    for i, it in enumerate(items, 1):
-        q = str(it.get("question", ""))
-        ground_truth = it.get("ground_truth")
-        complexity = it.get("complexity", "")
-        is_subgraph_deep = complexity == "subgraph-deep-analytics"
-        benchmark_answer = str(it.get("answer") or "").strip()
-        reference = (
-            benchmark_answer
-            if is_subgraph_deep
-            else (str(ground_truth).strip() if ground_truth is not None else "")
-        )
-        try:
-            qa_raw = rag.rag_qa(queries=[q])
-            answer = _extract_answer_from_result(qa_raw)
-        except Exception as e:  # noqa: BLE001
-            answer = f"[error] {e}"
+    per_type_meta: list[dict] = []
+    rem = remaining
+    sfx = output_suffix_from_setting(settings.OUTPUT_FILE) if plan.mode == "multi" else ""
+    res_dir = results_subdir(settings.HIPPO_RAG_DIR) if plan.mode == "multi" else None
 
-        row = {
-            "index": i,
-            "complexity": complexity,
-            "scoring_reference": "answer" if is_subgraph_deep else "ground_truth",
-            "recall_on_ground_truth_tokens": round(recall_overlap(reference, str(answer)), 4),
-            "question": q,
-            "ground_truth": ground_truth,
-            "answer": answer,
-            "llm_accuracy_correct": None,
-            "llm_accuracy_error": None,
-        }
-        if is_subgraph_deep:
-            row["ideal_for_scoring"] = benchmark_answer
-        results.append(row)
-        sc = row["recall_on_ground_truth_tokens"]
-        ref_tag = row["scoring_reference"]
-        print(
-            f"  [{i}/{len(items)}] recall@{ref_tag}={sc:.3f}  {q[:70]}…"
-            if len(q) > 70
-            else f"  [{i}/{len(items)}] recall@{ref_tag}={sc:.3f}  {q}"
+    for complexity, bpath, raw_items in batches:
+        chunk = raw_items
+        if rem > 0:
+            chunk = raw_items[:rem]
+            rem -= len(chunk)
+        if not chunk:
+            continue
+        type_key = complexity or "mixed"
+        print(f"--- тип: {type_key} ({len(chunk)} вопросов) ---")
+        batch_results = run_chunk(chunk)
+        results.extend(batch_results)
+        mean_b = sum(r["recall_on_ground_truth_tokens"] for r in batch_results) / max(
+            len(batch_results), 1
         )
+        per_type_meta.append(
+            {
+                "question_type": type_key,
+                "benchmark": str(bpath),
+                "n": len(batch_results),
+                "mean_recall_on_ground_truth_tokens": round(mean_b, 4),
+            }
+        )
+        if plan.mode == "multi" and res_dir is not None:
+            type_summary = {
+                "settings": "settings.py",
+                "backend": "hipporag",
+                "corpus": str(resolved_corpus_path()),
+                "benchmark_mode": "multi",
+                "question_type": type_key,
+                "benchmark": str(bpath),
+                "retrieval_k": settings.RETRIEVAL_K,
+                "n": len(batch_results),
+                "mean_recall_on_ground_truth_tokens": round(mean_b, 4),
+            }
+            _write_results(res_dir / f"{type_key}{sfx}", type_summary, batch_results)
+            print(f"Тип {type_key!r}: результаты → {res_dir / f'{type_key}{sfx}'}")
+        if rem == 0 and remaining > 0:
+            break
 
-    mean_recall = sum(r["recall_on_ground_truth_tokens"] for r in results) / max(len(results), 1)
+    if not results:
+        print("Нет вопросов для прогона.", file=sys.stderr)
+        return 1
+
+    mean_recall = sum(r["recall_on_ground_truth_tokens"] for r in results) / len(results)
     summary: dict = {
         "settings": "settings.py",
         "backend": "hipporag",
         "corpus": str(resolved_corpus_path()),
+        "benchmark_mode": plan.mode,
         "benchmark": str(bench_path),
         "retrieval_k": settings.RETRIEVAL_K,
         "n": len(results),
         "mean_recall_on_ground_truth_tokens": round(mean_recall, 4),
+        "by_question_type": per_type_meta,
     }
-
-    _run_llm_accuracy_judge(results, summary)
-    out_path = _resolve_output_path()
-    _write_results(out_path, summary, results)
-    print(json.dumps(summary, ensure_ascii=False, indent=2))
-    print(f"Результаты: {out_path}")
+    if plan.mode == "single":
+        out_path = _resolve_output_path()
+        _write_results(out_path, summary, results)
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
+        print(f"Результаты: {out_path}")
+    else:
+        assert res_dir is not None
+        summary["results_dir"] = str(res_dir)
+        _write_json(res_dir / "_summary.json", summary)
+        print(json.dumps(summary, ensure_ascii=False, indent=2))
+        print(f"Сводка по типам: {res_dir / '_summary.json'}")
     return 0
 
 

@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "input_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results",
+    "output_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\extended_metrics",
+    "types": [
+      "simple",
+      "multi-hop",
+      "aggregation",
+      "cross-branch",
+      "subgraph-deep-analytics"
+    ],
+    "sentence_transformer_model": "all-MiniLM-L6-v2",
+    "alpha": 0.5,
+    "llm_model": "qwen/qwen3.6-plus"
+  },
+  "by_type": {
+    "simple": {
+      "n": 30,
+      "summary": {
+        "rouge_l": 0.20140671258868784,
+        "ss": 0.25460821856477855,
+        "fc": 0.2782051282051282,
+        "ac": 0.2454761370657586,
+        "fs": 0.24283559577677227,
+        "cov": 0.13888888888888887
+      }
+    },
+    "multi-hop": {
+      "n": 30,
+      "summary": {
+        "rouge_l": 0.020391888812941444,
+        "ss": 0.0770430412921709,
+        "fc": 0.12037037037037036,
+        "ac": 0.09505321699190036,
+        "fs": 0.18055555555555555,
+        "cov": 0.0
+      }
+    },
+    "aggregation": {
+      "n": 31,
+      "summary": {
+        "rouge_l": 0.0073831292047610835,
+        "ss": 0.04006845400671016,
+        "fc": 0.0,
+        "ac": 0.036632441904180094,
+        "fs": 0.0,
+        "cov": 0.0
+      }
+    },
+    "cross-branch": {
+      "n": 1,
+      "summary": {
+        "rouge_l": 0.0,
+        "ss": -0.09686741991278928,
+        "fc": 0.0,
+        "ac": -0.04843370995639464,
+        "fs": null,
+        "cov": 0.0
+      }
+    },
+    "subgraph-deep-analytics": {
+      "n": 33,
+      "summary": {
+        "rouge_l": 0.015118637506813668,
+        "ss": 0.06641156106585622,
+        "fc": 0.05905084326136958,
+        "ac": 0.0627312021636129,
+        "fs": 0.6001736111111111,
+        "cov": 0.026437276437276436
+      }
+    }
+  },
+  "aggregate_summary": {
+    "rouge_l": 0.059054000680970574,
+    "ss": 0.1062909917214157,
+    "fc": 0.11124754227912123,
+    "ac": 0.10698545825761745,
+    "fs": 0.2621569653761008,
+    "cov": 0.04031277431277431
+  }
+}

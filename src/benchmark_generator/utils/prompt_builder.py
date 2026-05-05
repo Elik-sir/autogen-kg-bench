@@ -1,56 +1,19 @@
+from __future__ import annotations
+
 import json
-import os
 
-
-ENGLISH_BENCHMARK_TEXT_RULE = (
-    "LANGUAGE (mandatory): All natural-language content you produce for the benchmark must be in English: "
-    "especially the `question` field. For complexity `subgraph-deep-analytics`, also write `answer` and every "
-    "string in `analysis_focus` in English. Keep proper names, tickers, and literals exactly as they appear in the sample data."
+from benchmark_generator.prompt_settings import (
+    BASE_SYSTEM_PROMPT,
+    ENGLISH_BENCHMARK_TEXT_RULE,
+    MAX_PROPS_PER_SAMPLE,
+    MAX_SAMPLE_LABELS,
+    MAX_SAMPLES_CHARS,
+    MAX_SAMPLES_PER_LABEL,
+    MAX_SCHEMA_CHARS,
+    MAX_SCHEMA_PROPS_PER_TYPE,
+    MAX_VALUE_CHARS,
+    USEFUL_ENTITY_KEYS,
 )
-
-BASE_SYSTEM_PROMPT = (
-    "You are a Data Scientist. Your task is to build a benchmark for evaluating GraphRAG systems. "
-    "You are given the Neo4j graph schema and SAMPLE rows from the database. "
-    "You must return a strictly valid JSON array of objects. No markdown, no text before or after. "
-    "Generate only questions that admit an unambiguous answer from the graph data. "
-    + ENGLISH_BENCHMARK_TEXT_RULE
-)
-
-USEFUL_ENTITY_KEYS = {
-    "name",
-    "title",
-    "description",
-    "summary",
-    "headline",
-    "sector",
-    "industry",
-    "country",
-    "region",
-    "category",
-    "status",
-    "date",
-    "year",
-    "amount",
-    "value",
-    "revenue",
-    "profit",
-    "risk",
-    "sentiment",
-    "score",
-    "impact",
-    "ticker",
-}
-
-
-MAX_SCHEMA_CHARS = max(2_000, int(os.getenv("BENCHMARK_MAX_SCHEMA_CHARS", "12000")))
-MAX_SAMPLES_CHARS = max(2_000, int(os.getenv("BENCHMARK_MAX_SAMPLES_CHARS", "24000")))
-MAX_SCHEMA_PROPS_PER_TYPE = max(
-    5, int(os.getenv("BENCHMARK_MAX_SCHEMA_PROPS_PER_TYPE", "40"))
-)
-MAX_SAMPLE_LABELS = max(1, int(os.getenv("BENCHMARK_MAX_SAMPLE_LABELS", "30")))
-MAX_SAMPLES_PER_LABEL = max(1, int(os.getenv("BENCHMARK_MAX_SAMPLES_PER_LABEL", "3")))
-MAX_PROPS_PER_SAMPLE = max(3, int(os.getenv("BENCHMARK_MAX_PROPS_PER_SAMPLE", "12")))
-MAX_VALUE_CHARS = max(20, int(os.getenv("BENCHMARK_MAX_VALUE_CHARS", "180")))
 
 
 def _truncate_text(text: str, max_chars: int) -> str:
@@ -218,29 +181,103 @@ Generate {count} questions of type "simple":
     return BASE_SYSTEM_PROMPT, user_prompt
 
 
-def build_multi_hop_prompts(schema, data_samples, count, existing_questions=None):
-    user_prompt = (
-        _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
-        + f"""
-=== TASK TYPE: MULTI-HOP ===
-Generate {count} questions of type "multi-hop":
-- paths of 2–4 hops across different node types,
-- focus on non-obvious links or dependencies.
+def _build_multi_hop_x_prompts(
+    schema,
+    local_context: dict,
+    *,
+    count: int,
+    hop_count: int,
+    complexity: str,
+    existing_questions=None,
+):
+    local_ontology = ""
+    if isinstance(local_context, dict):
+        local_ontology = str(local_context.get("local_ontology") or "")
+    local_ontology = _truncate_text(local_ontology, MAX_SAMPLES_CHARS)
+    anchor_label = (
+        str(local_context.get("anchor_label", "")).strip()
+        if isinstance(local_context, dict)
+        else ""
+    )
+    anchor_id = (
+        str(local_context.get("anchor_element_id", "")).strip()
+        if isinstance(local_context, dict)
+        else ""
+    )
+    paths_found = int(local_context.get("paths_found") or 0) if isinstance(local_context, dict) else 0
 
-=== EXTRA RULES FOR NON-EMPTY RESULTS (MANDATORY) ===
-1. Each question must tie to at least one anchor (name/title/ticker) that CLEARLY appears in the SAMPLE DATA.
-2. Do not use rare or exotic WHERE values that do not appear in the SAMPLE DATA.
-3. Avoid overly tight filter combinations (city + industry + resource + keyword) in one query.
-4. Before finalizing Cypher, run an internal self-check:
-   - is there at least one concrete anchor from the samples;
-   - could the filter set yield an empty intersection;
-   - can the query be made less brittle without losing the multi-hop intent.
-5. If the query is aggregate (COUNT/SUM/AVG/MIN/MAX), phrase it so the result is informative (not null and not a trivial zero).
-6. Prefer patterns where at least one hop is supported by the samples (entities and relationships appear in the provided data).
+    user_prompt = (
+        _base_user_prompt(schema, {}, existing_questions=existing_questions)
+        + f"""
+=== TASK TYPE: {complexity.upper()} ===
+Generate {count} question(s) of type "{complexity}".
+
+Anchor label: {anchor_label or "(unknown)"}
+Anchor element_id: {anchor_id or "(unknown)"}
+Extracted paths count: {paths_found}
+Required reasoning hops: exactly {hop_count}
+
+=== LOCAL ONTOLOGY (ONLY TRUSTED CONTEXT) ===
+{local_ontology or "(empty)"}
+
+=== STRICT RULES (MANDATORY) ===
+1. Use ONLY the local ontology and path examples above.
+2. Do NOT invent entities, labels, relationship types, or properties.
+3. The generated question must require EXACTLY {hop_count} logical steps/hops.
+4. Cypher must reflect exactly {hop_count} hops between the start anchor and target entity.
+5. Do not collapse the task into a shorter query with fewer hops.
+6. Use concrete anchor/filter values that exist in the provided local ontology.
+7. Return concrete fields in RETURN (not full nodes).
+8. If you cannot satisfy the rules, output an empty JSON array [].
 """
-        + _output_format_prompt("multi-hop")
+        + _output_format_prompt(complexity)
     )
     return BASE_SYSTEM_PROMPT, user_prompt
+
+
+def build_multi_hop_2_prompts(schema, local_context, count, existing_questions=None):
+    return _build_multi_hop_x_prompts(
+        schema,
+        local_context,
+        count=count,
+        hop_count=2,
+        complexity="multi-hop-2",
+        existing_questions=existing_questions,
+    )
+
+
+def build_multi_hop_3_prompts(schema, local_context, count, existing_questions=None):
+    return _build_multi_hop_x_prompts(
+        schema,
+        local_context,
+        count=count,
+        hop_count=3,
+        complexity="multi-hop-3",
+        existing_questions=existing_questions,
+    )
+
+
+def build_multi_hop_4_prompts(schema, local_context, count, existing_questions=None):
+    return _build_multi_hop_x_prompts(
+        schema,
+        local_context,
+        count=count,
+        hop_count=4,
+        complexity="multi-hop-4",
+        existing_questions=existing_questions,
+    )
+
+
+def build_multi_hop_prompts(schema, data_samples, count, existing_questions=None):
+    # Backward-compatible alias; prefer build_multi_hop_2/3/4_prompts.
+    return _build_multi_hop_x_prompts(
+        schema,
+        data_samples if isinstance(data_samples, dict) else {},
+        count=count,
+        hop_count=2,
+        complexity="multi-hop-2",
+        existing_questions=existing_questions,
+    )
 
 
 def build_aggregation_prompts(schema, data_samples, count, existing_questions=None):
@@ -268,7 +305,7 @@ Generate {count} questions of type "cross-branch" using this recipe:
 3) Build an independent branch B from the anchor to Entity_B.
 4) In the question text, avoid naming Entity_A/Entity_B directly (entity masking), but Cypher must retrieve them explicitly.
 
-Success criterion: answering requires combining context from both chains Anchor→Entity_A and Anchor→Entity_B.
+Success criterion: answering requires combining context from both chains Anchor->Entity_A and Anchor->Entity_B.
 """
         + _output_format_prompt("cross-branch")
     )
@@ -295,12 +332,12 @@ def build_same_type_common_prompts(schema, data_samples, pair_context: dict, exi
     path_lines = []
     if da is not None and db is not None:
         path_lines.append(
-            f"Lengths of shortest paths A→common and B→common (in hops): {da} and {db} (each at most 3)."
+            f"Lengths of shortest paths A->common and B->common (in hops): {da} and {db} (each at most 3)."
         )
     if pha:
-        path_lines.append(f"Example shortest path A→common: {pha}")
+        path_lines.append(f"Example shortest path A->common: {pha}")
     if phb:
-        path_lines.append(f"Example shortest path B→common: {phb}")
+        path_lines.append(f"Example shortest path B->common: {phb}")
     path_block = "\n".join(path_lines) if path_lines else ""
 
     case_block = f"""
@@ -325,7 +362,7 @@ Generate exactly 1 question for the case below.
 
 Logic:
 - A and B share one label and have no edge between them.
-- Some entity is reachable from both A and B along chains of 1–3 hops (including only 2–3 steps with no shared direct neighbor).
+- Some entity is reachable from both A and B along chains of 1-3 hops (including only 2-3 steps with no shared direct neighbor).
 - Local 1-hop lists and path hints are for context; the question should target that shared entity.
 
 Requirements:
@@ -388,7 +425,7 @@ All of the question, answer, and analysis_focus strings must be in English."""
     else:
         intro = f"""Below are business-context fragments about companies.
 Generate {count} pairs: each pair is a complex analytical question and a reference answer.
-Critical for indexing: pair i in the JSON array must use ONLY CONTEXT i—do not mix facts across companies or move signals between blocks.
+Critical for indexing: pair i in the JSON array must use ONLY CONTEXT i-do not mix facts across companies or move signals between blocks.
 All questions, answers, and analysis_focus strings must be in English."""
 
     user_prompt = f"""

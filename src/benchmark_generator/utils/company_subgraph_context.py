@@ -467,4 +467,3 @@ def build_company_subgraph_contexts(
             }
         )
     return out
-

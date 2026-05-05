@@ -1,0 +1,71 @@
+{
+  "meta": {
+    "llm_model": "qwen/qwen3.6-plus",
+    "embedding_model": "text-embedding-3-small",
+    "metrics": "default",
+    "answer_relevancy_strictness": 1,
+    "llm_max_tokens": 4096,
+    "ragas_max_workers": 4,
+    "ragas_run_max_retries": 10,
+    "input_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results",
+    "output_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\judge\\data\\ragas_hippo",
+    "types_evaluated": [
+      "simple",
+      "multi-hop",
+      "aggregation",
+      "cross-branch",
+      "subgraph-deep-analytics"
+    ]
+  },
+  "by_type": {
+    "simple": {
+      "n_rows": 30,
+      "summary": {
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.26165946410350666
+      },
+      "input_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\simple.jsonl",
+      "output_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\judge\\data\\ragas_hippo\\simple.json"
+    },
+    "multi-hop": {
+      "n_rows": 30,
+      "summary": {
+        "faithfulness": 0.7849999999999999,
+        "answer_relevancy": 0.09280132261477121
+      },
+      "input_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\multi-hop.jsonl",
+      "output_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\judge\\data\\ragas_hippo\\multi-hop.json"
+    },
+    "aggregation": {
+      "n_rows": 31,
+      "summary": {
+        "faithfulness": 0.8193548387096774,
+        "answer_relevancy": 0.07732660298119579
+      },
+      "input_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\aggregation.jsonl",
+      "output_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\judge\\data\\ragas_hippo\\aggregation.json"
+    },
+    "cross-branch": {
+      "n_rows": 1,
+      "summary": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "input_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\cross-branch.jsonl",
+      "output_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\judge\\data\\ragas_hippo\\cross-branch.json"
+    },
+    "subgraph-deep-analytics": {
+      "n_rows": 33,
+      "summary": {
+        "faithfulness": 0.8859066859066859,
+        "answer_relevancy": 0.07541718846892008
+      },
+      "input_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\subgraph-deep-analytics.jsonl",
+      "output_file": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\judge\\data\\ragas_hippo\\subgraph-deep-analytics.json"
+    }
+  },
+  "aggregate_summary": {
+    "answer_relevancy": 0.12415772410751813,
+    "faithfulness": 0.7774793650793649
+  }
+}

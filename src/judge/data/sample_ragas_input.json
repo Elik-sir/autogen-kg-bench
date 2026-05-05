@@ -1,0 +1,20 @@
+[
+  {
+    "item_id": "ex-1",
+    "question": "What is the capital of France?",
+    "answer": "Paris is the capital and largest city of France.",
+    "contexts": [
+      "France is a country in Western Europe. Its capital city is Paris, located in the north-central part of the country."
+    ],
+    "ground_truth": "Paris"
+  },
+  {
+    "item_id": "ex-2",
+    "question": "What is the capital of France?",
+    "answer": "Berlin was divided during the Cold War.",
+    "contexts": [
+      "France is a country in Western Europe. Its capital city is Paris, located in the north-central part of the country."
+    ],
+    "ground_truth": "Paris"
+  }
+]

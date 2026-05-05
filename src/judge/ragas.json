@@ -1,0 +1,304 @@
+{
+  "summary": {
+    "faithfulness": 0.6499999999999999,
+    "answer_relevancy": 0.40671060693230027
+  },
+  "rows": [
+    {
+      "index": 0,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "1",
+      "question": "Какой тикер у компании с именем «Colgate-Palmolive Company»?",
+      "answer": "CL",
+      "ground_truth": "CL, Colgate-Palmolive Company"
+    },
+    {
+      "index": 1,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5279310036004863
+      },
+      "item_id": "2",
+      "question": "Какие компании работают в той же отрасли, что и Colgate-Palmolive Company, и какие у них тикеры?",
+      "answer": "KMB, CLX, CHD.",
+      "ground_truth": "Kimberly-Clark Corporation, KMB; Clorox Company (The), CLX; Church & Dwight Company, Inc., CHD"
+    },
+    {
+      "index": 2,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.24687902649084953
+      },
+      "item_id": "3",
+      "question": "Какие города находятся в той же стране, что и Дублин?",
+      "answer": "Дублин.",
+      "ground_truth": "Swords; Ballybrit; Galway; Cork"
+    },
+    {
+      "index": 3,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8736022975578418
+      },
+      "item_id": "4",
+      "question": "Какие новости публиковались о Southern Company (The) и о секторе, к которому она относится?",
+      "answer": "Никакие новости о Southern Company или её секторе не публиковались в предоставленных данных.",
+      "ground_truth": "Southern Company receives record $26 . 5B federal loan ; Georgia customers could see lower power bills; Morgan Stanley Maintains an Underweight Rating on The Southern Company ( SO ) ; Department Of Energy Loans Record $26 . 5 Billion To Boost Southern Power Grid , Targets Massive Cost Savings - Amazon . com ( NASDAQ : AMZN ), Microsoft ( NASDAQ : MSFT ) ; Westpac Banking Corp Boosts Holdings in Southern Company ( The ) $SO; US offers largest ever energy loan with $26 . 5 billion to Southern Co – Oil & Gas 360; Recent Analyst Ratings Changes for Southern ( SO ) ; White House Data Center Pledge Aims to Protect Home Electricity Rates; The Southern Company Gets the Largest Ever Loan from the US Department of Energy; How proposed legislation could impact your power bill; Christopher Cummiskey Sells 6 , 669 Shares of Southern ( NYSE : SO ) Stock; Sagespring Wealth Partners LLC Decreases Position in Southern Company ( The ) $SO; Wealth Enhancement Advisory Services LLC Boosts Position in Southern Company ( The ) $SO; Roberts Wealth Advisors LLC Takes Position in Southern Company ( The ) $SO; At street level : Jam In The Streets brings live music and philanthropy to Athens; Exchange Traded Concepts LLC Buys 114 , 601 Shares of Southern Company ( The ) $SO; Mather Group LLC . Decreases Position in Southern Company ( The ) $SO; Highline Wealth Partners LLC Has $61 , 000 Position in Southern Company ( The ) $SO; Big Trouble For Bankrupt Pakistan : UAE , Saudi Arabia , China Corner Asim Munir , Shehbaz Sharif , Demand Billions In Dues; Oil prices rise anew after a US - Iran standoff in the Strait of Hormuz strands tankers;   I Have Debt On $2 . 2 Billion Of Real Estate , Says Grant Cardone .  This Is Why People Hate Me  ; PFG Investments LLC Makes New $863 , 000 Investment in CSW Industrials , Inc . $CSW; Security Financial Services INC . Invests $1 . 32 Million in SPDR S & P Aerospace & Defense ETF $XAR; Tributary Capital Management LLC Has $17 . 39 Million Stake in CSW Industrials , Inc . $CSW; BBAI , DJT , OKLO and RKLB Price Roundup : Four Volatile Stocks Wrap a Busy Week; Elevated Capital Advisors LLC Acquires 34 , 785 Shares of Simplify Barrier Income ETF $SBAR; Fidelity MSCI Industrials Index ETF $FIDU Shares Acquired by Elevated Capital Advisors LLC; Japan Historic Pivot - The Bank of Japan Finally Ends the Era of Negative Interest Rates . ; Should You Buy the Vanguard S & P 500 ETF With the Stock Market At a Fresh Record High ? The Answer Might Surprise You . ; Short - Covering Rally ... Or Something More ? ; 1 big thing were watching in this week market just as important as Iran; Growth Stocks To Watch Now – April 19th; KOPSI May Open Under Pressure On Monday; Malaysia Shares May Run Out Of Steam On Monday; Wall St hits highs as Strait of Hormuz declared open; AI can open up possibilities for strained rural health care providers in Utah; Inside the Shapiro administration  absolutely ambitiou plan to prevent maternal deaths; Virginia Governor Proposes Expansion of Paid Sick Leave; Cuts to Princeton Public Library threaten a critical community resource ⋆ Princeton , NJ local news % ; The Monday Report - 20 April 2026; Nearly 1 In 4 People Seeking Abortions Out Of State Chose Illinois . Here Why | Community; Beyond Growth : How a wellbeing economy can help us avoid collapse; Rising revenues , deepening poverty; NYC Doctor Pleads Guilty to $24M COVID Testing Fraud Scheme; Marin Housing Authority gets new director; College of Education Hosts Maiden International Conference on Contemporary Challenges in Education , Communication , Information and Technology; Mount Vernon shifts taxicab regulations to Utilities Commission; CII GST - Style Land Council Plan to Speed Up Industrial Allotment; A 64 - Year - Old Impossible Choice : Dave Ramsey Reveals Why $27 , 000 Annual Income Cannot Cover New England Rent; Exxon and partners profits soar to US$29B in 5 years while Guyana received US$5 . 4B in 50 / 50 partnership; The Chip That Wants to Dethrone Nvidia Heads to Wall Street; Chef James Scott on fire , flavour and flair at Longridge House; Traphagen Investment Advisors LLC Increases Holdings in VanEck Alternative Asset Manager ETF $GPZ; SPDR Portfolio Developed World ex - US ETF $SPDW Shares Purchased by Global Financial Private Client LLC; Quant snapshot : Eni , Alpine Income lead top - rated names as Crown Castle , Goosehead lag; VCI Wealth Management LLC Has $2 . 37 Million Position in KKR & Co . Inc . $KKR; Audit of Meghan Markle  royal tour  wardrobe exposes a worrying truth … this is everything the Palace always feared : JANE TIPPETT; The S & P 500 has blown past 7 , 000 in an epic comeback rally . Here why it can keep going . ; The Simplest Way to Put $21 , 000 in a TFSA to Work in 2026; Razorpay IPO Papers via Confidential Route Soon; Canterbury Park ( NASDAQ : CPHC ) & Chilco River ( OTCMKTS : CRVH ) Financial Survey; Financial Survey : Gaxos . ai ( NASDAQ : GXAI ) & Allied Gaming & Entertainment ( NASDAQ : AGAE ) ; Head to Head Survey : HWH International ( NASDAQ : HWH ) vs . Royal Caribbean Cruises ( NYSE : RCL ) ; Head to Head Survey : Wynn Resorts ( NASDAQ : WYNN ) & Melco International Development ( OTCMKTS : MDEVF ) ; India Consumer Discretionary Sector Poised for Remarkable Growth in Q4 FY26 , ETRetail; Growlife ( OTCMKTS : PHOT ) & Foxx Development ( NASDAQ : FOXX ) Head to Head Contrast; Peloton Stock Is Rallying , But Can It Deliver Another 70 % Upside ? ; Top Apparel Stocks To Follow Now – April 19th; Coliwoo eyes growth overseas as parent LHN seeks next space - optimisation gem; Gender diversity , tenure length remain governance gaps among STI company chairpersons; Green real estate labels mask deeper capital market divides; Which Is the Better ETF , Vanguard Mega - Cap MGK or iShare Small - Cap IWO ? ; Which Is the Better Large - Cap ETF , Vanguard MGK or State Street SPY ? ; Promising Social Media Stocks To Follow Today – April 18th; Jim Cramer on Lumen Technologies ( LUMN ):  Ive Always Felt That It Was a Decent Spec  ; Direxion Daily NFLX Bear 1X Shares ( NASDAQ : NFXS ) Short Interest Update; AT & T Inc . ( NYSE : T ) Sees Significant Growth in Short Interest; 2 TSX Stocks Priced Under $100 With Serious Upside Potential; Telecoms Attacks in Nigeria Spark Fears for 2027 Elections; Cap Debate : 2 Iconic ETF Paths , 1 Big Trade - Off; AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley; VCI Wealth Management LLC Lowers Stake in Fidelity MSCI Communication Services Index ETF $FCOM; iShares MSCI Netherlands ETF ( NYSEARCA : EWN ) Sees Significant Drop in Short Interest; This Week Market Wrap : War Fades , Markets Rip , Fed Hopes Rise; Contrasting Fenbo ( NASDAQ : FEBO ) and Bolt Projects ( NASDAQ : BSLK ) ; Chipmaker Tops Moutai for Highest Price Tag Among China Stocks; Iran war , $4 gas , took all the fun right out of U . S . consumer economy; Vanguard Total World Stock ETF ( NYSEARCA : VT ) Sets New 52 - Week High – What Next ? ; Earnings Preview : What To Expect From Bunge Global Report; Meet the Dividend King That Just Raised Its Payout For the 70th Consecutive Year . Here Why It a No - Brainer Buy Before the End of April . ; War stress test reveals winners & losers in factor investing; The Great Rotation Has Crushed Growth Stocks . History Says That Usually When You Should Be Buying Them . ; The Best Stocks to Invest $1 , 000 in Right Now; Edible Garden ( NASDAQ : EDBL ) and Dole ( NYSE : DOLE ) Critical Survey; PepsiCo ( PEP ) Stock Price Handed Boost as CEO Ramon Laguarta Says Cuts Are Working , Q1 Results Top Estimates; 4 Consumer Staples Stocks Built to Outlast Any Market Downturn; The Smartest Dividend Stocks to Buy With $2 , 000 Right Now"
+    },
+    {
+      "index": 4,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "5",
+      "question": "Какие продукты производятся компаниями, работающими в отрасли \"Health Care Services\"?",
+      "answer": "В предоставленных данных отсутствуют компании, классифицированные как работающие в отрасли \"Health Care Services\", поэтому перечислить производимые ими продукты невозможно.",
+      "ground_truth": "risk assessment services for the life insurance industry, Quest Diagnostics Incorporated; anatomic pathology testing, Quest Diagnostics Incorporated; diagnostic information services, Quest Diagnostics Incorporated; routine, non-routine and advanced clinical testing, Quest Diagnostics Incorporated; information technology solutions, Quest Diagnostics Incorporated; medical drug monitoring services, Labcorp Holdings Inc.; occupational testing services, Labcorp Holdings Inc.; infectious disease tests, Labcorp Holdings Inc.; gene-based and esoteric testing, Labcorp Holdings Inc.; services related to anatomic pathology/oncology, Labcorp Holdings Inc."
+    },
+    {
+      "index": 5,
+      "scores": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.7621083832397275
+      },
+      "item_id": "6",
+      "question": "Какие новости упоминают ресурсы, необходимые Southern Company (The)?",
+      "answer": "Southern Company использует ресурсы, включая электроэнергию, природный газ, возобновляемые источники энергии, газопроводы и объекты хранения газа.",
+      "ground_truth": "Eyesore or green godsend ? The 125 - mile pipeline to clean up the Peaks, 2026-04-11, natural gas pipelines; LPG shortage drives surge in PNG demand in Belagavi | Hubballi News, 2026-04-11, natural gas pipelines; CHRIS JOHNSON : AI Data Centers Can Win Over Skeptics . But It Must Learn From Fracking, 2026-04-13, natural gas pipelines; Condor Achieves New Production Record of 14 , 000 boe / d in Uzbekistan, 2026-04-13, natural gas pipelines; Condor Energies Inc .: Condor Announces $15 Million Bought Deal Public Offering, 2026-04-13, natural gas pipelines; FY2027 EPS Estimate for Pembina Pipeline Lowered by Analyst, 2026-04-14, natural gas pipelines; Top Oil Stocks To Watch Now – April 11th, 2026-04-14, natural gas pipelines; Loews ( NYSE : L ) versus World Access ( OTCMKTS : WAXS ) Head to Head Review, 2026-04-15, natural gas pipelines; WindAction | Northeast states set big climate goals . Now those plans are in trouble, 2026-04-15, natural gas pipelines; Stay safe while gardening and landscaping, 2026-04-16, natural gas pipelines"
+    },
+    {
+      "index": 6,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.2879096625858094
+      },
+      "item_id": "7",
+      "question": "Какие люди работают в компаниях, расположенных в штате TN?",
+      "answer": "R. Brad Martin, Rajesh Subramaniam, John W. Dietrich, Brie A. Carere, John Alan Smith, Guy M. Erwin II, Vishal Talwar, Jenifer Hollander, Gina F. Adams, Jill C. Brannon, H. Eric Bolton Jr., Adrian Bradley Hill, A. Clay Holder, Robert J. DelPriore, Timothy P. Argo, David Herring, Joseph P. Fracchia, Jennifer Patrick, Leslie Bratten Cantrell Wolfgang, Melanie M. Carpenter, Justin L. Jude, Rick Galloway, Matthew J. McKay, Andy Hamilton, John R. Meyne, Michael S. Clark, Joseph P. Boutross, Genevieve L. Dombrowski, Walter P. Hanley, Yanik Cantieni.",
+      "ground_truth": "Ms. Jennifer M. Bedsole, AutoZone, Inc., Memphis; Mr. John Scott Murphy, AutoZone, Inc., Memphis; Ms. Michelle K. Borninkhof, AutoZone, Inc., Memphis; Mr. Kenneth E. Jaycox Jr., AutoZone, Inc., Memphis; Mr. Thomas B. Newbern, AutoZone, Inc., Memphis; Mr. Brian L. Campbell, AutoZone, Inc., Memphis; Mr. William C. Rhodes III, AutoZone, Inc., Memphis; Mr. Eric S. Gould, AutoZone, Inc., Memphis; Mr. Jamere  Jackson CPA, AutoZone, Inc., Memphis; Mr. Philip B. Daniele III, AutoZone, Inc., Memphis"
+    },
+    {
+      "index": 7,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.35407396913658135
+      },
+      "item_id": "8",
+      "question": "В каких отраслях оперируют фонды, владеющие компанией Ameriprise Financial, Inc. (тикер AMP)?",
+      "answer": "Управление активами, банковские услуги, инвестиции.",
+      "ground_truth": "Asset Management & Custody Banks, Geode Capital Management, LLC; Asset Management & Custody Banks, JPMORGAN CHASE & CO; Asset Management & Custody Banks, State Street Corporation; Asset Management & Custody Banks, Blackrock Inc.; Asset Management & Custody Banks, Vanguard Group Inc"
+    },
+    {
+      "index": 8,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.65015382759938
+      },
+      "item_id": "9",
+      "question": "Какие фонды владеют компаниями, работающими в отрасли «Water Utilities», и какой процент владения у каждого фонда?",
+      "answer": "Фонды, владеющие компанией American Water Works Company, Inc. (отрасль «Water Utilities»):  \n- Vanguard Group Inc — 13,44%  \n- Blackrock Inc. — 10,61%  \n- State Street Corporation — 5,92%  \n- Aristotle Capital Management, LLC — 3,23%  \n- Geode Capital Management, LLC — 2,57%",
+      "ground_truth": "Aristotle Capital Management, LLC, 0.0323, American Water Works Company, I; Geode Capital Management, LLC, 0.0257, American Water Works Company, I; Vanguard Group Inc, 0.1344, American Water Works Company, I; Blackrock Inc., 0.10609999, American Water Works Company, I; State Street Corporation, 0.0592, American Water Works Company, I"
+    },
+    {
+      "index": 9,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.3569275565878663
+      },
+      "item_id": "10",
+      "question": "Какие заголовки новостей упоминают продукты, произведённые компанией, расположенной в городе «Chicago»?",
+      "answer": "MDLZ, KHC, CAG",
+      "ground_truth": "Comparing Corteva ( NYSE : CTVA ) & Archer Daniels Midland ( NYSE : ADM ) ; Head - To - Head Review : Davis Commodities ( NASDAQ : DTCK ) and Archer Daniels Midland ( NYSE : ADM ) ; Analyzing Adecoagro ( NYSE : AGRO ) & Archer Daniels Midland ( NYSE : ADM ) ; Indo - US Trade : Global integration meets rural anxiety;   We bought 15 times more grain from farmers at MSP than Congress : Amit Shah slams Rahul Gandhi for misleading public;   PM knows Budget has been damp squib : Jairam Ramesh; Trade liberalization to boost India farm exports , says Niti Aayog Ramesh Chand; Court ruling on tariffs , Trump response fuel market uncertainty for US grains , beef; U . S . ethanol exports take center stage as E15 prospects falter | Agri - Pulse Communications , Inc . ; Winterizing Your Cowherd - Managing Cows Through Cold Stress"
+    },
+    {
+      "index": 10,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.32397712902908204
+      },
+      "item_id": "11",
+      "question": "Какие должности занимают люди, работающие в компаниях, производящих продукт «FPGA design products»?",
+      "answer": "Co-Founder & Executive Chairman, CEO, President & Director, Chief Financial Officer, Advisor, Senior Vice President of Operations, General Counsel & Corporate Secretary, Chief Marketing Officer, Chief People Officer, Chief Strategy Officer, Senior Vice President of Engineering Excellence Group.",
+      "ground_truth": "Ms. Ann  Minooka, Chief Marketing Officer; Dr. Aart J. de Geus Ph.D., Co-Founder & Executive Chairman; Ms. Jill  Larsen, Chief People Officer; Mr. Antonio  Varas, Chief Strategy Officer; Mr. Raja  Tabet, Senior Vice President of Engineering Excellence Group; Ms. Janet  Lee, General Counsel & Corporate Secretary; Mr. John F. Runkel Jr., Advisor; Ms. Shelagh  Glaser, Chief Financial Officer; Mr. Sassine  Ghazi, CEO, President & Director; Ms. Alessandra  Costa, Senior Vice President of Operations"
+    },
+    {
+      "index": 11,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.513800936785059
+      },
+      "item_id": "12",
+      "question": "Какие фонды владеют компаниями, расположенными в Чикаго, и какой процент они владеют?",
+      "answer": "Vanguard Group Inc владеет 11.5% Cboe и 9.79% CME; Blackrock Inc. — 8.97% Cboe и 8.67% CME; State Street Corporation — 4.48% Cboe и 4.46% CME; FMR, LLC — 4.27% Cboe; Alliancebernstein L.P. — 6.07% Cboe; JPMORGAN CHASE & CO — 5.29% CME; Geode Capital Management, LLC — 2.6% CME.",
+      "ground_truth": "Alliancebernstein L.P., Cboe Global Markets, Inc., 0.060700003; Blackrock Inc., McDonald's Corporation, 0.0731; Blackrock Inc., Ventas, Inc., 0.1113; Blackrock Inc., Kellanova, 0.0889; Blackrock Inc., United Airlines Holdings, Inc., 0.0767; Blackrock Inc., Mondelez International, Inc., 0.074499995; Blackrock Inc., Motorola Solutions, Inc., 0.0947; Blackrock Inc., Archer-Daniels-Midland Company, 0.0936; Blackrock Inc., Northern Trust Corporation, 0.0787; Blackrock Inc., GE HealthCare Technologies Inc., 0.0802"
+    },
+    {
+      "index": 12,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.3623793213392054
+      },
+      "item_id": "13",
+      "question": "Какие сотрудники работают в компаниях, производящих продукт «FPGA design products», и какие у них должности?",
+      "answer": "Dr. Aart J. de Geus Ph.D. — Co-Founder & Executive Chairman; Mr. Sassine Ghazi — CEO, President & Director; Ms. Shelagh Glaser — Chief Financial Officer; Mr. John F. Runkel Jr. — Advisor; Ms. Alessandra Costa — Senior Vice President of Operations; Ms. Janet Lee — General Counsel & Corporate Secretary; Ms. Ann Minooka — Chief Marketing Officer; Ms. Jill Larsen — Chief People Officer; Mr. Antonio Varas — Chief Strategy Officer; Mr. Raja Tabet — Senior Vice President of Engineering Excellence Group.",
+      "ground_truth": "Dr. Aart J. de Geus Ph.D., Co-Founder & Executive Chairman, Synopsys, Inc.; Mr. Antonio  Varas, Chief Strategy Officer, Synopsys, Inc.; Mr. John F. Runkel Jr., Advisor, Synopsys, Inc.; Mr. Raja  Tabet, Senior Vice President of Engineering Excellence Group, Synopsys, Inc.; Mr. Sassine  Ghazi, CEO, President & Director, Synopsys, Inc.; Ms. Alessandra  Costa, Senior Vice President of Operations, Synopsys, Inc.; Ms. Ann  Minooka, Chief Marketing Officer, Synopsys, Inc.; Ms. Janet  Lee, General Counsel & Corporate Secretary, Synopsys, Inc.; Ms. Jill  Larsen, Chief People Officer, Synopsys, Inc.; Ms. Shelagh  Glaser, Chief Financial Officer, Synopsys, Inc."
+    },
+    {
+      "index": 13,
+      "scores": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.4290153014889342
+      },
+      "item_id": "14",
+      "question": "В какие отрасли входят компании, принадлежащие фонду «Public Investment Fund», и сколько компаний в каждой отрасли?",
+      "answer": "- Communication Services: 2 компании  \n- Financials: 3 компании",
+      "ground_truth": "Interactive Home Entertainment, 2"
+    },
+    {
+      "index": 14,
+      "scores": {
+        "faithfulness": 0.9,
+        "answer_relevancy": 0.7538452610528732
+      },
+      "item_id": "15",
+      "question": "Какие новости публиковались о компаниях, расположенных в штате Теннесси (TN)?",
+      "answer": "В штате Теннесси расположены FedEx Corporation и HCA Healthcare, Inc. FedEx, основанная в 1971 году, базируется в Мемфисе и является ключевым игроком в сфере логистики и доставки. HCA Healthcare, основанная в 1968 году, базируется в Нэшвилле и является крупнейшим оператором больниц в США, занимая 61-е место в рейтинге Fortune 500 в 2024 году, несмотря на скандалы 1990-х годов.",
+      "ground_truth": "Tractor Supply ( TSCO ) Buy Rating Reiterated at DA Davidson, 2026-04-19, Tractor Supply Company, Brentwood; L1 Capital International Trimmed HCA Healthcare ( HCA ) on Valuation Consideration, 2026-04-17, HCA Healthcare, Inc., Nashville; FedEx ( NYSE : FDX ) EVP Tracy Brightman Sells 16 , 959 Shares, 2026-04-17, FedEx Corporation, Memphis; Promising Automotive Stocks To Add to Your Watchlist – April 17th, 2026-04-17, AutoZone, Inc., Memphis; FedEx ( NYSE : FDX ) Director Sells $2 , 138 , 355 . 00 in Stock, 2026-04-17, FedEx Corporation, Memphis; People are selling their plasma across Massachusetts to deal with rising prices, 2026-04-16, Tractor Supply Company, Brentwood; Retail Stocks To Watch Now – April 16th, 2026-04-16, AutoZone, Inc., Memphis; Citigroup Lowers International Paper ( IP ) Target , Flags Tough Packaging Sector Setup, 2026-04-15, International Paper Company, Memphis; Nike Chairman and Founder Phil Knight Announces Succession Plans, 2026-04-15, FedEx Corporation, Memphis; FedEx CFO , vice president to step down, 2026-04-14, FedEx Corporation, Memphis"
+    },
+    {
+      "index": 15,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.4114015071528303
+      },
+      "item_id": "16",
+      "question": "Какие компании требуют ресурс «containers», который упоминается в новостях?",
+      "answer": "KKR и Packaging Corporation of America.",
+      "ground_truth": "Nordson Corporation, NDSN, Property and Trading Update & Notice of Results | Company Announcement, 2026-04-21; Nordson Corporation, NDSN, Winpak ( WIPKF ) Projected to Post Quarterly Earnings on Thursday, 2026-04-21; Nordson Corporation, NDSN, Police arrest 330 in sweeping crackdown on energy subsidy abuse, 2026-04-21; Nordson Corporation, NDSN, What to do when a pipe bursts or you have a water leak, 2026-04-21; Nordson Corporation, NDSN, Hyundai Ioniq 3 is a stylish £25 , 000 electric hatchback - but does it have enough range to better Chinese rivals ? , 2026-04-21"
+    },
+    {
+      "index": 16,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.14123861604447172
+      },
+      "item_id": "17",
+      "question": "В какой отрасли работает компания, в которой работает Mr. Takeshi  Numoto?",
+      "answer": "Information Technology.",
+      "ground_truth": "Microsoft Corporation, Systems Software"
+    },
+    {
+      "index": 17,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6050710115716351
+      },
+      "item_id": "18",
+      "question": "Какие новости упоминают компании, принадлежащие фонду «Public Investment Fund»?",
+      "answer": "Public Investment Fund владеет акциями компаний Take-Two Interactive Software (TTWO) и Electronic Arts (EA), и по состоянию на 30 сентября 2025 года не изменил свои позиции в обеих компаниях.",
+      "ground_truth": "Electronic Arts Inc . $EA Shares Sold by Banco Bilbao Vizcaya Argentaria S . A . , 2026-03-15, Electronic Arts Inc., EA; Lighthouse Investment Partners LLC Has $11 . 26 Million Stock Holdings in Electronic Arts Inc . $EA, 2026-03-16, Electronic Arts Inc., EA; Moore Capital Management LP Acquires 50 , 136 Shares of Electronic Arts Inc . $EA, 2026-03-17, Electronic Arts Inc., EA; Take - Two Interactive Stock : Is TTWO Underperforming the Communication Sector ? , 2026-03-17, Electronic Arts Inc., EA; Laura Miele Sells 2 , 500 Shares of Electronic Arts ( NASDAQ : EA ) Stock, 2026-03-18, Electronic Arts Inc., EA; AIA Group Ltd Grows Position in Electronic Arts Inc . $EA, 2026-03-19, Electronic Arts Inc., EA; State Street , Voya Seek Shelter From Default Risk, 2026-03-23, Electronic Arts Inc., EA; Roberts Wealth Advisors LLC Sells 5 , 750 Shares of Electronic Arts Inc . $EA, 2026-03-26, Electronic Arts Inc., EA; How JPMorgan Pulled Off EA $15 Billion Debt Sale Amid War, 2026-03-29, Electronic Arts Inc., EA; Bankers arent letting the Iran war get in the way of a deal, 2026-03-30, Electronic Arts Inc., EA"
+    },
+    {
+      "index": 18,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "19",
+      "question": "Какие отрасли имеют наибольшее количество компаний, требующих ресурс «third-party financial institutions»?",
+      "answer": "Недостаточно информации.",
+      "ground_truth": "Asset Management & Custody Banks, 1"
+    },
+    {
+      "index": 19,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.45208118696395966
+      },
+      "item_id": "20",
+      "question": "Какие фонды владеют компаниями, которые производят продукт «wide area network infrastructure», и какой процент владения у каждого фонда?",
+      "answer": "- Vanguard Group Inc: 10.16% (FTNT), 10.14% (AVGO)  \n- Blackrock Inc.: 8.35% (FTNT), 8.0% (AVGO)  \n- State Street Corporation: 3.99% (FTNT), 3.92% (AVGO)  \n- Geode Capital Management, LLC: 2.31% (FTNT)  \n- NORGES BANK: 2.09% (FTNT)  \n- JPMORGAN CHASE & CO: 3.98% (AVGO)  \n- Capital International Investors: 3.1% (AVGO)",
+      "ground_truth": "Morgan Stanley, 0.0356, Dell Technologies Inc., DELL; Vanguard Group Inc, 0.0888, Dell Technologies Inc., DELL; Blackrock Inc., 0.0721, Dell Technologies Inc., DELL; JPMORGAN CHASE & CO, 0.0257, Dell Technologies Inc., DELL; State Street Corporation, 0.0427, Dell Technologies Inc., DELL"
+    },
+    {
+      "index": 20,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "21",
+      "question": "Какие фонды владеют компаниями, которые требуют ресурс «containers», и какой процент владения у каждого фонда?",
+      "answer": "Недостаточно данных для ответа.",
+      "ground_truth": "Vanguard Group Inc, 0.108100004, Nordson Corporation; Blackrock Inc., 0.0684, Nordson Corporation; State Street Corporation, 0.051, Nordson Corporation; Kayne Anderson Rudnick Investment Management LLC, 0.0438, Nordson Corporation; Geode Capital Management, LLC, 0.027, Nordson Corporation"
+    },
+    {
+      "index": 21,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "22",
+      "question": "Сколько компаний работают в отрасли \"Water Utilities\"?",
+      "answer": "1.",
+      "ground_truth": "1"
+    },
+    {
+      "index": 22,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.4697416715155563
+      },
+      "item_id": "23",
+      "question": "В какой отрасли работает компания с тикером CL и в каком городе она расположена?",
+      "answer": "Компания работает в отрасли потребительских товаров и расположена в Окленде, Калифорния.",
+      "ground_truth": "Colgate-Palmolive Company, Household Products, New York"
+    },
+    {
+      "index": 23,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.43940126704524574
+      },
+      "item_id": "24",
+      "question": "Какой из перечисленных продуктов PepsiCo относится к её основной отрасли Soft Drinks & Non‑alcoholic Beverages, если учитывать только связь компании с этой отраслью и исключить остальные производимые товары?",
+      "answer": "Pepsi-Cola",
+      "ground_truth": "Pepsi Black, Schweppes"
+    },
+    {
+      "index": 24,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.7219218990349124
+      },
+      "item_id": "25",
+      "question": "Как наличие крупных институциональных инвесторов (Blackrock Inc., Vanguard Group Inc, State Street Corporation, Pzena Investment Management LLC, First Eagle Investment Management, LLC) может влиять на стратегию Dollar General по расширению ассортимента потребительских товаров (например, бумажные полотенца, паста, солёные закуски) в регионах, где компания критикуют за создание продовольственных пустынь?",
+      "answer": "Крупные институциональные инвесторы могут стимулировать Dollar General к расширению и улучшению ассортимента товаров, включая более здоровые и разнообразные потребительские продукты, чтобы снизить репутационные риски, связанные с продовольственными пустынями, и обеспечить долгосрочную устойчивость бизнеса, что соответствует их интересам в области ESG и стабильной прибыли.",
+      "ground_truth": "Нет данных по запросу."
+    },
+    {
+      "index": 25,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8910149444174998
+      },
+      "item_id": "26",
+      "question": "Как наличие пяти крупнейших институциональных инвесторов и диверсификация по трём бизнес‑сегментам (Retail, Foodservice, International) влияют на способность Hormel Foods расширять международные продажи своих разнообразных продуктов (перishable и shelf‑stable) при сохранении финансовой устойчивости?",
+      "answer": "Наличие крупных институциональных инвесторов обеспечивает Hormel Foods финансовую устойчивость и доступ к капиталу, а диверсификация по трём бизнес-сегментам снижает риски и поддерживает рост международных продаж за счёт гибкости в выходе на новые рынки с разнообразным ассортиментом продукции.",
+      "ground_truth": "Пять крупнейших институциональных инвесторов — Vanguard Group Inc, Invesco Ltd., Blackrock Inc., State Street Corporation и Geode Capital Management, LLC — обеспечивают Hormel Foods значительный капитал и поддержку акционеров, что укрепляет финансовую устойчивость компании. Одновременная работа в трёх бизнес‑сегментах — Retail, Foodservice и International — распределяет доходы и риски, позволяя компании предлагать как скоропортящиеся (fresh meats, refrigerated meals, guacamoles и др.), так и длительно хранимые (canned meats, nut‑butters, shelf‑stable meals) продукты в более чем 80 странах. Такое сочетание сильных инвесторов и сегментной диверсификации повышает способность Hormel расширять международные продажи разнообразных продуктов, сохраняя финансовую стабильность."
+    }
+  ],
+  "meta": {
+    "input": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\hippo-rag\\benchmark_data.jsonl",
+    "llm_model": "qwen/qwen3.6-plus",
+    "embedding_model": "text-embedding-3-small",
+    "metrics": "default",
+    "answer_relevancy_strictness": 1,
+    "llm_max_tokens": 4096,
+    "ragas_max_workers": 4,
+    "ragas_run_max_retries": 10
+  }
+}

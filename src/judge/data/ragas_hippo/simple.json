@@ -1,0 +1,350 @@
+{
+  "summary": {
+    "faithfulness": 0.6,
+    "answer_relevancy": 0.26165946410350666
+  },
+  "rows": [
+    {
+      "index": 0,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "1",
+      "question": "What is the stock ticker for AT&T Inc.?",
+      "answer": "T",
+      "ground_truth": "T"
+    },
+    {
+      "index": 1,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8433311368899556
+      },
+      "item_id": "2",
+      "question": "What is the business description of Ameriprise Financial, Inc.?",
+      "answer": "Ameriprise Financial, Inc. is a diversified financial services company that provides financial planning, wealth management, asset management, insurance, annuities, and estate planning products and services to individual and institutional clients in the United States and internationally. It operates through three segments: Advice & Wealth Management, Asset Management, and Retirement & Protection Solutions. The company was founded in 1894, is based in Minneapolis, Minnesota, and was formerly a division of American Express before being spun off in September 2005.",
+      "ground_truth": "Ameriprise Financial, Inc., together with its subsidiaries, operates as a diversified financial services company in the United States and internationally. The company offers financial planning and advice services to individual and institutional clients. It operates through Advice & Wealth Management, Asset Management, and Retirement & Protection Solutions segments. The Advice & Wealth Management segment provides financial planning and advice; brokerage products and services for retail and institutional clients; discretionary and non-discretionary investment advisory accounts; mutual funds; ins"
+    },
+    {
+      "index": 2,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "3",
+      "question": "What are the headlines of news articles about AT&T Inc.?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "What Going On With AT & T Stock Thursday ? - AT & T ( NYSE : T ) ; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Hazleton Standard Speaker; Amazon - Globalstar deal is poised to boost Apple satellite ambitions; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Boulder Daily Camera; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Akron News - Reporter; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Colorado Hometown Weekly; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – The Mercury; Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Sentinel and Enterprise; Morgan Stanley Begins Coverage on AT & T ( NYSE : T ) ; AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley"
+    },
+    {
+      "index": 3,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "4",
+      "question": "Which company does Mr. John C. Griffith work for?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "American Water Works Company, I"
+    },
+    {
+      "index": 4,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.919182147695272
+      },
+      "item_id": "5",
+      "question": "In which industry does West Pharmaceutical Services, I operate?",
+      "answer": "West Pharmaceutical Services, Inc. operates in the Health Care Supplies industry.",
+      "ground_truth": "Health Care Supplies"
+    },
+    {
+      "index": 5,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "6",
+      "question": "On what dates were news articles published about Aristotle Capital Management, LLC?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "2026-02-04; 2026-02-04; 2026-03-15; 2026-03-16; 2026-04-03"
+    },
+    {
+      "index": 6,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.6035473268665559
+      },
+      "item_id": "7",
+      "question": "In which state is the city of Dublin located?",
+      "answer": "Город Дублин, в котором находится штаб-квартира Accenture plc и Smurfit Westrock plc, расположен в Ирландии, где административное деление на штаты отсутствует. В Ирландии нет штатов, поэтому Дублин не находится ни в каком штате.",
+      "ground_truth": "CA; OH"
+    },
+    {
+      "index": 7,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8325158510115919
+      },
+      "item_id": "8",
+      "question": "What products does AT&T Inc. produce?",
+      "answer": "AT&T Inc. не производит продукты, а предоставляет телекоммуникационные и технологические услуги, а также продаёт устройства и аксессуары, такие как смартфоны, планшеты, портативные модемы (wireless data cards), чехлы, защитные крышки и беспроводные зарядные устройства. Эти устройства и аксессуары продаются через собственные магазины, агентов и сторонние розничные точки.",
+      "ground_truth": "handsets; wireless computing devices; wireless voice and data communications services; carrying cases/protective covers; wireless data cards; wireless chargers; AT&T Dedicated Internet; hosted and managed professional services; fiber ethernet and broadband; fixed wireless"
+    },
+    {
+      "index": 8,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.5611949979035283
+      },
+      "item_id": "9",
+      "question": "To which sector does the Water Utilities industry belong?",
+      "answer": "Сектор: Utilities.",
+      "ground_truth": "Utilities"
+    },
+    {
+      "index": 9,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "10",
+      "question": "What is the domain of the news article titled \"Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) \"?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "themarketsdaily.com"
+    },
+    {
+      "index": 10,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.45148517575505065
+      },
+      "item_id": "11",
+      "question": "What is the job title of Mr. John C. Griffith at his employer?",
+      "answer": "CEO, President & Director",
+      "ground_truth": "CEO, President & Director"
+    },
+    {
+      "index": 11,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "12",
+      "question": "What is the source country of the news article titled '4 banks cutting mortgage rates in boost for buyers - full list'?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "United Kingdom"
+    },
+    {
+      "index": 12,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 1.0000000000000002
+      },
+      "item_id": "13",
+      "question": "Which sector does the Personal Care Products industry belong to?",
+      "answer": "The Personal Care Products industry belongs to the Consumer Staples sector.",
+      "ground_truth": "Consumer Staples"
+    },
+    {
+      "index": 13,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9999999999999998
+      },
+      "item_id": "14",
+      "question": "In which industry does Ameriprise Financial, Inc. operate?",
+      "answer": "Ameriprise Financial, Inc. operates in the financial services industry, specifically in wealth management, asset management, insurance, and financial planning.",
+      "ground_truth": "Asset Management & Custody Banks"
+    },
+    {
+      "index": 14,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "15",
+      "question": "What is the domain of the news article titled 'AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley'?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "themarketsdaily.com"
+    },
+    {
+      "index": 15,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "16",
+      "question": "Which company employs Ms. Kellye L. Walker J.D.?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Deere & Company"
+    },
+    {
+      "index": 16,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "17",
+      "question": "Which company employs Mr. Tamer K. Abuaita?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Stanley Black & Decker, Inc."
+    },
+    {
+      "index": 17,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "18",
+      "question": "What resources are required by West Pharmaceutical Services, I?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "advanced reconstitution, mixing, and transfer technologies; regulatory expertise; components for syringes and cartridges; after-sales technical support services; raw materials for stoppers and seals; cyclic olefin polymer for Crystal Zenith"
+    },
+    {
+      "index": 18,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.37302876787452555
+      },
+      "item_id": "19",
+      "question": "Which industry is discussed in the news article titled '4 banks cutting mortgage rates in boost for buyers - full list'?",
+      "answer": "Индустрия, обсуждаемая в статье, — ипотечная (mortgage) или банковская, связанная с предоставлением ипотечных кредитов и изменением процентных ставок.",
+      "ground_truth": "Consumer Finance"
+    },
+    {
+      "index": 19,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "20",
+      "question": "Which company produces the product named Haoyuan?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Revvity, Inc."
+    },
+    {
+      "index": 20,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.3670104628661087
+      },
+      "item_id": "21",
+      "question": "Which country contains the state of NJ?",
+      "answer": "United States",
+      "ground_truth": "United States"
+    },
+    {
+      "index": 21,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8984880562426107
+      },
+      "item_id": "22",
+      "question": "To which sector does the Real Estate Services industry belong?",
+      "answer": "Согласно предоставленному контексту, индустрия Real Estate Services относится к сектору Real Estate.",
+      "ground_truth": "Real Estate"
+    },
+    {
+      "index": 22,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "23",
+      "question": "On what date was the news article about Lingotto Investment Management LLP published?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "2026-01-30; 2026-02-11; 2026-03-01; 2026-03-04; 2026-03-09; 2026-04-04"
+    },
+    {
+      "index": 23,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "24",
+      "question": "What is the language of the news article with the headline \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "English"
+    },
+    {
+      "index": 24,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "25",
+      "question": "What is the wiki summary for the company with the ticker \"WST\"?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "The pharmaceutical industry is a medical industry that discovers, develops, produces, and markets pharmaceutical goods such as medications. Medications are then administered to (or self-administered by) patients for curing or preventing disease or for alleviating symptoms of illness or injury. \nGeneric drugs are typically not protected by patents, whereas branded drugs are covered by patents. The industry's various subdivisions include distinct areas, such as manufacturing biologics and total synthesis. The industry is subject to a variety of laws and regulations that govern the patenting, efficacy testing, safety evaluation, and marketing of these drugs.\nThe global pharmaceutical market was valued at approximately US$1.48 trillion in 2022, reflecting steady growth from 2020 and continuing expansion despite the impacts of the COVID-19 pandemic. The sector showed a compound annual growth rate (CAGR) of 1.8% in 2021, including the effects of the COVID-19 pandemic.\nIn historical terms, th"
+    },
+    {
+      "index": 25,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "26",
+      "question": "Which city is located in the state named \"NH\"?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Portsmouth"
+    },
+    {
+      "index": 26,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "27",
+      "question": "When was the record for Ameriprise Financial, Inc. last updated?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "2026-03-23"
+    },
+    {
+      "index": 27,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "28",
+      "question": "What search query was used to collect the news article titled \"4 banks cutting mortgage rates in boost for buyers - full list\"?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "\"Consumer Finance\" AND (industry OR market OR companies)"
+    },
+    {
+      "index": 28,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "29",
+      "question": "What is the stock ticker of the company that produces the product \"Data center facilities\"?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "AMT"
+    },
+    {
+      "index": 29,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "30",
+      "question": "What is the URL for the news article with the headline 'Comparing Principal Financial Group ( NASDAQ : PFG ) & Hamilton Insurance Group ( NYSE : HG ) '?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "https://www.themarketsdaily.com/2026/04/19/comparing-principal-financial-group-nasdaqpfg-hamilton-insurance-group-nysehg.html"
+    }
+  ],
+  "meta": {
+    "llm_model": "qwen/qwen3.6-plus",
+    "embedding_model": "text-embedding-3-small",
+    "metrics": "default",
+    "answer_relevancy_strictness": 1,
+    "llm_max_tokens": 4096,
+    "ragas_max_workers": 4,
+    "ragas_run_max_retries": 10,
+    "question_type": "simple",
+    "input": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\simple.jsonl",
+    "input_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results"
+  }
+}

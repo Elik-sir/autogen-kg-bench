@@ -1,0 +1,56 @@
+{
+  "meta": {
+    "input_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\hippo-rag\\results",
+    "output_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\hippo-rag\\results\\generation_metrics",
+    "types": [
+      "simple",
+      "multi-hop",
+      "aggregation",
+      "cross-branch",
+      "subgraph-deep-analytics"
+    ],
+    "llm_model": "qwen/qwen3.6-plus",
+    "skip_existing": true
+  },
+  "by_type": {
+    "simple": {
+      "n": 30,
+      "summary": {
+        "faithfulness": 0.4744444444444444,
+        "answer_relevance": 0.6966666666666667
+      }
+    },
+    "multi-hop": {
+      "n": 30,
+      "summary": {
+        "faithfulness": 0.4891666666666667,
+        "answer_relevance": 0.59
+      }
+    },
+    "aggregation": {
+      "n": 31,
+      "summary": {
+        "faithfulness": 0.25806451612903225,
+        "answer_relevance": 0.5806451612903226
+      }
+    },
+    "cross-branch": {
+      "n": 1,
+      "summary": {
+        "faithfulness": 1.0,
+        "answer_relevance": 0.5
+      }
+    },
+    "subgraph-deep-analytics": {
+      "n": 33,
+      "summary": {
+        "faithfulness": 0.4313206574570211,
+        "answer_relevance": 0.8545454545454545
+      }
+    }
+  },
+  "aggregate_summary": {
+    "faithfulness": 0.41713532023532024,
+    "answer_relevance": 0.6824
+  }
+}

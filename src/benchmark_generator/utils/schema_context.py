@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from utils.rel_type_cover import select_nodes_covering_schema_rel_types
@@ -36,6 +35,7 @@ def get_schema(db_manager):
     schema = schema_result[0]["value"]
 
     return schema
+
 
 def get_samples(db_manager, per_label_limit: int = DATA_SAMPLES_PER_LABEL_DEFAULT):
     """Извлекает примеры реальных данных, чтобы LLM не галлюцинировала значения."""

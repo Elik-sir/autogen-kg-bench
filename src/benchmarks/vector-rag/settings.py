@@ -24,6 +24,8 @@ OPENROUTER_APP_TITLE: str = "autogen-kg-bench"
 # По умолчанию — тот же корпус, что у light-rag (относительно этой папки)
 CORPUS_FILE: str = "../light-rag/corpus.txt"
 BENCHMARK_FILE: str = ""
+# Пусто → каталог `benchmark_questions_by_type` в корне репозитория (после split-скрипта)
+BENCHMARK_QUESTIONS_DIR: str = ""
 OUTPUT_FILE: str = "vector_benchmark_data.jsonl"
 WORKING_DIR: str = ".vector_rag_data"
 
@@ -36,9 +38,11 @@ LLM_TEMPERATURE: float = 0.2
 REBUILD_INDEX: bool = False
 LIMIT_QUESTIONS: int = 0
 
-# LLM-as-judge для метрики accuracy (пустая строка = тот же LLM_MODEL)
+# Сколько вопросов бенчмарка обрабатывать одновременно (потоки: FAISS + HTTP к LLM/эмбеддингам).
+QUESTION_CONCURRENCY: int = 8
+
+# Зарезервировано под вспомогательные LLM-метрики (пустая строка = тот же LLM_MODEL)
 METRICS_JUDGE_MODEL: str = ""
 METRICS_API_DELAY_SEC: float = 0.0
-ENABLE_LLM_ACCURACY: bool = True
 
 VECTOR_RAG_DIR: Path = _VR

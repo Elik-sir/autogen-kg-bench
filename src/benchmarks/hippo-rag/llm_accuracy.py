@@ -1,87 +1,28 @@
-"""
-LLM-as-judge: бинарная метрика accuracy (ответ эквивалентен эталону).
-"""
+"""Судья бенчмарка: реализация в `utils.eval`, клиент/модель из локального `settings`."""
 
 from __future__ import annotations
 
-import json
-import re
-from typing import Any
+import settings  # noqa: E402
+from utils.eval import (  # noqa: E402
+    ACCURACY_SYSTEM,
+    ACCURACY_USER_TEMPLATE,
+    judge_correct,
+    openai_client_for_judge,
+    resolve_judge_model,
+)
 
-from openai import OpenAI
+__all__ = [
+    "ACCURACY_SYSTEM",
+    "ACCURACY_USER_TEMPLATE",
+    "judge_correct",
+    "judge_model",
+    "openai_client",
+]
 
-import settings
 
-ACCURACY_SYSTEM = """Ты строгий судья бенчмарка RAG. Нужно решить: **верен ли ответ системы относительно эталона** для данного вопроса.
-
-ПРАВИЛА:
-1) **Эталон (ground_truth)** — ожидаемый факт. Если эталон конкретен (число, имя, список, да/нет), ответ должен передать тот же смысл и ключевые факты.
-2) Если эталон непустой, а ответ — отказ ("нельзя ответить", "нет данных", "недостаточно данных") или игнорирует ожидаемый факт -> correct=false.
-3) Для составных эталонов (списки, пары) допускаются формулировки и порядок, но не пропуск существенных частей.
-
-Верни только JSON одной строкой: {"correct": true или false}"""
-
-ACCURACY_USER_TEMPLATE = """Вопрос:
-{question}
-
-Эталон:
-{ideal}
-
-Ответ системы:
-{answer}"""
+def openai_client():
+    return openai_client_for_judge(settings)
 
 
 def judge_model() -> str:
-    m = (getattr(settings, "METRICS_JUDGE_MODEL", None) or "").strip()
-    return m or settings.LLM_MODEL
-
-
-def openai_client() -> OpenAI:
-    key = settings.OPENAI_API_KEY or ""
-    if not key.strip():
-        raise RuntimeError("Нужен OPENAI_API_KEY/OPENROUTER_API_KEY в settings или .env")
-    kwargs: dict[str, Any] = {"base_url": settings.OPENAI_API_BASE, "api_key": key}
-    if settings.OPENROUTER_HTTP_REFERER:
-        kwargs["default_headers"] = {
-            "HTTP-Referer": settings.OPENROUTER_HTTP_REFERER,
-            "X-Title": settings.OPENROUTER_APP_TITLE,
-        }
-    return OpenAI(**kwargs)
-
-
-def _extract_json_object(text: str) -> dict[str, Any]:
-    text = text.strip()
-    m = re.search(r"```(?:json)?\s*(\{[\s\S]*?\})\s*```", text)
-    if m:
-        text = m.group(1)
-    m2 = re.search(r"\{[\s\S]*\}", text)
-    if m2 and not text.startswith("{"):
-        text = m2.group(0)
-    return json.loads(text)
-
-
-def judge_correct(
-    client: OpenAI,
-    model: str,
-    question: str,
-    ground_truth: str,
-    answer: str,
-) -> bool:
-    user = ACCURACY_USER_TEMPLATE.format(
-        question=question or "",
-        ideal=ground_truth or "",
-        answer=answer or "",
-    )
-    resp = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": ACCURACY_SYSTEM},
-            {"role": "user", "content": user},
-        ],
-        temperature=0.0,
-    )
-    content = (resp.choices[0].message.content or "").strip()
-    data = _extract_json_object(content)
-    if "correct" not in data or not isinstance(data["correct"], bool):
-        raise ValueError(f"Некорректный ответ судьи: {content!r}")
-    return data["correct"]
+    return resolve_judge_model(settings)

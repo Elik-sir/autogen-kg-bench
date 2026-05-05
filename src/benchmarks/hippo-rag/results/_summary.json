@@ -1,0 +1,43 @@
+{
+  "settings": "settings.py",
+  "backend": "hipporag",
+  "corpus": "/app/src/benchmarks/light-rag/corpus.txt",
+  "benchmark_mode": "multi",
+  "benchmark": "/app/benchmark_questions_by_type/simple.json",
+  "retrieval_k": 5,
+  "n": 125,
+  "mean_recall_on_ground_truth_tokens": 0.2467,
+  "by_question_type": [
+    {
+      "question_type": "simple",
+      "benchmark": "/app/benchmark_questions_by_type/simple.json",
+      "n": 30,
+      "mean_recall_on_ground_truth_tokens": 0.2657
+    },
+    {
+      "question_type": "multi-hop",
+      "benchmark": "/app/benchmark_questions_by_type/multi-hop.json",
+      "n": 30,
+      "mean_recall_on_ground_truth_tokens": 0.102
+    },
+    {
+      "question_type": "aggregation",
+      "benchmark": "/app/benchmark_questions_by_type/aggregation.json",
+      "n": 31,
+      "mean_recall_on_ground_truth_tokens": 0.1011
+    },
+    {
+      "question_type": "cross-branch",
+      "benchmark": "/app/benchmark_questions_by_type/cross-branch.json",
+      "n": 1,
+      "mean_recall_on_ground_truth_tokens": 0.2745
+    },
+    {
+      "question_type": "subgraph-deep-analytics",
+      "benchmark": "/app/benchmark_questions_by_type/subgraph-deep-analytics.json",
+      "n": 33,
+      "mean_recall_on_ground_truth_tokens": 0.4971
+    }
+  ],
+  "results_dir": "/app/src/benchmarks/hippo-rag/results"
+}

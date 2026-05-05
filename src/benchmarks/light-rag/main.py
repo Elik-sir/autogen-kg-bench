@@ -9,8 +9,11 @@ LightRAG: индексация текста и прогон бенчмарка.
 Уже проиндексировано — только вопросы бенчмарка:
   (PowerShell)  $env:LIGHTRAG_QUERY_ONLY = "1"; uv run python main.py
 
-После прогона опционально вызывается LLM-as-judge (accuracy); отключить:
-  LIGHTRAG_ENABLE_LLM_JUDGE=0
+В каждую запись результатов добавляется `contexts` — тексты чанков из retrieval
+(LightRAG `aquery_llm` → `data.chunks`), чтобы RAGAS Faithfulness опиралась на
+реальный контекст (см. `src/judge`, `load_eval_records`). Объём retrieval задаётся
+в `settings.py` (`QUERY_*` / `LIGHTRAG_QUERY_*`), по умолчанию сужен для метрик.
+Параллельные `aquery_llm`: `QUERY_CONCURRENCY` / env `LIGHTRAG_QUERY_CONCURRENCY` (по умолчанию 4).
 """
 
 from __future__ import annotations
@@ -19,7 +22,6 @@ import asyncio
 import json
 import re
 import sys
-import time
 from pathlib import Path
 
 _SRC = Path(__file__).resolve().parent.parent.parent
@@ -27,6 +29,11 @@ if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
 import settings  # noqa: E402
+from utils.benchmark_by_type import (  # noqa: E402
+    build_benchmark_plan,
+    output_suffix_from_setting,
+    results_subdir,
+)
 
 REPO_ROOT = settings.LIGHT_RAG_DIR.parent.parent.parent
 
@@ -46,20 +53,108 @@ def recall_overlap(ground_truth: str, answer: str) -> float:
     return len(g & a) / len(g)
 
 
-def _resolve_benchmark_path() -> Path:
-    s = settings.BENCHMARK_FILE
-    if not (s and str(s).strip()):
-        return (REPO_ROOT / "graphrag_benchmark.json").resolve()
-    p = Path(s).expanduser()
-    if p.is_absolute():
-        return p.resolve()
-    a = (settings.LIGHT_RAG_DIR / p).resolve()
-    if a.is_file():
-        return a
-    b = (REPO_ROOT / p).resolve()
-    if b.is_file():
-        return b
-    return a
+def _contexts_from_aquery_llm(full: dict) -> list[str]:
+    """Тексты чанков из `LightRAG.aquery_llm` (`data.chunks[].content`) для RAGAS."""
+    data = full.get("data")
+    if not isinstance(data, dict):
+        return []
+    chunks = data.get("chunks") or []
+    if not isinstance(chunks, list):
+        return []
+    out: list[str] = []
+    for ch in chunks:
+        if not isinstance(ch, dict):
+            continue
+        raw = ch.get("content")
+        if raw is None:
+            continue
+        s = str(raw).strip()
+        if s:
+            out.append(s)
+    return out
+
+
+def _answer_from_aquery_llm(full: dict) -> str:
+    lr = full.get("llm_response") or {}
+    if lr.get("is_streaming"):
+        return ""
+    c = lr.get("content")
+    return "" if c is None else str(c)
+
+
+def _benchmark_query_param(mode: str):
+    """Параметры запроса: те же лимиты, что режут контекст для ответа и для `contexts`."""
+    from lightrag import QueryParam  # noqa: WPS433
+
+    return QueryParam(
+        mode=mode,
+        stream=False,
+        top_k=int(settings.QUERY_TOP_K),
+        chunk_top_k=int(settings.QUERY_CHUNK_TOP_K),
+        max_entity_tokens=int(settings.QUERY_MAX_ENTITY_TOKENS),
+        max_relation_tokens=int(settings.QUERY_MAX_RELATION_TOKENS),
+        max_total_tokens=int(settings.QUERY_MAX_TOTAL_TOKENS),
+    )
+
+
+async def _run_single_benchmark_query(
+    rag: object,
+    qp: object,
+    semaphore: asyncio.Semaphore,
+    print_lock: asyncio.Lock,
+    *,
+    index: int,
+    item: dict,
+    n_items: int,
+) -> dict:
+    """Один вопрос: `aquery_llm` под семафором, печать прогресса под lock."""
+    q = item.get("question", "")
+    ground_truth = item.get("ground_truth")
+    complexity = item.get("complexity", "")
+    is_subgraph_deep = complexity == "subgraph-deep-analytics"
+    benchmark_answer = str(item.get("answer") or "").strip()
+    reference = (
+        benchmark_answer
+        if is_subgraph_deep
+        else (str(ground_truth).strip() if ground_truth is not None else "")
+    )
+
+    rag_contexts: list[str] = []
+    rag_answer = ""
+    async with semaphore:
+        try:
+            full = await rag.aquery_llm(q, param=qp)
+            rag_answer = _answer_from_aquery_llm(full)
+            rag_contexts = _contexts_from_aquery_llm(full)
+        except Exception as e:  # noqa: BLE001
+            rag_answer = f"[error] {e}"
+
+    rdict = {
+        "index": index,
+        "complexity": complexity,
+        "scoring_reference": "answer" if is_subgraph_deep else "ground_truth",
+        "recall_on_ground_truth_tokens": round(
+            recall_overlap(reference, str(rag_answer)), 4
+        ),
+        "question": q,
+        "ground_truth": ground_truth,
+        "answer": rag_answer,
+        "contexts": rag_contexts,
+    }
+    if is_subgraph_deep:
+        rdict["ideal_for_scoring"] = benchmark_answer
+
+    sc = rdict["recall_on_ground_truth_tokens"]
+    ref_tag = rdict["scoring_reference"]
+    line = (
+        f"  [{index}/{n_items}] recall@{ref_tag}={sc:.3f}  {q[:70]}…"
+        if len(q) > 70
+        else f"  [{index}/{n_items}] recall@{ref_tag}={sc:.3f}  {q}"
+    )
+    async with print_lock:
+        print(line, flush=True)
+
+    return rdict
 
 
 def _resolve_working_dir() -> Path:
@@ -106,75 +201,6 @@ async def _require_indexing_complete(rag) -> str | None:
     return None
 
 
-def _ideal_for_llm_judge(row: dict) -> str | None:
-    """Тот же эталон, что для recall: ground_truth или ideal_for_scoring (subgraph)."""
-    if row.get("scoring_reference") == "answer":
-        ideal = row.get("ideal_for_scoring")
-        if ideal is not None and str(ideal).strip():
-            return str(ideal).strip()
-        return None
-    gt = row.get("ground_truth")
-    if gt is None or not str(gt).strip():
-        return None
-    return str(gt).strip()
-
-
-def _run_llm_accuracy_judge(results: list[dict], summary: dict) -> None:
-    if not getattr(settings, "ENABLE_LLM_ACCURACY", True):
-        summary["llm_accuracy"] = {"skipped": True, "reason": "ENABLE_LLM_ACCURACY=false"}
-        return
-    key = (settings.OPENROUTER_API_KEY or "").strip()
-    if not key:
-        summary["llm_accuracy"] = {"skipped": True, "reason": "no OPENROUTER_API_KEY"}
-        return
-
-    from llm_accuracy import judge_correct, judge_model, openai_client  # noqa: WPS433
-
-    delay = float(getattr(settings, "METRICS_API_DELAY_SEC", 0.0))
-    model = judge_model()
-    try:
-        client = openai_client()
-    except Exception as e:  # noqa: BLE001
-        summary["llm_accuracy"] = {"skipped": True, "reason": str(e)}
-        return
-
-    summary["llm_judge_model"] = model
-    n_scored = 0
-    n_correct = 0
-    n_skipped_empty_ideal = 0
-
-    for r in results:
-        ideal = _ideal_for_llm_judge(r)
-        if not ideal:
-            n_skipped_empty_ideal += 1
-            continue
-        q = str(r.get("question", ""))
-        ans = str(r.get("answer", ""))
-        try:
-            ok = judge_correct(client, model, q, ideal, ans)
-            r["llm_accuracy_correct"] = ok
-            r["llm_accuracy_error"] = None
-            n_scored += 1
-            if ok:
-                n_correct += 1
-            tag = "✓" if ok else "✗"
-            print(f"  [judge] #{r.get('index')} accuracy {tag}", flush=True)
-        except Exception as ex:  # noqa: BLE001
-            r["llm_accuracy_correct"] = None
-            r["llm_accuracy_error"] = str(ex)
-            print(f"  [judge] #{r.get('index')} error: {ex}", flush=True)
-        if delay > 0:
-            time.sleep(delay)
-
-    acc = round(n_correct / n_scored, 4) if n_scored else None
-    summary["llm_accuracy"] = {
-        "mean_accuracy": acc,
-        "n_judged": n_scored,
-        "n_correct": n_correct,
-        "n_skipped_empty_ideal": n_skipped_empty_ideal,
-    }
-
-
 def _write_results(path: Path, summary: dict, items: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.suffix.lower() == ".jsonl":
@@ -188,6 +214,11 @@ def _write_results(path: Path, summary: dict, items: list[dict]) -> None:
         )
 
 
+def _write_json(path: Path, obj: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(obj, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
 async def _run() -> int:
     from openrouter_lightrag import (  # noqa: WPS433
         apply_openrouter_env_defaults,
@@ -196,23 +227,35 @@ async def _run() -> int:
         ensure_lightrag_available,
         indexing_llm_retry_scope,
     )
-    from lightrag import QueryParam  # noqa: WPS433
-
     from raw_corpus import load_raw_text, resolved_corpus_path  # noqa: WPS433
 
     ensure_lightrag_available()
     apply_openrouter_env_defaults()
 
-    bench_path = _resolve_benchmark_path()
-    if not bench_path.is_file():
-        print(f"Файл бенчмарка не найден: {bench_path}", file=sys.stderr)
-        return 1
+    plan = build_benchmark_plan(
+        repo_root=REPO_ROOT,
+        benchmark_pkg_dir=settings.LIGHT_RAG_DIR,
+        benchmark_file_setting=settings.BENCHMARK_FILE,
+        benchmark_questions_dir_setting=getattr(settings, "BENCHMARK_QUESTIONS_DIR", ""),
+    )
+    if plan.mode == "single":
+        bench_path = plan.single_path
+        assert bench_path is not None
+        if not bench_path.is_file():
+            print(f"Файл бенчмарка не найден: {bench_path}", file=sys.stderr)
+            return 1
+        with open(bench_path, encoding="utf-8") as f:
+            all_benchmark_items: list[dict] = json.load(f)
+        batches: list[tuple[str | None, Path, list[dict]]] = [(None, bench_path, all_benchmark_items)]
+    else:
+        batches = [(c, p, its) for c, p, its in plan.multi_parts]
+        if not batches:
+            print("Нет файлов в benchmark_questions_by_type и нет graphrag_benchmark.json.", file=sys.stderr)
+            return 1
+        bench_path = batches[0][1]
 
-    with open(bench_path, encoding="utf-8") as f:
-        items: list[dict] = json.load(f)
     limit = int(settings.LIMIT_QUESTIONS)
-    if limit and limit > 0:
-        items = items[:limit]
+    remaining = limit if limit and limit > 0 else 0
 
     corpus_path = resolved_corpus_path()
     corpus = ""
@@ -270,6 +313,16 @@ async def _run() -> int:
     if mode not in ("naive", "local", "global", "hybrid"):
         mode = "hybrid"
 
+    run_total = 0
+    _rem = remaining
+    for _, _, raw in batches:
+        if _rem > 0:
+            c = min(len(raw), _rem)
+            run_total += c
+            _rem -= c
+        else:
+            run_total += len(raw)
+
     try:
         print(
             f"(LLM: timeout={settings.LLM_TIMEOUT_SEC}s, воркер ~{2 * settings.LLM_TIMEOUT_SEC}s; "
@@ -296,67 +349,124 @@ async def _run() -> int:
             if indexing_err:
                 print(indexing_err, file=sys.stderr)
                 return 2
-            print(f"Индексация успешна, вопросов в прогоне: {len(items)}")
+            print(f"Индексация успешна, вопросов в прогоне: {run_total}")
         else:
-            print(f"Вопросов в прогоне: {len(items)}")
+            print(f"Вопросов в прогоне: {run_total}")
 
-        results: list[dict] = []
-        for i, it in enumerate(items, 1):
-            q = it.get("question", "")
-            ground_truth = it.get("ground_truth")
-            complexity = it.get("complexity", "")
-            is_subgraph_deep = complexity == "subgraph-deep-analytics"
-            benchmark_answer = str(it.get("answer") or "").strip()
-            reference = (
-                benchmark_answer
-                if is_subgraph_deep
-                else (str(ground_truth).strip() if ground_truth is not None else "")
+        print(
+            "QueryParam (retrieval): "
+            f"top_k={settings.QUERY_TOP_K}, chunk_top_k={settings.QUERY_CHUNK_TOP_K}, "
+            f"max_entity_tokens={settings.QUERY_MAX_ENTITY_TOKENS}, "
+            f"max_relation_tokens={settings.QUERY_MAX_RELATION_TOKENS}, "
+            f"max_total_tokens={settings.QUERY_MAX_TOTAL_TOKENS}"
+            + (
+                " [LIGHTRAG_QUERY_FULL_BUDGET]"
+                if getattr(settings, "USE_FULL_QUERY_BUDGET", False)
+                else ""
             )
+        )
+        _qp = _benchmark_query_param(mode)
+        _conc = int(getattr(settings, "QUERY_CONCURRENCY", 1))
+        print(f"Параллельных запросов к RAG (aquery_llm): {_conc}", flush=True)
 
-            try:
-                rag_answer = await rag.aquery(
-                    q,
-                    param=QueryParam(mode=mode),
+        _sem = asyncio.Semaphore(_conc)
+        _plock = asyncio.Lock()
+        results_all: list[dict] = []
+        per_type_meta: list[dict] = []
+        rem = remaining
+        sfx = output_suffix_from_setting(settings.OUTPUT_FILE) if plan.mode == "multi" else ""
+        res_dir = results_subdir(settings.LIGHT_RAG_DIR) if plan.mode == "multi" else None
+
+        for complexity, bpath, raw_items in batches:
+            chunk = raw_items
+            if rem > 0:
+                chunk = raw_items[:rem]
+                rem -= len(chunk)
+            if not chunk:
+                continue
+            n_items = len(chunk)
+            _tasks = [
+                _run_single_benchmark_query(
+                    rag,
+                    _qp,
+                    _sem,
+                    _plock,
+                    index=i,
+                    item=it,
+                    n_items=n_items,
                 )
-            except Exception as e:  # noqa: BLE001
-                rag_answer = f"[error] {e}"
-
-            rdict = {
-                "index": i,
-                "complexity": complexity,
-                "scoring_reference": "answer" if is_subgraph_deep else "ground_truth",
-                "recall_on_ground_truth_tokens": round(
-                    recall_overlap(reference, str(rag_answer)), 4
-                ),
-                "question": q,
-                "ground_truth": ground_truth,
-                "answer": rag_answer,
-            }
-            if is_subgraph_deep:
-                rdict["ideal_for_scoring"] = benchmark_answer
-            results.append(rdict)
-            sc = rdict["recall_on_ground_truth_tokens"]
-            ref_tag = rdict["scoring_reference"]
-            print(
-                f"  [{i}/{len(items)}] recall@{ref_tag}={sc:.3f}  {q[:70]}…"
-                if len(q) > 70
-                else f"  [{i}/{len(items)}] recall@{ref_tag}={sc:.3f}  {q}"
+                for i, it in enumerate(chunk, 1)
+            ]
+            batch_results = list(await asyncio.gather(*_tasks))
+            results_all.extend(batch_results)
+            mean_b = sum(r["recall_on_ground_truth_tokens"] for r in batch_results) / max(
+                len(batch_results), 1
             )
+            type_key = complexity or "mixed"
+            per_type_meta.append(
+                {
+                    "question_type": type_key,
+                    "benchmark": str(bpath),
+                    "n": len(batch_results),
+                    "mean_recall_on_ground_truth_tokens": round(mean_b, 4),
+                }
+            )
+            if plan.mode == "multi" and res_dir is not None:
+                type_summary = {
+                    "settings": "settings.py",
+                    "corpus": str(corpus_path),
+                    "benchmark_mode": "multi",
+                    "question_type": type_key,
+                    "benchmark": str(bpath),
+                    "mode": mode,
+                    "n": len(batch_results),
+                    "mean_recall_on_ground_truth_tokens": round(mean_b, 4),
+                    "query_top_k": settings.QUERY_TOP_K,
+                    "query_chunk_top_k": settings.QUERY_CHUNK_TOP_K,
+                    "query_max_entity_tokens": settings.QUERY_MAX_ENTITY_TOKENS,
+                    "query_max_relation_tokens": settings.QUERY_MAX_RELATION_TOKENS,
+                    "query_max_total_tokens": settings.QUERY_MAX_TOTAL_TOKENS,
+                    "query_full_budget": getattr(settings, "USE_FULL_QUERY_BUDGET", False),
+                    "query_concurrency": int(getattr(settings, "QUERY_CONCURRENCY", 1)),
+                }
+                _write_results(res_dir / f"{type_key}{sfx}", type_summary, batch_results)
+                print(f"Тип {type_key!r}: результаты → {res_dir / f'{type_key}{sfx}'}", flush=True)
+            if rem == 0 and remaining > 0:
+                break
 
-        mean_recall = sum(r["recall_on_ground_truth_tokens"] for r in results) / max(len(results), 1)
+        if not results_all:
+            print("Нет вопросов для прогона.", file=sys.stderr)
+            return 1
+
+        mean_recall = sum(r["recall_on_ground_truth_tokens"] for r in results_all) / len(results_all)
         summary = {
             "settings": "settings.py",
             "corpus": str(corpus_path),
+            "benchmark_mode": plan.mode,
             "benchmark": str(bench_path),
             "mode": mode,
-            "n": len(results),
+            "n": len(results_all),
             "mean_recall_on_ground_truth_tokens": round(mean_recall, 4),
+            "query_top_k": settings.QUERY_TOP_K,
+            "query_chunk_top_k": settings.QUERY_CHUNK_TOP_K,
+            "query_max_entity_tokens": settings.QUERY_MAX_ENTITY_TOKENS,
+            "query_max_relation_tokens": settings.QUERY_MAX_RELATION_TOKENS,
+            "query_max_total_tokens": settings.QUERY_MAX_TOTAL_TOKENS,
+            "query_full_budget": getattr(settings, "USE_FULL_QUERY_BUDGET", False),
+            "query_concurrency": int(getattr(settings, "QUERY_CONCURRENCY", 1)),
+            "by_question_type": per_type_meta,
         }
-        _run_llm_accuracy_judge(results, summary)
-        out_path = _resolve_output_path()
-        _write_results(out_path, summary, results)
-        print(json.dumps(summary, ensure_ascii=False, indent=2))
-        print(f"Результаты записаны: {out_path}")
+        if plan.mode == "single":
+            out_path = _resolve_output_path()
+            _write_results(out_path, summary, results_all)
+            print(json.dumps(summary, ensure_ascii=False, indent=2))
+            print(f"Результаты записаны: {out_path}")
+        else:
+            assert res_dir is not None
+            summary["results_dir"] = str(res_dir)
+            _write_json(res_dir / "_summary.json", summary)
+            print(json.dumps(summary, ensure_ascii=False, indent=2))
+            print(f"Сводка по типам: {res_dir / '_summary.json'}")
     finally:
         await rag.finalize_storages()
 

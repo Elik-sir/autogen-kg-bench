@@ -94,12 +94,18 @@ def format_docs(docs: list) -> str:
     )
 
 
-def answer_from_store(
+def answer_from_store_with_contexts(
     store: FAISS,
     question: str,
-) -> str:
+) -> tuple[str, list[str]]:
+    """Ответ LLM и список текстов извлечённых чанков (для логов / downstream-метрик)."""
     retriever = store.as_retriever(search_kwargs={"k": settings.RETRIEVAL_K})
     docs = retriever.invoke(question)
+    contexts: list[str] = []
+    for d in docs:
+        t = (d.page_content if hasattr(d, "page_content") else str(d)).strip()
+        if t:
+            contexts.append(t)
     context = format_docs(docs)
     prompt = (
         "Используй только следующий контекст. Если в нём нет сведений для ответа, "
@@ -110,4 +116,12 @@ def answer_from_store(
     )
     llm = get_llm()
     msg = llm.invoke([HumanMessage(content=prompt)])
-    return msg.content or ""
+    return msg.content or "", contexts
+
+
+def answer_from_store(
+    store: FAISS,
+    question: str,
+) -> str:
+    a, _ = answer_from_store_with_contexts(store, question)
+    return a

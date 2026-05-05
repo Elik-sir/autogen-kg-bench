@@ -1,0 +1,219 @@
+[
+  {
+    "complexity": "aggregation",
+    "question": "Rank the top 3 investment funds by their ownership percentage in Ameriprise Financial, Inc. (ticker: AMP), returning the fund name and the exact ownership percentage.",
+    "cypher": "MATCH (f:Fund)-[r:OWNS]->(c:Company {ticker: 'AMP'}) RETURN f.name AS fund_name, r.pct AS ownership_percentage ORDER BY r.pct DESC LIMIT 3",
+    "ground_truth": "Vanguard Group Inc, 0.1331; JPMORGAN CHASE & CO, 0.1034; Blackrock Inc., 0.0968",
+    "answer": "Vanguard Group Inc, 0.1331\nJPMORGAN CHASE & CO, 0.1034\nBlackrock Inc., 0.0968"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "How many news articles have been published about AT&T Inc.?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_COMPANY]->(c:Company {name: \"AT&T Inc.\"}) RETURN COUNT(n) AS news_count LIMIT 10",
+    "ground_truth": "15",
+    "answer": "15"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Which industry has the highest number of companies operating within it?",
+    "cypher": "MATCH (c:Company)-[:OPERATES_IN_INDUSTRY]->(i:Industry) RETURN i.name AS industry_name, COUNT(c) AS company_count ORDER BY company_count DESC LIMIT 1",
+    "ground_truth": "Health Care Equipment, 17",
+    "answer": "Health Care Equipment"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "What is the average ownership percentage held by Boston Partners across all its portfolio companies?",
+    "cypher": "MATCH (f:Fund {name: \"Boston Partners\"})-[r:OWNS]->(c:Company) RETURN AVG(r.pct) AS avg_ownership_pct LIMIT 10",
+    "ground_truth": "0.03636",
+    "answer": "0.03636"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "How many distinct individuals are recorded as working for Ameriprise Financial, Inc.?",
+    "cypher": "MATCH (p:Person)-[:WORKS_FOR]->(c:Company {ticker: \"AMP\"}) RETURN COUNT(DISTINCT p) AS employee_count LIMIT 10",
+    "ground_truth": "10",
+    "answer": "10"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "What are the earliest and most recent publication dates for news articles covering the Energy sector?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_SECTOR]->(s:Sector {name: \"Energy\"}) RETURN MIN(n.date) AS earliest_date, MAX(n.date) AS latest_date LIMIT 10",
+    "ground_truth": "2026-04-20, 2026-04-20",
+    "answer": "2026-04-20, 2026-04-20"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Which three funds have the largest number of owned companies in the database?",
+    "cypher": "MATCH (f:Fund)-[:OWNS]->(c:Company) RETURN f.name AS fund_name, COUNT(c) AS owned_companies ORDER BY owned_companies DESC LIMIT 3",
+    "ground_truth": "Blackrock Inc., 500; Vanguard Group Inc, 500; State Street Corporation, 461",
+    "answer": "Blackrock Inc., 500; Vanguard Group Inc, 500; State Street Corporation, 461"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Which companies have been featured in the most news coverage, and what are their respective article counts? Provide the top 3.",
+    "cypher": "MATCH (c:Company)<-[:NEWS_ABOUT_COMPANY]-(n:News) RETURN c.name AS company_name, count(n) AS article_count ORDER BY article_count DESC LIMIT 3",
+    "ground_truth": "Alphabet Inc., 34; Bank of America Corporation, 20; Ameriprise Financial, Inc., 20",
+    "answer": "Alphabet Inc., 34; Bank of America Corporation, 20; Ameriprise Financial, Inc., 20"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "What is the average ownership stake that Aristotle Capital Management, LLC maintains across its invested companies?",
+    "cypher": "MATCH (f:Fund {name: 'Aristotle Capital Management, LLC'})-[o:OWNS]->(c:Company) RETURN avg(o.pct) AS avg_ownership_pct LIMIT 10",
+    "ground_truth": "0.049866666000000004",
+    "answer": "0.049866666000000004"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Rank the companies by the number of recorded personnel working for them, and return the top 2 organizations with their headcounts.",
+    "cypher": "MATCH (p:Person)-[:WORKS_FOR]->(c:Company) RETURN c.name AS company_name, count(p) AS personnel_count ORDER BY personnel_count DESC LIMIT 2",
+    "ground_truth": "Fox Corporation, 20; News Corporation, 20",
+    "answer": "Fox Corporation, 20\nNews Corporation, 20"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "How many news articles have been published that specifically reference the Information Technology sector?",
+    "cypher": "MATCH (s:Sector {name: 'Information Technology'})<-[:NEWS_ABOUT_SECTOR]-(n:News) RETURN count(n) AS sector_news_count LIMIT 10",
+    "ground_truth": "2",
+    "answer": "2"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "What are the minimum and maximum ownership percentages recorded among all funds holding shares in Ameriprise Financial, Inc.?",
+    "cypher": "MATCH (f:Fund)-[o:OWNS]->(c:Company {name: 'Ameriprise Financial, Inc.'}) RETURN min(o.pct) AS min_ownership_pct, max(o.pct) AS max_ownership_pct LIMIT 10",
+    "ground_truth": "0.0306, 0.1331",
+    "answer": "0.0306, 0.1331"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "What is the total number of resources required by AT&T Inc. according to the operational data?",
+    "cypher": "MATCH (c:Company {name: 'AT&T Inc.'})-[:REQUIRES]->(r:Resource) RETURN count(r) AS total_resources_required LIMIT 10",
+    "ground_truth": "8",
+    "answer": "8"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "How many distinct industries are currently classified under the 'Energy' sector in the corporate taxonomy?",
+    "cypher": "MATCH (s:Sector {name: 'Energy'})<-[:PART_OF]-(i:Industry) RETURN count(i) AS industry_count LIMIT 10",
+    "ground_truth": "5",
+    "answer": "5"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "What is the maximum single-asset ownership percentage (`pct`) that 'Blackhill Capital, Inc.' maintains across its investment portfolio?",
+    "cypher": "MATCH (f:Fund {name: 'Blackhill Capital, Inc.'})-[o:OWNS]->(c:Company) RETURN max(o.pct) AS max_ownership_percentage LIMIT 10",
+    "ground_truth": "0.0645",
+    "answer": "0.0645"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Calculate the average number of distinct operational resources required per company operating within the 'Water Utilities' industry.",
+    "cypher": "MATCH (ind:Industry {name: 'Water Utilities'})<-[:OPERATES_IN_INDUSTRY]-(comp:Company)-[:REQUIRES]->(res:Resource) WITH comp, count(DISTINCT res) AS resource_count RETURN avg(resource_count) AS avg_resources_per_company LIMIT 10",
+    "ground_truth": "1.0",
+    "answer": "1.0"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Identify the top 3 products by the volume of corporate producers, returning each product's name alongside its producer count.",
+    "cypher": "MATCH (comp:Company)-[:PRODUCES]->(prod:Product) RETURN prod.name AS product_name, count(comp) AS producer_count ORDER BY producer_count DESC LIMIT 3",
+    "ground_truth": "natural gas, 26; electricity, 18; software, 9",
+    "answer": "natural gas, 26\nelectricity, 18\nsoftware, 9"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "What is the cumulative sum of ownership percentages (`pct`) allocated by 'Boston Partners' across all its recorded equity positions?",
+    "cypher": "MATCH (f:Fund {name: 'Boston Partners'})-[o:OWNS]->(c:Company) RETURN sum(o.pct) AS total_ownership_percentage LIMIT 10",
+    "ground_truth": "0.1818",
+    "answer": "0.1818"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Count the number of distinct personnel employed by 'Ameriprise Financial, Inc.' who hold executive titles containing the word 'Chief'.",
+    "cypher": "MATCH (p:Person)-[w:WORKS_FOR]->(c:Company {name: 'Ameriprise Financial, Inc.'}) WHERE w.title CONTAINS 'Chief' RETURN count(DISTINCT p.name) AS executive_count LIMIT 10",
+    "ground_truth": "4",
+    "answer": "4"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "How many news articles list 'United Kingdom' as their sourcecountry, and what is the earliest publication date among them?",
+    "cypher": "MATCH (n:News) WHERE n.sourcecountry = 'United Kingdom' RETURN count(n) AS article_count, min(n.date) AS earliest_date LIMIT 10",
+    "ground_truth": "1819, 2026-01-20",
+    "answer": "1819, 2026-01-20"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "For 'AT&T Inc.', how many distinct products does it produce, and what is the maximum character length of those product names?",
+    "cypher": "MATCH (c:Company {name: 'AT&T Inc.'})-[:PRODUCES]->(p:Product) RETURN count(p) AS product_count, max(size(p.name)) AS max_name_length LIMIT 10",
+    "ground_truth": "19, 47",
+    "answer": "19, 47"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Which sector encompasses the largest number of distinct industries, and what is that industry count?",
+    "cypher": "MATCH (i:Industry)-[:PART_OF]->(s:Sector) RETURN s.name AS sector_name, count(i) AS industry_count ORDER BY industry_count DESC LIMIT 1",
+    "ground_truth": "Industrials, 20",
+    "answer": "Industrials, 20"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Calculate the total number of distinct cities that are located within the state of 'NJ'.",
+    "cypher": "MATCH (c:City)-[:IN_STATE]->(s:State {name: 'NJ'}) RETURN count(c) AS city_count LIMIT 10",
+    "ground_truth": "14",
+    "answer": "14"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Among all individuals working for 'American International Group, I', what is the most frequently occurring job title, and how many people hold it?",
+    "cypher": "MATCH (p:Person)-[w:WORKS_FOR]->(c:Company {name: 'American International Group, I'}) RETURN w.title AS job_title, count(p) AS employee_count ORDER BY employee_count DESC LIMIT 1",
+    "ground_truth": "Executive VP & Chief Information Officer, 1",
+    "answer": "Executive VP & Chief Information Officer, 1"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Which news domain has published the highest number of articles about 'AT&T Inc.', and what is that article count?",
+    "cypher": "MATCH (n:News)-[:NEWS_ABOUT_COMPANY]->(c:Company {name: 'AT&T Inc.'}) RETURN n.domain AS news_domain, count(n) AS article_count ORDER BY article_count DESC LIMIT 1",
+    "ground_truth": "dailypolitical.com, 3",
+    "answer": "dailypolitical.com, 3"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "What is the total number of distinct resources required by companies that produce 'Data center facilities'?",
+    "cypher": "MATCH (c:Company)-[:PRODUCES]->(p:Product {name: 'Data center facilities'}) MATCH (c)-[:REQUIRES]->(r:Resource) RETURN count(DISTINCT r) AS total_resources LIMIT 10",
+    "ground_truth": "3",
+    "answer": "3"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Calculate the total count of distinct resources required by all companies operating within the 'Oil & Gas Refining & Marketing' industry.",
+    "cypher": "MATCH (c:Company)-[:OPERATES_IN_INDUSTRY]->(:Industry {name: 'Oil & Gas Refining & Marketing'}), (c)-[:REQUIRES]->(r:Resource) RETURN count(DISTINCT r.name) AS total_distinct_resources LIMIT 10",
+    "ground_truth": "26",
+    "answer": "26"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "What is the maximum recorded ownership percentage (`pct`) for any fund holding equity in companies that produce 'Data center facilities'?",
+    "cypher": "MATCH (f:Fund)-[o:OWNS]->(c:Company)-[:PRODUCES]->(:Product {name: 'Data center facilities'}) RETURN max(o.pct) AS max_ownership_percentage LIMIT 10",
+    "ground_truth": "0.1359",
+    "answer": "0.1359"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Rank the top 3 states by the number of distinct cities located within them, returning each state's name alongside its city count.",
+    "cypher": "MATCH (city:City)-[:IN_STATE]->(state:State) RETURN state.name AS state_name, count(DISTINCT city.name) AS city_count ORDER BY city_count DESC LIMIT 3",
+    "ground_truth": "CA, 32; NJ, 14; TX, 13",
+    "answer": "CA, 32\nNJ, 14\nTX, 13"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "For companies classified under the 'Consumer Discretionary' sector, what is the average number of news articles published about each organization?",
+    "cypher": "MATCH (c:Company)-[:OPERATES_IN_INDUSTRY]->(:Industry)-[:PART_OF]->(:Sector {name: 'Consumer Discretionary'}) OPTIONAL MATCH (n:News)-[:NEWS_ABOUT_COMPANY]->(c) WITH c, count(n) AS news_count RETURN avg(news_count) AS avg_news_articles_per_company LIMIT 10",
+    "ground_truth": "13.204081632653065",
+    "answer": "13.204081632653065"
+  },
+  {
+    "complexity": "aggregation",
+    "question": "Identify the minimum number of recorded personnel working for any single company that operates in the 'Water Utilities' industry.",
+    "cypher": "MATCH (c:Company)-[:OPERATES_IN_INDUSTRY]->(:Industry {name: 'Water Utilities'}) OPTIONAL MATCH (p:Person)-[:WORKS_FOR]->(c) WITH c, count(p) AS personnel_count RETURN min(personnel_count) AS minimum_personnel_count LIMIT 10",
+    "ground_truth": "10",
+    "answer": "10"
+  }
+]

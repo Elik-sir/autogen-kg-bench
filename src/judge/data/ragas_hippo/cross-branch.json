@@ -1,0 +1,31 @@
+{
+  "summary": {
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.0
+  },
+  "rows": [
+    {
+      "index": 0,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "1",
+      "question": "For the telecommunications provider with ticker 'T', identify the key personnel affiliated with the organization and retrieve the headlines of recent media coverage referencing it.",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Mr. Jeffery Scott McElfresh, Mr. Brett Joseph Feldman, Mr. John T. Stankey, Mr. David R. McAtee II, Mr. Pascal  Desroches CPA, Ms. Lori M. Lee, Ms. Sabrina  Sanders, Mr. Rick  Moore, Mr. Larry  Solomon, Ms. Kellyn Smith Kenny M.B.A., What Going On With AT & T Stock Thursday ? - AT & T ( NYSE : T ) , Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Hazleton Standard Speaker, Amazon - Globalstar deal is poised to boost Apple satellite ambitions, Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Boulder Daily Camera, Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Akron News - Reporter, Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Colorado Hometown Weekly, Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – The Mercury, Amazon $11 . 6 billion Globalstar deal amps up rivalry with Musk – Sentinel and Enterprise, Morgan Stanley Begins Coverage on AT & T ( NYSE : T ) , AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley, AT & T Inc . ( NYSE : T ) Sees Significant Growth in Short Interest, Other Barks & Bites for Friday , April 17 : CAFC Reverses District Court Rulings in Penile Implant Patent Case ; CJEU Clarifies Scope of  Pastiche  Copyright Exception ; Stanford AI Index Shows Tech Gap Between U . S . And China Nearly Gone, Best Telecom Stocks To Watch Now – April 17th, Trump Weighs Appointing Michael Murray to Lead Antitrust at DOJ, Wireless Broadband Alliance Issues New Wi - Fi Security Guidelines to Advance Trust , Privacy and Seamless Global Roaming"
+    }
+  ],
+  "meta": {
+    "llm_model": "qwen/qwen3.6-plus",
+    "embedding_model": "text-embedding-3-small",
+    "metrics": "default",
+    "answer_relevancy_strictness": 1,
+    "llm_max_tokens": 4096,
+    "ragas_max_workers": 4,
+    "ragas_run_max_retries": 10,
+    "question_type": "cross-branch",
+    "input": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\cross-branch.jsonl",
+    "input_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results"
+  }
+}

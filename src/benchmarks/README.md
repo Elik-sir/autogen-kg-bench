@@ -1,1 +1,1 @@
-В этой папке будут находиться системы GraphRAG, LightRAG, HippoRAG и **vector-rag** (LangChain + FAISS) для тестирования их на моём бенчмарке.
+В этой папке — прогоны бенчмарка: **graphrag** (Neo4j / Cypher, `benchmarks/graphrag`), LightRAG, HippoRAG и **vector-rag** (LangChain + FAISS). Вопросы по умолчанию из `benchmark_questions_by_type/` (см. `scripts/split_benchmark_by_type.py`).

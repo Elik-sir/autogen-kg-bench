@@ -1,0 +1,350 @@
+{
+  "summary": {
+    "faithfulness": 0.7849999999999999,
+    "answer_relevancy": 0.09280132261477121
+  },
+  "rows": [
+    {
+      "index": 0,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.45582150162106927
+      },
+      "item_id": "1",
+      "question": "Which sector does the company where Mr. John C. Griffith works operate in?",
+      "answer": "Industrials",
+      "ground_truth": "Utilities"
+    },
+    {
+      "index": 1,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "2",
+      "question": "What products are manufactured by companies in which Aristotle Capital Management, LLC holds an ownership stake?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "surface water treatment; treated water storage facilities; water and wastewater pumping stations; transmission, distribution, and collection mains and pipes; dams; groundwater treatment; groundwater wells; wastewater treatment; water and wastewater services; electrics"
+    },
+    {
+      "index": 2,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "3",
+      "question": "What resources are required by the company mentioned in the news headline \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "customer service and support systems; retail store operations and management; telecommunication services from providers; IT and software solutions; raw materials for manufacturing handsets and accessories; branding and marketing services; network infrastructure and equipment; wholesale services from suppliers"
+    },
+    {
+      "index": 3,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.18333298363270836
+      },
+      "item_id": "4",
+      "question": "In which country is the headquarters city of West Pharmaceutical Services, I located?",
+      "answer": "США",
+      "ground_truth": "United States"
+    },
+    {
+      "index": 4,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "5",
+      "question": "Which news articles discuss the industry of companies owned by Harris Associates L.P.?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Why Trump Wants Greenland So Badly What Under The Ice Could Explain It, 2026-03-16; This FTSE 250 stock pays a 10 . 1 % dividend yield ! , 2026-03-16; iShares U . S . Oil & Gas Exploration & Production ETF ( BATS : IEO ) Reaches New 52 - Week High – Still a Buy ? , 2026-03-16; EQS Newswire : China Petroleum & Chemical Corporation : Sinopec Announced 2025 Annual Results Annual Payout Ratio Reached 81 % The Board Considered and Approved the Proposal to Grant to a Mandate for New Round of Share Repurchase, 2026-03-22; Sinopec Announced 2025 Annual Results Annual Payout Ratio Reached 81 % , 2026-03-23; Global High Power Azimuth Thruster Market to Reach USD 495 Million by 2032 , Driven by Offshore Energy Expansion, 2026-03-25; Energy ETFs Pull In Billions as Oil Rally Fuels Sector Gains, 2026-03-28; iShares U . S . Oil & Gas Exploration & Production ETF ( BATS : IEO ) Reaches New 1 - Year High – Should You Buy ? , 2026-03-30; SPDR S & P Oil & Gas Exploration & Production ETF ( NYSEARCA : XOP ) Hits New 12 - Month High – Here Why, 2026-04-01; What Going On With Occidental Petroleum Stock Thursday ? - Occidental Petroleum ( NYSE : OXY ) , 2026-04-02"
+    },
+    {
+      "index": 5,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "6",
+      "question": "Which funds hold ownership stakes in the company where Ms. Kellye L. Walker J.D. is employed?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Vanguard Group Inc, 0.0828; State Street Corporation, 0.038399998; Price (T.Rowe) Associates Inc, 0.0279; Blackrock Inc., 0.0686; JPMORGAN CHASE & CO, 0.084"
+    },
+    {
+      "index": 6,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "7",
+      "question": "In which US state are the headquarters cities of companies owned by Lingotto Investment Management LLP located?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "NY"
+    },
+    {
+      "index": 7,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "8",
+      "question": "What products are produced by the company that employs Mr. Tamer K. Abuaita?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "tool boxes, sawhorses, medical cabinets, and engineered storage solutions; engineered plastic and mechanical fasteners; axel swage; hand-held vacuums, paint tools, and cleaning appliances; heat shields; self-piercing riveting systems; blind inserts and tools; blind rivets and tools; levelling and layout tools, planes, hammers, demolition tools, clamps, vises, knives, saws, chisels, and industrial and automotive tools; precision nut running systems"
+    },
+    {
+      "index": 8,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "9",
+      "question": "In which industries do the companies owned by Harris Associates L.P. operate?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Oil & Gas Exploration & Production; Hotels, Resorts & Cruise Lines; Insurance Brokers; Broadcasting; Building Products; Life Sciences Tools & Services; Research & Consulting Services"
+    },
+    {
+      "index": 9,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "10",
+      "question": "Which news headlines discuss resources required by AT&T Inc.?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Dell Technologies ( DELL ) Prepared for High - Margin Storage Attach Opportunity; Mexxiss Technologies Postpones Dubai Launch of Global Digital Platforms Amid Rising Geopolitical Uncertainty; Chennai be positive 24 Crowned  Best Design Agency  &  Best Healthcare Agency  at BIG BANG AWARDS 2025"
+    },
+    {
+      "index": 10,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "11",
+      "question": "Which cities serve as headquarters for companies owned by Aristotle Capital Management, LLC?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Camden; San Francisco; Houston"
+    },
+    {
+      "index": 11,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9114743188526658
+      },
+      "item_id": "12",
+      "question": "Which companies are mentioned in news articles that discuss the Water Utilities industry?",
+      "answer": "The companies mentioned in the context that discuss the Water Utilities industry are American Water Works Company, Inc. and Xylem Inc.",
+      "ground_truth": "Xylem Inc.; IDEXX Laboratories, Inc.; Ecolab Inc."
+    },
+    {
+      "index": 12,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "13",
+      "question": "In which city is the headquarters of the company where Ms. Kellye L. Walker J.D. works?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Moline"
+    },
+    {
+      "index": 13,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "14",
+      "question": "Which news headlines discuss the industry in which the company employing Mr. John C. Griffith operates?",
+      "answer": "По представленному контексту ответить на вопрос невозможно.",
+      "ground_truth": "PFAS contamination spreads in North Georgia carpet towns | Georgia; Badger Meter ( BMI ) Q1 2026 Earnings Transcript; Why Have Infrastructure Funds Experienced Strong Growth in Recent Quarters ? ; Badger Meter Q1 Earnings Call Highlights; Water Stocks Worth Watching – April 17th; EPA Targets Microplastics , Pharmaceuticals , and PFAS in Drinking Water | Alston & Bird; Do data centers really use so much water ? Here are 5 key issues"
+    },
+    {
+      "index": 14,
+      "scores": {
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "15",
+      "question": "In which state is the headquarters city located for the company in which Harris Associates L.P. holds an ownership stake?",
+      "answer": "Ответ дать нельзя, так как из контекста не следует, в какую именно компанию вложена доля Harris Associates L.P. — в APA Corporation или Northern Trust Corporation. В обоих случаях указано владение этой компанией, но без точного указания, о какой из них идет речь в вопросе.",
+      "ground_truth": "TX; CA; NY; MI; NC; GA"
+    },
+    {
+      "index": 15,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "16",
+      "question": "What news articles mention resources that are required by Ameriprise Financial, Inc.?",
+      "answer": "По представленному контексту ответить на вопрос о новостных статьях, упоминающих ресурсы, необходимые Ameriprise Financial, Inc., невозможно.",
+      "ground_truth": "AI Patents : A Corporate Decision Tool IV | Bennett Jones LLP, 2026-02-04; FinancialContent - Intuit ( INTU ) Earnings Deep Dive : Leading the Generative AI Revolution in Finance, 2026-02-26; Bitcoin price prediction 2030 : 5 - year bitcoin forecast, 2026-04-02"
+    },
+    {
+      "index": 16,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "17",
+      "question": "Which news headlines discuss products manufactured by companies owned by Lingotto Investment Management LLP?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Breaking News -  The Kelly Clarkson Show  to Conclude After Season Seven; Access Hollywood Canceled by NBC with Karamo and Steve Wilkos; Paramount Plus : Price , Plans , and How to Subscribe in 2026; How to watch  Scream 7 : When to stream the latest Scream movie at home; Paramount Plus Review : Good Value for the Price , With an App That Could Use Some Improvement; Paramount+ Got About 1 Million New Subscribers From First UFC Event : Exec; Netflix Quietly Blocks Taylor Sheridan Acclaimed Western Featuring 3 MCU Stars; AP News in Brief at 11 : 04 p . m . EST; AP News in Brief at 12 : 04 a . m . EST - The Morning Sun; The fall of showmax and echoes in Nigerian startups"
+    },
+    {
+      "index": 17,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "18",
+      "question": "Which news articles cover the sector that encompasses the industry of AT&T Inc.?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Which Is the Better ETF , Vanguard Mega - Cap MGK or iShare Small - Cap IWO ? ; Which Is the Better Large - Cap ETF , Vanguard MGK or State Street SPY ? ; Promising Social Media Stocks To Follow Today – April 18th; Jim Cramer on Lumen Technologies ( LUMN ):  Ive Always Felt That It Was a Decent Spec  ; Direxion Daily NFLX Bear 1X Shares ( NASDAQ : NFXS ) Short Interest Update; AT & T Inc . ( NYSE : T ) Sees Significant Growth in Short Interest; 2 TSX Stocks Priced Under $100 With Serious Upside Potential; Telecoms Attacks in Nigeria Spark Fears for 2027 Elections; Cap Debate : 2 Iconic ETF Paths , 1 Big Trade - Off; AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley"
+    },
+    {
+      "index": 18,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "19",
+      "question": "Which investment funds hold an ownership stake in the company that employs Mr. Tamer K. Abuaita?",
+      "answer": "По представленному контексту невозможно определить, какие инвестиционные фонды владеют долей в компании, в которой работает г-н Тамер К. Абуайта, так как в данных отсутствует информация о нем и его работодателе.",
+      "ground_truth": "Price (T.Rowe) Associates Inc; State Street Corporation; Blackrock Inc.; Vanguard Group Inc; Capital Research Global Investors"
+    },
+    {
+      "index": 19,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.2699193831955886
+      },
+      "item_id": "20",
+      "question": "In which state is the headquarters city located for the company discussed in the news headline \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+      "answer": "Texas",
+      "ground_truth": "TX"
+    },
+    {
+      "index": 20,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "21",
+      "question": "Which news headlines discuss products manufactured by the company that employs Mr. Tamer K. Abuaita?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Artemis II astronauts prepare for reentry after historic moon mission; What time will Artemis II splash down ? ; Artemis II crew prepare cruiser for fast reentry | The Arkansas Democrat - Gazette; Artemis II astronauts describe their lunar voyage as surreal and profound ahead of Earth return; Artemis II crew prepares for reentry after historic journey around moon; As Artemis II heads back to Earth today , crew is staking their lives on the heat shield; Watch live : Artemis II astronauts return to Earth following historic moon mission; How NASA and the Artemis II crew completed the  perfect  splashdown - 11 - Apr - 2026; Motorcycle Heat Shields united kingdom Motorcycle Exhaust Wrap , Heat Wrap For Exhaust Pipes , Car Exhaust Heat Wrap; Constellium beaming with pride over moon mission"
+    },
+    {
+      "index": 21,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "22",
+      "question": "What news headlines mention resources required by the company in which Harris Associates L.P. holds an ownership stake?",
+      "answer": "По представленному контексту ответ дать нельзя.",
+      "ground_truth": "Afterpay ( OTCMKTS : AFTPF ) & New Era Energy & Digital ( NASDAQ : NUAI ) Financial Review; Streaming Stocks To Keep An Eye On – April 19th; 13 Best Crude Oil Stocks to Buy According to Analysts; Pembina Pipeline ( NYSE : PBA ) Stock Rating Upgraded by Wall Street Zen; Wall Street Zen Upgrades Ovintiv ( NYSE : OVV ) to  Buy  ; Head to Head Review : Triple Flag Precious Metals ( NYSE : TFPM ) and Franco - Nevada ( NYSE : FNV ) ; CNX Resources Corporation . ( NYSE : CNX ) Receives $35 . 67 Consensus Price Target from Analysts; Hudson Edge Investment Partners Inc . Acquires 16 , 793 Shares of ONEOK , Inc . $OKE; Pembina Pipeline Corp . $PBA Shares Bought by TD Waterhouse Canada Inc . ; Avila Energy Corporation Announces Rights Offering"
+    },
+    {
+      "index": 22,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "23",
+      "question": "Which news articles discuss the city that serves as headquarters for the company where Ms. Kellye L. Walker J.D. works?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Device that helps make space travel possible named  Coolest Thing Made in Illinois  ; Space travel device named  Coolest Thing Made in Illinois  ; Multiple tornadoes spotted as severe thunderstorm outbreak begins in central US; Rock Island County Children Advocacy Center starts new endowment; 6th annual Shorts - A - Palooza brings Illinois filmmakers to Morrison; Tornado outbreak strikes central US;   A Soldier Play , April 24 through May 3 | River Citie Reader"
+    },
+    {
+      "index": 23,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "24",
+      "question": "Which news headlines cover the industry in which the company owned by Lingotto Investment Management LLP operates?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Letting creativity flow at Hybris Productions; Secrets At Red Rocks Wins Children & Family Emmy® Award;   The AI Doc  Director Daniel Roher Talks AI Impact on Hollywood; PRESS RELEASE : THE LOOTWALLAHS : HOW INDIAN BUSINESS IS ROBBING INDIANS Part; Cobrapost Investigation : LOOTWALLAHS : HOW INDIAN BUSINESS IS ROBBING INDIANS Part; WDYK : Rolling Down the Road - New Hampshire Magazine; Narrative content joins ZEE5 united kingdom platform; Interview : Filmmaker and Producer - Director John Ira Palmer on storytelling , collaboration , and the future of filmmaking"
+    },
+    {
+      "index": 24,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "25",
+      "question": "What products are manufactured by the company discussed in the news headline \"AT & T ( NYSE : T ) Research Coverage Started at Morgan Stanley\"?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "handsets; wireless computing devices; wireless voice and data communications services; carrying cases/protective covers; wireless data cards; wireless chargers; AT&T Dedicated Internet; hosted and managed professional services; fiber ethernet and broadband; fixed wireless"
+    },
+    {
+      "index": 25,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "26",
+      "question": "Which news headlines discuss the resources required by West Pharmaceutical Services, I?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "Taylor Wessing boosts London practice with another RPC alumnus; Sappi at Interpack 2026 : future - proof packaging papers in action; Aeropres Launches AeroNu™ Renewable Propellants to Advance Sustainable Aerosol Innovation; The Chinese Supply Chain That Feeds Both Sides; A $175 Million Move Into Sotera Health Signals Potential Opportunity Amid 21 % Stock Drop; What You Need To Know When Hiring Life Sciences Executives In Toronto; Akin Adds Democratic Lawyer to Boost Congressional Practice; FinancialContent - PAYX Q1 Deep Dive : AI Initiatives and Paycor Integration Shape Growth Outlook; Top 5 Private Label Supplements Manufacturer in Europe for Premium Brands in 2026; Beyond the biofilm : Tackling mould and bacterial contamination in modern food & beverage"
+    },
+    {
+      "index": 26,
+      "scores": {
+        "faithfulness": 0.4,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "27",
+      "question": "What specific resources are required by the company in which Harris Associates L.P. holds an ownership stake?",
+      "answer": "По представленному контексту ответить на вопрос о конкретных ресурсах, необходимых компании, в которую инвестировала Harris Associates L.P., невозможно. В данных указаны только сведения о доле владения, количестве акций и их стоимости, но отсутствует информация о ресурсах, используемых самой компанией.",
+      "ground_truth": "natural gas liquids; petroleum; oil and gas exploration technologies; natural gas; host listings; user data; payment processing; internet services; business management services; technology"
+    },
+    {
+      "index": 27,
+      "scores": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "28",
+      "question": "In which US state is the headquarters city located for the company where Mr. Tamer K. Abuaita works?",
+      "answer": "По контексту ответ дать нельзя.",
+      "ground_truth": "CT"
+    },
+    {
+      "index": 28,
+      "scores": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.963491491141104
+      },
+      "item_id": "29",
+      "question": "Which sector does the industry of AT&T Inc. fall under?",
+      "answer": "AT&T Inc. falls under the Communication Services sector.",
+      "ground_truth": "Communication Services"
+    },
+    {
+      "index": 29,
+      "scores": {
+        "faithfulness": 0.4,
+        "answer_relevancy": 0.0
+      },
+      "item_id": "30",
+      "question": "Which sectors encompass the industries of the companies in which Harris Associates L.P. holds an ownership stake?",
+      "answer": "По представленному контексту ответить на вопрос о секторах и отраслях всех компаний, в которых Harris Associates L.P. имеет долю, невозможно. Упоминается только одна компания — L3Harris Technologies, Inc., относящаяся к сектору **Industrials** и отрасли **Aerospace & Defense**. О других компаниях в контексте нет информации.",
+      "ground_truth": "Energy; Consumer Discretionary; Financials; Communication Services; Industrials; Health Care"
+    }
+  ],
+  "meta": {
+    "llm_model": "qwen/qwen3.6-plus",
+    "embedding_model": "text-embedding-3-small",
+    "metrics": "default",
+    "answer_relevancy_strictness": 1,
+    "llm_max_tokens": 4096,
+    "ragas_max_workers": 4,
+    "ragas_run_max_retries": 10,
+    "question_type": "multi-hop",
+    "input": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results\\multi-hop.jsonl",
+    "input_dir": "C:\\Users\\ekurm\\projects\\autogen-kg-bench\\src\\benchmarks\\vector-rag\\results"
+  }
+}

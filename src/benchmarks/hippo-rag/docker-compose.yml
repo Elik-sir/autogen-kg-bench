@@ -3,7 +3,7 @@ services:
     build:
       context: ../../..
       dockerfile: src/benchmarks/hippo-rag/Dockerfile
-    image: hippo-rag-bench:latest
+    image: hippo-rag-bench:1
     working_dir: /app/src/benchmarks/hippo-rag
     env_file:
       - .env
