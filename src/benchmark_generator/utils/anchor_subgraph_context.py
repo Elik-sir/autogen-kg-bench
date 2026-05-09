@@ -80,20 +80,46 @@ def get_anchor_candidates_by_label(
     label: str,
     limit_per_label: int,
 ) -> list[dict[str, Any]]:
+    preselect_limit = int(max(limit_per_label * 5, 50))
     query = f"""
     MATCH (n:`{_safe_label(label)}`)
     OPTIONAL MATCH (n)-[r]-()
     WITH n, count(r) AS degree, count(DISTINCT type(r)) AS diversity
     ORDER BY diversity DESC, degree DESC
+    LIMIT $preselect_limit
+    CALL {{
+      WITH n
+      OPTIONAL MATCH p=(n)-[*2..4]-(target)
+      WHERE elementId(target) <> elementId(n)
+        AND ALL(rel IN relationships(p) WHERE single(x IN relationships(p) WHERE x = rel))
+        AND ALL(node IN nodes(p) WHERE single(x IN nodes(p) WHERE x = node))
+      RETURN
+        coalesce(max(length(p)), 0) AS max_hops,
+        count(p) AS long_path_count
+    }}
+    WITH n, degree, diversity, max_hops, long_path_count
+    ORDER BY
+      diversity DESC,
+      max_hops DESC,
+      long_path_count DESC,
+      degree DESC
     LIMIT $limit_per_label
     RETURN
       elementId(n) AS element_id,
       labels(n) AS labels,
       properties(n) AS props,
       degree,
-      diversity
+      diversity,
+      max_hops,
+      long_path_count
     """
-    rows = db_manager.run_query(query, {"limit_per_label": int(max(1, limit_per_label))})
+    rows = db_manager.run_query(
+        query,
+        {
+            "limit_per_label": int(max(1, limit_per_label)),
+            "preselect_limit": preselect_limit,
+        },
+    )
     out: list[dict[str, Any]] = []
     for row in rows:
         element_id = row.get("element_id")
@@ -108,6 +134,8 @@ def get_anchor_candidates_by_label(
                 "props": row.get("props") or {},
                 "degree": int(row.get("degree") or 0),
                 "diversity": int(row.get("diversity") or 0),
+                "max_hops": int(row.get("max_hops") or 0),
+                "long_path_count": int(row.get("long_path_count") or 0),
             }
         )
     return out

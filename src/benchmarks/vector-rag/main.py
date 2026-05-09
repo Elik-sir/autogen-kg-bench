@@ -2,7 +2,7 @@
 Векторный RAG (LangChain: FAISS + top-k + LLM) и прогон вопросов бенчмарка.
 
 Вопросы берутся из каталога `benchmark_questions_by_type/` в корне репозитория
-(файлы `simple.json`, `multi-hop.json`, … — порядок прогона задаётся в
+(файлы `simple.json`, `multi-hop-2.json`, … — порядок в
 `utils.benchmark_by_type.QUESTION_TYPE_ORDER`). Результаты пишутся в `results/<тип>.<суффикс>`
 и сводка в `results/_summary.json`.
 

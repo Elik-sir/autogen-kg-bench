@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 
 from benchmark_generator.answer_builder import build_answer_from_context
 from benchmark_generator.dedup import is_near_duplicate_question, normalize_question_text
@@ -29,6 +30,25 @@ def _build_deterministic_answer_for_multi_hop(item: dict) -> str:
     if not deduped:
         return ""
     return "; ".join(deduped)
+
+
+def _contains_technical_identifier(text: str) -> bool:
+    value = str(text or "").strip()
+    if not value:
+        return False
+    # Typical Neo4j elementId form: "<num>:<uuid>:<num>"
+    if re.search(r"\b\d+:[0-9a-fA-F-]{12,}:\d+\b", value):
+        return True
+    if "elementid(" in value.lower():
+        return True
+    return False
+
+
+def _is_empty_or_none_answer(value) -> bool:
+    text = str(value or "").strip()
+    if not text:
+        return True
+    return text.lower() in {"none", "null", "n/a", "na"}
 
 
 def validate_generated_items(
@@ -100,8 +120,15 @@ def validate_generated_items(
                 item["ground_truth"] = result_to_ground_truth(question, result)
             complexity = str(item.get("complexity", "")).strip().lower()
             if complexity.startswith("multi-hop-") or complexity == "simple":
+                if _contains_technical_identifier(str(item.get("ground_truth", ""))):
+                    print(f"[ПРОПУСК] Технический ID в ground_truth: {question}")
+                    continue
                 deterministic_answer = _build_deterministic_answer_for_multi_hop(item)
-                item["answer"] = deterministic_answer or str(item.get("ground_truth", "")).strip()
+                candidate_answer = deterministic_answer or str(item.get("ground_truth", "")).strip()
+                if _contains_technical_identifier(candidate_answer):
+                    print(f"[ПРОПУСК] Технический ID в answer: {question}")
+                    continue
+                item["answer"] = candidate_answer
             else:
                 item["answer"] = build_answer_from_context(
                     llm=llm,
@@ -109,6 +136,9 @@ def validate_generated_items(
                     ground_truth=str(item.get("ground_truth", "")),
                     fallback=str(item.get("answer", "")),
                 )
+            if _is_empty_or_none_answer(item.get("answer", "")):
+                print(f"[ПРОПУСК] Пустой/None answer: {question}")
+                continue
             benchmark_dataset.append(item)
             seen_exact_questions.add(normalized_question)
             seen_normalized_questions.append(normalized_question)

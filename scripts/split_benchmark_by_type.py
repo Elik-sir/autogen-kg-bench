@@ -10,6 +10,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 SRC_ORDER = (
     "simple",
+    "multi-hop-2",
+    "multi-hop-3",
+    "multi-hop-4",
     "multi-hop",
     "aggregation",
     "cross-branch",

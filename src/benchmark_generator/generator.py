@@ -96,6 +96,8 @@ class BenchmarkGenerator:
         output_file="graphrag_benchmark.json",
         sample_entities_per_type=10,
         per_type_targets=None,
+        strict_deterministic_mode: bool = False,
+        intra_type_workers: int = 8,
     ):
         try:
             return run_generation_pipeline(
@@ -106,6 +108,8 @@ class BenchmarkGenerator:
                 output_file=output_file,
                 sample_entities_per_type=sample_entities_per_type,
                 per_type_targets=per_type_targets,
+                strict_deterministic_mode=strict_deterministic_mode,
+                intra_type_workers=intra_type_workers,
             )
         finally:
             self.db.close()

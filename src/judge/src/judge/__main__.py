@@ -56,7 +56,7 @@ def main() -> int:
         default="",
         help=(
             "Каталог с результатами бенчмарка по типам (например ../benchmarks/vector-rag/results): "
-            "последовательно оцениваются simple.jsonl, multi-hop.jsonl, … см. judge.io.QUESTION_TYPE_ORDER"
+            "последовательно оцениваются simple.jsonl, multi-hop-2.jsonl, … см. judge.io.QUESTION_TYPE_ORDER"
         ),
     )
     p.add_argument(

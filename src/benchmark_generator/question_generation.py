@@ -13,7 +13,10 @@ from benchmark_generator.utils.company_subgraph_context import build_company_sub
 from benchmark_generator.utils.llm_response_parser import parse_qa_pairs_response
 from benchmark_generator.utils.prompt_builder import (
     build_aggregation_prompts,
+    build_multi_hop_2_prompts,
+    build_multi_hop_3_prompts,
     build_same_type_common_prompts,
+    build_simple_prompts,
     build_subgraph_deep_analytics_prompts,
 )
 from benchmark_generator.utils.same_type_common_context import find_same_type_common_contexts
@@ -47,41 +50,86 @@ class QuestionGenerationEngine:
         response = self.llm.generate_response(system_prompt, user_prompt)
         return parse_qa_pairs_response(response)
 
-    def generate_simple_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
-        """Simple = multi-hop-1: свойство якорной сущности или ровно одно ребро A–B (детерминированный Cypher)."""
-        print(
-            f"Генерация {num_questions} simple-вопросов (свойство узла или 1 сосед по ребру)..."
-        )
-        out: list[dict[str, Any]] = []
-        max_attempts = max(num_questions * 8, 18)
-        attempts = 0
-        while len(out) < num_questions and attempts < max_attempts:
-            attempts += 1
-            prefer_edge = (attempts % 2) == 1
-            item: dict[str, Any] | None = None
-            if prefer_edge:
-                item = self._try_generate_path_multi_hop_item(
-                    hop_count=1,
-                    complexity="simple",
-                    existing_questions=existing_questions,
-                )
-            if item is None:
-                item = self._try_generate_simple_property_item(existing_questions=existing_questions)
-            if item is None and not prefer_edge:
-                item = self._try_generate_path_multi_hop_item(
-                    hop_count=1,
-                    complexity="simple",
-                    existing_questions=existing_questions,
-                )
-            if item:
-                out.append(item)
+    def _build_question_for_cypher(
+        self,
+        *,
+        cypher: str,
+        complexity: str,
+        existing_questions=None,
+    ) -> str:
+        existing_list = [str(q).strip() for q in (existing_questions or []) if str(q).strip()]
+        existing_block = "\n".join(f"- {q}" for q in existing_list[-80:]) if existing_list else "- (none)"
+        prompt = f"""
+You are generating benchmark question text for an existing Cypher query.
+Your task: write exactly one natural English question that is answered by this query result.
 
-        if len(out) < num_questions:
-            print(
-                f"[ПРЕДУПРЕЖДЕНИЕ] simple: получено {len(out)}/{num_questions} "
-                f"после {attempts} попыток."
+Complexity: {complexity}
+Cypher:
+{cypher}
+
+Rules:
+1) The question must match what the query returns (entity vs metric/count/value).
+2) Do not mention Cypher, graph, nodes, edges, relationships, or hops.
+3) One sentence only, ending with a question mark.
+4) Business-analyst style wording.
+5) Do not copy or closely paraphrase already used questions.
+6) Output only the question text.
+
+Already generated questions:
+{existing_block}
+"""
+        response = self.llm.generate_response(
+            "You convert Cypher queries into natural benchmark questions.",
+            prompt,
+        )
+        question = re.sub(r"\s+", " ", str(response or "").strip())
+        question = re.sub(r"^['\"`]+|['\"`]+$", "", question).strip()
+        if question and not question.endswith("?"):
+            question = question.rstrip(".") + "?"
+        return question
+
+    def _align_items_to_cypher(
+        self,
+        *,
+        items,
+        complexity: str,
+        existing_questions=None,
+    ) -> list[dict[str, Any]]:
+        out: list[dict[str, Any]] = []
+        for item in items or []:
+            if not isinstance(item, dict):
+                continue
+            cypher = str(item.get("cypher", "")).strip()
+            if not cypher:
+                continue
+            question = self._build_question_for_cypher(
+                cypher=cypher,
+                complexity=complexity,
+                existing_questions=existing_questions,
             )
+            if not question:
+                continue
+            item["complexity"] = complexity
+            item["question"] = question
+            out.append(item)
         return out
+
+    def generate_simple_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
+        print(f"Генерация {num_questions} simple-вопросов...")
+        generated = self._generate_by_prompt_builder(
+            build_simple_prompts,
+            schema,
+            data_samples,
+            num_questions,
+            existing_questions=existing_questions,
+        )
+        if isinstance(generated, dict):
+            generated = [generated]
+        return self._align_items_to_cypher(
+            items=generated,
+            complexity="simple",
+            existing_questions=existing_questions,
+        )
 
     def generate_multi_hop_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         # Backward-compatible alias: old "multi-hop" maps to 2-hop variant.
@@ -118,30 +166,52 @@ class QuestionGenerationEngine:
         num_questions: int = 2,
         existing_questions=None,
     ):
-        if hop_count < 1 or hop_count > 4:
-            print(f"[ПРОПУСК] hop_count вне диапазона 1..4: {hop_count}")
+        if hop_count not in (2, 3):
+            print(f"[ПРОПУСК] Поддерживаются только multi-hop-2/3, передано: {hop_count}")
             return []
 
         complexity = f"multi-hop-{hop_count}"
         print(f"Генерация {num_questions} {complexity}-вопросов...")
+        prompt_builder = build_multi_hop_2_prompts if hop_count == 2 else build_multi_hop_3_prompts
         out: list[dict[str, Any]] = []
-        max_attempts = max(num_questions * 8, 18)
+        max_attempts = max(num_questions * 6, 15)
         attempts = 0
         while len(out) < num_questions and attempts < max_attempts:
             attempts += 1
-            item = self._try_generate_path_multi_hop_item(
+            anchor = self._next_anchor()
+            if not anchor:
+                break
+            local_context = build_anchor_subgraph_context(
+                self.db,
+                anchor=anchor,
                 hop_count=hop_count,
+                max_paths_per_anchor=MAX_PATHS_PER_ANCHOR,
+            )
+            if not local_context:
+                continue
+            generated = self._generate_by_prompt_builder(
+                prompt_builder,
+                schema,
+                local_context,
+                min(1, num_questions - len(out)),
+                existing_questions=existing_questions,
+            )
+            if isinstance(generated, dict):
+                generated = [generated]
+            if not generated:
+                continue
+            aligned = self._align_items_to_cypher(
+                items=generated,
                 complexity=complexity,
                 existing_questions=existing_questions,
             )
-            if item:
-                out.append(item)
+            if not aligned:
+                continue
+            item = aligned[0]
+            out.append(item)
 
         if len(out) < num_questions:
-            print(
-                f"[ПРЕДУПРЕЖДЕНИЕ] {complexity}: получено {len(out)}/{num_questions} "
-                f"после {attempts} попыток."
-            )
+            print(f"[ПРЕДУПРЕЖДЕНИЕ] {complexity}: получено {len(out)}/{num_questions}.")
         return out
 
     def _try_generate_path_multi_hop_item(
@@ -174,6 +244,9 @@ class QuestionGenerationEngine:
             hop_count=hop_count,
             complexity=complexity,
             existing_questions=existing_questions,
+            cypher=cypher,
+            params=params,
+            local_ontology=str(local_context.get("local_ontology", "")),
         )
         if not question:
             return None
@@ -219,57 +292,37 @@ class QuestionGenerationEngine:
                 break
         if not picked_key:
             return None
-        element_id = str(anchor.get("element_id") or "").strip()
-        if not element_id:
-            return None
+        anchor_fragment, anchor_params = self._build_node_match_fragment(
+            var_name="n",
+            node={
+                "labels": labels if isinstance(labels, list) else [labels],
+                "props": props,
+            },
+            param_prefix="anchor",
+        )
 
         cypher = """
-MATCH (n)
-WHERE elementId(n) = $anchor_element_id
+MATCH __ANCHOR_FRAGMENT__
 RETURN n[$prop_key] AS value
 LIMIT 5
-""".strip()
-        params = {"anchor_element_id": element_id, "prop_key": picked_key}
+""".strip().replace("__ANCHOR_FRAGMENT__", anchor_fragment)
+        safe_prop_key = str(picked_key).replace("`", "``")
+        cypher = cypher.replace("n[$prop_key] AS value", f"n.`{safe_prop_key}` AS value")
+        params = {}
 
         labels = anchor.get("labels") or [anchor.get("label") or "Node"]
         anchor_node = {
             "labels": labels if isinstance(labels, list) else [labels],
             "props": props,
-            "element_id": element_id,
+            "element_id": anchor.get("element_id"),
         }
         entity_name = self._node_name(anchor_node, fallback="this entity")
         label_s = self._node_label(anchor_node, fallback="entity").lower()
 
-        existing_block = ""
-        existing_list = [str(q).strip() for q in (existing_questions or []) if str(q).strip()]
-        if existing_list:
-            existing_block = "\n".join(f"- {q}" for q in existing_list[-50:])
-
-        prompt = f"""
-Write exactly one short English benchmark question.
-The answer must be the value of property "{picked_key}" for the entity named "{entity_name}" ({label_s}).
-
-Constraints:
-1) One sentence, English, business tone.
-2) Do NOT mention: graph, node, edge, Cypher, property key "{picked_key}" verbatim, database.
-3) Do NOT state the answer value.
-4) Avoid similarity to existing questions.
-
-Existing questions to avoid:
-{existing_block if existing_block else "- (none)"}
-"""
-        response = self.llm.generate_response(
-            "You create natural benchmark questions for enterprise graph QA.",
-            prompt,
-        )
-        q = str(response or "").strip()
-        q = re.sub(r"^['\"`]+|['\"`]+$", "", q).strip()
-        if "\n" in q:
-            q = q.splitlines()[0].strip()
+        q = f"What is the {picked_key.replace('_', ' ')} of {entity_name}?"
+        q = re.sub(r"\s+", " ", q).strip()
         if not q.endswith("?"):
             q = q.rstrip(".") + "?"
-        if not q:
-            q = f"What {picked_key.replace('_', ' ')} is associated with {entity_name}?"
         return {
             "question": q,
             "cypher": cypher,
@@ -303,6 +356,57 @@ Existing questions to avoid:
         if isinstance(labels, list) and labels:
             return str(labels[0])
         return fallback
+
+    def _build_node_lookup_predicate(
+        self,
+        *,
+        var_name: str,
+        node: dict[str, Any],
+        param_prefix: str,
+    ) -> tuple[str, dict[str, Any]] | None:
+        props = node.get("props") if isinstance(node, dict) else None
+        if not isinstance(props, dict):
+            return None
+        preferred_keys = ("uuid", "id", "ticker", "symbol", "name", "title")
+        for key in preferred_keys:
+            value = props.get(key)
+            if value in (None, ""):
+                continue
+            param_name = f"{param_prefix}_{key}"
+            return f"{var_name}.{key} = ${param_name}", {param_name: value}
+        return None
+
+    def _build_node_match_fragment(
+        self,
+        *,
+        var_name: str,
+        node: dict[str, Any],
+        param_prefix: str,
+    ) -> tuple[str, dict[str, Any]]:
+        label = self._node_label(node, fallback="")
+        label_hint = f":`{str(label).replace('`', '``')}`" if label else ""
+        props = node.get("props") if isinstance(node, dict) else None
+        if isinstance(props, dict):
+            for key in ("uuid", "id", "ticker", "symbol", "name", "title"):
+                value = props.get(key)
+                if value in (None, ""):
+                    continue
+                literal = self._to_cypher_literal(value)
+                return (
+                    f"({var_name}{label_hint} {{{key}: {literal}}})",
+                    {},
+                )
+        return f"({var_name}{label_hint})", {}
+
+    def _to_cypher_literal(self, value: Any) -> str:
+        if value is None:
+            return "null"
+        if isinstance(value, bool):
+            return "true" if value else "false"
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            return str(value)
+        text = str(value).replace("\\", "\\\\").replace("'", "\\'")
+        return f"'{text}'"
 
     def _select_cross_branch_case(self, local_context: dict[str, Any]) -> dict[str, Any] | None:
         paths = local_context.get("paths") if isinstance(local_context, dict) else None
@@ -347,7 +451,7 @@ Existing questions to avoid:
         return cases[idx]
 
     def _build_cross_branch_cypher(
-        self, *, anchor_element_id: str, left_path: dict[str, Any], right_path: dict[str, Any]
+        self, *, left_path: dict[str, Any], right_path: dict[str, Any]
     ) -> tuple[str, dict[str, Any]] | None:
         left_nodes = left_path.get("nodes") if isinstance(left_path, dict) else None
         right_nodes = right_path.get("nodes") if isinstance(right_path, dict) else None
@@ -364,10 +468,16 @@ Existing questions to avoid:
             return None
 
         def _safe_label(label: str) -> str:
-            return str(label).replace("`", "``")
+            raw = str(label).strip()
+            if re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", raw):
+                return raw
+            return f"`{raw.replace('`', '``')}`"
 
         def _safe_rel(rel_type: str) -> str:
-            return str(rel_type).replace("`", "``")
+            raw = str(rel_type).strip()
+            if re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", raw):
+                return raw
+            return f"`{raw.replace('`', '``')}`"
 
         left_rel_1 = str((left_rels[0] or {}).get("type") or "").strip()
         left_rel_2 = str((left_rels[1] or {}).get("type") or "").strip()
@@ -381,29 +491,30 @@ Existing questions to avoid:
         right_mid_label = self._node_label(right_nodes[1], fallback="entity")
         right_target_label = self._node_label(right_nodes[2], fallback="entity")
 
-        left_target_id = str((left_nodes[2] or {}).get("element_id") or "").strip()
-        right_target_id = str((right_nodes[2] or {}).get("element_id") or "").strip()
-        if not anchor_element_id or not left_target_id or not right_target_id:
-            return None
+        anchor_fragment, anchor_params = self._build_node_match_fragment(
+            var_name="a", node=left_nodes[0], param_prefix="anchor"
+        )
+        left_target_fragment, left_target_params = self._build_node_match_fragment(
+            var_name="left_target", node=left_nodes[2], param_prefix="left_target"
+        )
+        right_target_fragment, right_target_params = self._build_node_match_fragment(
+            var_name="right_target", node=right_nodes[2], param_prefix="right_target"
+        )
 
         cypher = f"""
-MATCH (a)
-WHERE elementId(a) = $anchor_element_id
-MATCH (a)-[:`{_safe_rel(left_rel_1)}`]-(left_mid:`{_safe_label(left_mid_label)}`)
-      -[:`{_safe_rel(left_rel_2)}`]-(left_target:`{_safe_label(left_target_label)}`)
-MATCH (a)-[:`{_safe_rel(right_rel_1)}`]-(right_mid:`{_safe_label(right_mid_label)}`)
-      -[:`{_safe_rel(right_rel_2)}`]-(right_target:`{_safe_label(right_target_label)}`)
-WHERE elementId(left_target) = $left_target_element_id
-  AND elementId(right_target) = $right_target_element_id
-  AND elementId(left_mid) <> elementId(right_mid)
-RETURN DISTINCT coalesce(a.name, a.title, a.ticker, elementId(a)) AS anchor_value
+MATCH {anchor_fragment}
+MATCH (a)-[:{_safe_rel(left_rel_1)}]-(left_mid:{_safe_label(left_mid_label)})
+      -[:{_safe_rel(left_rel_2)}]-{left_target_fragment}
+MATCH (a)-[:{_safe_rel(right_rel_1)}]-(right_mid:{_safe_label(right_mid_label)})
+      -[:{_safe_rel(right_rel_2)}]-{right_target_fragment}
+WHERE left_mid <> right_mid
+RETURN DISTINCT coalesce(a.name, a.title, a.ticker, a.symbol, a.id, a.uuid) AS anchor_value
 LIMIT 5
 """.strip()
-        params = {
-            "anchor_element_id": anchor_element_id,
-            "left_target_element_id": left_target_id,
-            "right_target_element_id": right_target_id,
-        }
+        params = {}
+        params.update(anchor_params)
+        params.update(left_target_params)
+        params.update(right_target_params)
         return cypher, params
 
     def _build_cross_branch_question(
@@ -432,42 +543,57 @@ LIMIT 5
             return None
 
         def _safe_label(label: str) -> str:
-            return str(label).replace("`", "``")
+            raw = str(label).strip()
+            if re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", raw):
+                return raw
+            return f"`{raw.replace('`', '``')}`"
 
         def _safe_rel(rel_type: str) -> str:
-            return str(rel_type).replace("`", "``")
+            raw = str(rel_type).strip()
+            if re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", raw):
+                return raw
+            return f"`{raw.replace('`', '``')}`"
 
-        pattern_parts = ["(n0)"]
+        anchor_fragment, anchor_params = self._build_node_match_fragment(
+            var_name="n0", node=nodes[0], param_prefix="anchor"
+        )
+        pattern_parts = [anchor_fragment]
         for idx, rel in enumerate(rels):
             rel_type = str((rel or {}).get("type") or "").strip()
             if not rel_type:
                 return None
             next_node = nodes[idx + 1] if idx + 1 < len(nodes) else {}
-            labels = next_node.get("labels") if isinstance(next_node, dict) else None
-            label_hint = ""
-            if isinstance(labels, list) and labels:
-                label_hint = ":" + "`" + _safe_label(str(labels[0])) + "`"
-            pattern_parts.append(f"-[:`{_safe_rel(rel_type)}`]-")
-            pattern_parts.append(f"(n{idx + 1}{label_hint})")
-
-        anchor_eid = str((nodes[0] or {}).get("element_id") or "").strip()
-        target_eid = str((nodes[-1] or {}).get("element_id") or "").strip()
-        if not anchor_eid or not target_eid:
-            return None
+            if idx + 1 == len(rels):
+                next_fragment, target_params = self._build_node_match_fragment(
+                    var_name=f"n{idx + 1}",
+                    node=next_node,
+                    param_prefix="target",
+                )
+            else:
+                labels = next_node.get("labels") if isinstance(next_node, dict) else None
+                label_hint = ""
+                if isinstance(labels, list) and labels:
+                    label_hint = ":" + _safe_label(str(labels[0]))
+                next_fragment = f"(n{idx + 1}{label_hint})"
+            pattern_parts.append(f"-[:{_safe_rel(rel_type)}]-")
+            pattern_parts.append(next_fragment)
         hop_count = len(rels)
         path_pattern = "".join(pattern_parts)
         cypher = f"""
 MATCH p={path_pattern}
-WHERE elementId(n0) = $anchor_element_id
-  AND elementId(n{hop_count}) = $target_element_id
 RETURN
-  DISTINCT coalesce(n{hop_count}.name, n{hop_count}.title, n{hop_count}.ticker, elementId(n{hop_count})) AS target_value
+  DISTINCT coalesce(
+    n{hop_count}.name,
+    n{hop_count}.title,
+    n{hop_count}.ticker,
+    n{hop_count}.symbol,
+    n{hop_count}.id,
+    n{hop_count}.uuid
+  ) AS target_value
 LIMIT 10
 """.strip()
-        params = {
-            "anchor_element_id": anchor_eid,
-            "target_element_id": target_eid,
-        }
+        params = {}
+        params.update(anchor_params)
         return cypher, params
 
     def _build_question_from_path(
@@ -477,6 +603,9 @@ LIMIT 10
         hop_count: int,
         complexity: str,
         existing_questions=None,
+        cypher: str = "",
+        params: dict[str, Any] | None = None,
+        local_ontology: str = "",
     ) -> str:
         nodes = path.get("nodes") if isinstance(path, dict) else None
         rels = path.get("relationships") if isinstance(path, dict) else None
@@ -501,126 +630,85 @@ LIMIT 10
                     return str(value)
             return "the anchor entity"
 
-        def _rel_hint(rel_type: str) -> str:
+        def _humanize_rel_type(rel_type: str) -> str:
             mapping = {
-                "INVESTED_IN": "investment links",
+                "INVESTED_IN": "investment ties",
                 "OWNS": "ownership ties",
                 "CEO_OF": "executive leadership ties",
-                "MENTIONED_IN": "news co-mention signals",
-                "OPERATES_IN_INDUSTRY": "industry affiliation",
-                "PRODUCES": "product portfolio relations",
-                "WORKS_AT": "employment links",
-                "SUPPLIES": "supply-chain links",
-                "PARTNERS_WITH": "partnership signals",
+                "MENTIONED_IN": "news mention ties",
+                "NEWS_ABOUT_PRODUCT": "product news ties",
+                "OPERATES_IN_INDUSTRY": "industry ties",
+                "PRODUCES": "product portfolio ties",
+                "WORKS_AT": "employment ties",
+                "SUPPLIES": "supply-chain ties",
+                "PARTNERS_WITH": "partnership ties",
+                "LOCATED_IN": "location ties",
+                "IN_STATE": "state-level location ties",
             }
-            return mapping.get(rel_type, "indirect relationship signals")
+            if rel_type in mapping:
+                return mapping[rel_type]
+            return str(rel_type).strip().replace("_", " ").lower()
 
-        def _node_key_fact(node: dict[str, Any]) -> str:
-            props = node.get("props") if isinstance(node, dict) else None
-            if not isinstance(props, dict):
-                return ""
-            for key in ("industry", "sector", "country", "region", "city", "date", "year", "category"):
-                value = props.get(key)
-                if value not in (None, ""):
-                    return f"{key}={value}"
-            return ""
-
-        def _path_business_clues(path_nodes: list[dict[str, Any]]) -> list[str]:
-            clues: list[str] = []
-            for node in path_nodes[1:-1]:
-                name = _node_name(node)
-                label = _node_label(node)
-                fact = _node_key_fact(node)
-                if name and name != "the anchor entity":
-                    clues.append(f"{label} {name}")
-                if fact:
-                    clues.append(f"{label} with {fact}")
-                if len(clues) >= 4:
-                    break
-            return clues
-
-        def _clean_question(text: str) -> str:
+        def _normalize_question(text: str) -> str:
             q = str(text or "").strip()
+            q = re.sub(r"\s+", " ", q).strip()
             q = re.sub(r"^['\"`]+|['\"`]+$", "", q).strip()
-            if "\n" in q:
-                q = q.splitlines()[0].strip()
-            if not q.endswith("?"):
+            if q and not q.endswith("?"):
                 q = q.rstrip(".") + "?"
             return q
 
-        def _looks_too_abstract(question_text: str) -> bool:
-            lowered = question_text.lower()
-            banned = (
-                "indirectly connected",
-                "chain of",
-                "intermediate",
-                "through exactly",
-                "relationship chain",
-                "hops",
-            )
-            return any(token in lowered for token in banned)
-
         anchor = nodes[0]
         target = nodes[-1]
-        anchor_name = _node_name(anchor)
-        target_label = _node_label(target)
-        rel_types = [str((r or {}).get("type") or "RELATED_TO") for r in rels]
-        rel_hints = []
-        seen_hints: set[str] = set()
-        for rel_type in rel_types:
-            hint = _rel_hint(rel_type)
-            if hint in seen_hints:
-                continue
-            seen_hints.add(hint)
-            rel_hints.append(hint)
-        hints_text = ", ".join(rel_hints[:3]) if rel_hints else "indirect graph signals"
-        clues = _path_business_clues(nodes)
-        clues_text = "; ".join(clues) if clues else "no extra clues"
+        anchor_name = _node_name(anchor).strip() or "the anchor entity"
+        target_label = _node_label(target).strip() or "entity"
+        target_label_text = target_label.lower()
 
-        existing_block = ""
-        existing_list = [str(q).strip() for q in (existing_questions or []) if str(q).strip()]
-        if existing_list:
-            existing_block = "\n".join(f"- {q}" for q in existing_list[-50:])
+        rel_types = [str((r or {}).get("type") or "RELATED_TO").strip() for r in rels]
+        rel_hints = [_humanize_rel_type(rel_type) for rel_type in rel_types if rel_type]
+        rel_hints = rel_hints[: max(1, min(3, hop_count))]
+        rels_text = ", then ".join(rel_hints)
 
-        hop_phrase = "1 hop" if hop_count == 1 else f"{hop_count} hops"
-        prompt = f"""
-Write exactly one natural-sounding English benchmark question.
-The question must be answerable by a graph query and must target exactly one {target_label}.
+        if hop_count == 1:
+            fallback_question = (
+                f"Which {target_label_text} is directly associated with {anchor_name} "
+                f"through {rels_text}?"
+            )
+        else:
+            # For multi-hop we include intermediate entities from the actual path to keep
+            # wording grounded in the deterministic Cypher path and avoid LLM hallucinations.
+            bridge_entities: list[str] = []
+            for bridge in nodes[1:-1]:
+                bridge_name = _node_name(bridge).strip()
+                if bridge_name and bridge_name != "the anchor entity":
+                    bridge_entities.append(bridge_name)
+                if len(bridge_entities) >= 2:
+                    break
+            bridge_hint = ""
+            if bridge_entities:
+                bridge_hint = " via " + " and ".join(bridge_entities)
 
-Facts you may use:
-- Anchor entity: {anchor_name}
-- Required reasoning depth: {hop_phrase}
-- Relevant evidence themes: {hints_text}
-- Concrete path clues: {clues_text}
+            fallback_question = (
+                f"Which {target_label_text} is connected to {anchor_name}{bridge_hint} "
+                f"through {rels_text}?"
+            )
 
-Constraints:
-1) One sentence, English, business-analyst tone.
-2) Do NOT mention graph jargon: graph, node, edge, relationship, hop, cypher, chain.
-3) Do NOT reveal the final target value directly.
-4) Avoid abstract wording like "indirectly connected", "intermediate firms", or "chain of relationships".
-5) Mention at least one concrete named entity from the facts.
-6) Keep the intent aligned with complexity "{complexity}".
-7) Avoid very similar wording to existing questions.
+        fallback_question = _normalize_question(fallback_question)
 
-Existing questions to avoid:
-{existing_block if existing_block else "- (none)"}
-"""
-        response = self.llm.generate_response(
-            "You create natural benchmark questions for enterprise graph QA.",
-            prompt,
-        )
-        question = _clean_question(response)
-        if question and not _looks_too_abstract(question):
-            return question
-        return (
-            f"Which {target_label} is most likely implicated in the same business context as "
-            f"{anchor_name}, considering {hints_text}?"
-        )
+        # Reliability-first: for simple/multi-hop we keep question generation deterministic,
+        # because LLM paraphrases can drift to a different target node than Cypher returns.
+        return fallback_question
 
     def generate_aggregation_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} aggregation-вопросов...")
-        return self._generate_by_prompt_builder(
+        generated = self._generate_by_prompt_builder(
             build_aggregation_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
+        )
+        if isinstance(generated, dict):
+            generated = [generated]
+        return self._align_items_to_cypher(
+            items=generated,
+            complexity="aggregation",
+            existing_questions=existing_questions,
         )
 
     def generate_cross_branch_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
@@ -644,9 +732,7 @@ Existing questions to avoid:
             case = self._select_cross_branch_case(local_context)
             if not case:
                 continue
-            anchor_element_id = str(local_context.get("anchor_element_id") or "").strip()
             deterministic = self._build_cross_branch_cypher(
-                anchor_element_id=anchor_element_id,
                 left_path=case["left_path"],
                 right_path=case["right_path"],
             )

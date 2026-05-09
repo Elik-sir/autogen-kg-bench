@@ -42,6 +42,7 @@ def _run_type_generation_parallel(
     output_file,
     target_for_type,
     batch_size,
+    intra_type_workers: int | None = None,
 ):
     """Несколько потоков генерируют батчи параллельно; валидация и общее состояние — под одним lock."""
     collected_for_type = 0
@@ -53,7 +54,8 @@ def _run_type_generation_parallel(
     lock = threading.Lock()
     wip = _wip_checkpoint_path(output_file, type_name)
 
-    max_workers = max(1, min(8, target_for_type))
+    workers_cap = int(intra_type_workers) if intra_type_workers is not None else 8
+    max_workers = max(1, min(workers_cap, target_for_type))
 
     print(f"\n=== Этап: {type_name} (цель {target_for_type}, потоков {max_workers}) ===")
 
@@ -71,6 +73,11 @@ def _run_type_generation_parallel(
                     for item in local_benchmark
                     if item.get("complexity") == type_name and str(item.get("question", "")).strip()
                 ]
+            # Другие воркеры могли добить цель, пока мы ждали lock — не зовём LLM зря.
+            with lock:
+                if collected_for_type >= target_for_type:
+                    attempts -= 1
+                    continue
             generated_items = generator_fn(request_n, existing_questions=existing_questions)
             if isinstance(generated_items, dict):
                 generated_items = [generated_items]
@@ -116,6 +123,8 @@ def run_generation_pipeline(
     output_file="graphrag_benchmark.json",
     sample_entities_per_type=10,
     per_type_targets=None,
+    strict_deterministic_mode: bool = False,
+    intra_type_workers: int = 8,
 ):
     """Генерирует бенчмарк: типы строго по очереди (simple → multi-hop-… → …); внутри типа — параллельные батчи."""
     schema = get_schema(db)
@@ -128,57 +137,36 @@ def run_generation_pipeline(
             lambda n, existing_questions=None: question_engine.generate_simple_pairs(
                 schema, data_samples, num_questions=n, existing_questions=existing_questions
             ),
-            1,
+            2,
         ),
         (
             "multi-hop-2",
             lambda n, existing_questions=None: question_engine.generate_multi_hop_x_pairs(
                 schema, hop_count=2, num_questions=n, existing_questions=existing_questions
             ),
-            3,
+            2,
         ),
         (
             "multi-hop-3",
             lambda n, existing_questions=None: question_engine.generate_multi_hop_x_pairs(
                 schema, hop_count=3, num_questions=n, existing_questions=existing_questions
             ),
-            3,
-        ),
-        (
-            "multi-hop-4",
-            lambda n, existing_questions=None: question_engine.generate_multi_hop_x_pairs(
-                schema, hop_count=4, num_questions=n, existing_questions=existing_questions
-            ),
-            3,
+            2,
         ),
         (
             "aggregation",
             lambda n, existing_questions=None: question_engine.generate_aggregation_pairs(
                 schema, data_samples, num_questions=n, existing_questions=existing_questions
             ),
-            7,
-        ),
-        (
-            "cross-branch",
-            lambda n, existing_questions=None: question_engine.generate_cross_branch_pairs(
-                schema, data_samples, num_questions=n, existing_questions=existing_questions
-            ),
-            1,
+            3,
         ),
         (
             "subgraph-deep-analytics",
             lambda n, existing_questions=None: question_engine.generate_subgraph_deep_analytics_pairs(
                 schema, num_questions=n, existing_questions=existing_questions
             ),
-            5,
+            2,
         ),
-        # (
-        #   "same-type-common",
-        #   lambda n, existing_questions=None: question_engine.generate_same_type_common_pairs(
-        #       schema, data_samples, num_questions=n, existing_questions=existing_questions
-        #   ),
-        #   2
-        # ),
     ]
 
     if per_type_targets is None:
@@ -195,6 +183,24 @@ def run_generation_pipeline(
         for type_name, _, _ in generation_plan
     }
 
+    if strict_deterministic_mode:
+        deterministic_types = {
+            "simple",
+            "multi-hop-2",
+            "multi-hop-3",
+            "aggregation",
+            "subgraph-deep-analytics",
+        }
+        for type_name in list(per_type_targets.keys()):
+            if type_name in deterministic_types:
+                continue
+            if per_type_targets[type_name] > 0:
+                print(
+                    f"[STRICT] Тип '{type_name}' отключен в strict_deterministic_mode "
+                    f"(цель была {per_type_targets[type_name]})."
+                )
+            per_type_targets[type_name] = 0
+
     print("\nПлан генерации по типам:")
     for type_name, _, _ in generation_plan:
         print(f"- {type_name}: {per_type_targets[type_name]}")
@@ -206,7 +212,8 @@ def run_generation_pipeline(
             continue
         jobs.append((type_name, generator_fn, batch_size, target_for_type))
 
-    # Типы идут по очереди (simple → multi-hop → …). Внутри типа — параллельные батчи.
+    # Типы идут строго последовательно (simple -> multi-hop-2 -> ...),
+    # параллелизм допускается только внутри типа.
     type_results: dict[str, list] = {}
     for type_name, generator_fn, batch_size, target_for_type in jobs:
         _, collected_items = _run_type_generation_parallel(
@@ -216,6 +223,7 @@ def run_generation_pipeline(
             output_file=output_file,
             target_for_type=target_for_type,
             batch_size=batch_size,
+            intra_type_workers=intra_type_workers,
         )
         type_results[type_name] = collected_items
 

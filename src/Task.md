@@ -27,13 +27,12 @@
 
 Оркестратор: `src/main.py` → класс **`BenchmarkGenerator`**. Для каждого типа вопросов — **отдельная функция генерации** и **отдельный промпт** в `utils/prompt_builder.py`:
 
-| Тип (`complexity`) | Промпт | Суть |
-|--------------------|--------|------|
-| `simple` | `build_simple_prompts` | 1 hop, конкретная привязка к сущности |
-| `multi-hop` | `build_multi_hop_prompts` | цепочки 2–4 связей |
-| `aggregation` | `build_aggregation_prompts` | COUNT / агрегаты / топы |
-| `cross-branch` | `build_cross_branch_prompts` | параллельные ветки от anchor, маскирование сущностей в формулировке вопроса |
-| `subgraph-deep-analytics` | `build_subgraph_deep_analytics_prompts` | см. отдельный подраздел ниже |
+| Тип (`complexity`)        | Промпт                                  | Суть                                  |
+| ------------------------- | --------------------------------------- | ------------------------------------- |
+| `simple`                  | `build_simple_prompts`                  | 1 hop, конкретная привязка к сущности |
+| `multi-hop`               | `build_multi_hop_prompts`               | цепочки 2–4 связей                    |
+| `aggregation`             | `build_aggregation_prompts`             | COUNT / агрегаты / топы               |
+| `subgraph-deep-analytics` | `build_subgraph_deep_analytics_prompts` | см. отдельный подраздел ниже          |
 
 Общий парсинг ответа LLM: `utils/llm_response_parser.py` → `parse_qa_pairs_response()` (строгий JSON-массив).
 
@@ -105,17 +104,17 @@
 
 ## 5. Используемый стек и компоненты
 
-| Компонент | Назначение |
-|-----------|------------|
-| `neo4j_manager.py` → `Neo4jManager` | Сессии Neo4j, `run_query(query, parameters=None)` |
-| `llm_client.py` → `LLMClient` | Вызов LLM (OpenRouter и т.д.) |
-| `main.py` → `BenchmarkGenerator` | Цикл: схема + samples → генерация по типам → валидация → JSON |
-| `utils/schema_context.py` | `get_schema`, `get_samples` (покрытие типов связей, лимиты, логи) |
-| `utils/rel_type_cover.py` | Set cover по типам рёбер для примеров по label |
-| `utils/prompt_builder.py` | Отдельные промпты по типам вопросов |
-| `utils/company_subgraph_context.py` | Подграф компании, санитизация, `useful_context` |
-| `utils/benchmark_validation.py` | Тривиальные запросы, `result_to_ground_truth` |
-| `utils/cross_branch_reasoning.py` | Опциональная программная генерация cross-branch |
+| Компонент                           | Назначение                                                        |
+| ----------------------------------- | ----------------------------------------------------------------- |
+| `neo4j_manager.py` → `Neo4jManager` | Сессии Neo4j, `run_query(query, parameters=None)`                 |
+| `llm_client.py` → `LLMClient`       | Вызов LLM (OpenRouter и т.д.)                                     |
+| `main.py` → `BenchmarkGenerator`    | Цикл: схема + samples → генерация по типам → валидация → JSON     |
+| `utils/schema_context.py`           | `get_schema`, `get_samples` (покрытие типов связей, лимиты, логи) |
+| `utils/rel_type_cover.py`           | Set cover по типам рёбер для примеров по label                    |
+| `utils/prompt_builder.py`           | Отдельные промпты по типам вопросов                               |
+| `utils/company_subgraph_context.py` | Подграф компании, санитизация, `useful_context`                   |
+| `utils/benchmark_validation.py`     | Тривиальные запросы, `result_to_ground_truth`                     |
+| `utils/cross_branch_reasoning.py`   | Опциональная программная генерация cross-branch                   |
 
 ## 6. Прогон бенчмарка (LightRAG / vector-rag)
 

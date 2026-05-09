@@ -6,7 +6,7 @@
 в :func:`load_eval_records` без конвертации.
 
 **Пакетный режим CLI** (``--input-dir``): каталог с результатами бенчмарка по типам
-(например ``vector-rag/results``) — в нём ищутся ``simple.jsonl``, ``multi-hop.jsonl``, …
+(например ``vector-rag/results``) — в нём ищутся ``simple.jsonl``, ``multi-hop-2.jsonl``, …
 в порядке :data:`QUESTION_TYPE_ORDER`; см. :func:`discover_benchmark_result_files`.
 
 Важно для метрик RAGAS:
@@ -33,6 +33,9 @@ from typing import Any
 # Согласовано с ``utils.benchmark_by_type.QUESTION_TYPE_ORDER`` (прогон бенчмарка по типам).
 QUESTION_TYPE_ORDER: tuple[str, ...] = (
     "simple",
+    "multi-hop-2",
+    "multi-hop-3",
+    "multi-hop-4",
     "multi-hop",
     "aggregation",
     "cross-branch",

@@ -9,15 +9,14 @@ if __name__ == "__main__":
     # Запуск генератора
     generator = BenchmarkGenerator()
     generator.run(
-        target_size=5,
+        target_size=20,
         sample_entities_per_type=10,
+        intra_type_workers=4,
         per_type_targets={
-            "simple": 0,
-            "multi-hop-2": 0,
-            "multi-hop-3": 0,
-            "multi-hop-4": 0,
-            "aggregation": 0,
-            "cross-branch":0,
-            "subgraph-deep-analytics": 3,
+            "simple": 5,
+            "multi-hop-2": 5,
+            "multi-hop-3": 5,
+            "aggregation": 3,
+            "subgraph-deep-analytics": 2,
         },
     )

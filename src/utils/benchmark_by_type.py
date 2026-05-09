@@ -1,15 +1,18 @@
-"""Загрузка вопросов бенчмарка по типам (simple → multi-hop → …) и пути к `results/`."""
+"""Загрузка вопросов бенчмарка по типам (simple → multi-hop-2/3/4 → …) и пути к `results/`."""
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-# Порядок прогона: сначала все simple, затем все multi-hop и т.д.
+# Порядок прогона: simple → multi-hop-2/3/4 (как в генераторе) → …
+# «multi-hop» — legacy-файл, если всё ещё собран в один json.
 QUESTION_TYPE_ORDER: tuple[str, ...] = (
     "simple",
-    "multi-hop",
-    "aggregation",
+    "multi-hop-2",
+    "multi-hop-3",
+    "multi-hop-4",
+    # "aggregation",
     "cross-branch",
     "subgraph-deep-analytics",
 )
