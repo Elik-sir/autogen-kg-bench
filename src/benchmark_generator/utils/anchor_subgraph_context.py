@@ -87,8 +87,7 @@ def get_anchor_candidates_by_label(
     WITH n, count(r) AS degree, count(DISTINCT type(r)) AS diversity
     ORDER BY diversity DESC, degree DESC
     LIMIT $preselect_limit
-    CALL {{
-      WITH n
+    CALL (n) {{
       OPTIONAL MATCH p=(n)-[*2..4]-(target)
       WHERE elementId(target) <> elementId(n)
         AND ALL(rel IN relationships(p) WHERE single(x IN relationships(p) WHERE x = rel))
