@@ -53,37 +53,32 @@ class _FakeDbManager:
                 }
             ]
 
-        if "MATCH p=(anchor)-[*1.." in query:
-            hop_count = 0
-            if "length(p) = 2" in query:
-                hop_count = 2
-            if hop_count == 2:
-                return [
-                    {
-                        "nodes": [
-                            {
-                                "element_id": "4:company-101",
-                                "node_id": 101,
-                                "labels": ["Company"],
-                                "props": {"name": "Acme Corp", "ticker": "ACM"},
-                            },
-                            {
-                                "element_id": "4:event-301",
-                                "node_id": 301,
-                                "labels": ["Event"],
-                                "props": {"title": "Supply Chain Initiative"},
-                            },
-                            {
-                                "element_id": "4:person-401",
-                                "node_id": 401,
-                                "labels": ["Person"],
-                                "props": {"name": "Jane Doe", "title": "COO"},
-                            },
-                        ],
-                        "relationships": [{"type": "INVOLVED_IN"}, {"type": "LED_BY"}],
-                    }
-                ]
-            return []
+        if "(anchor)-[r1]-(n1)" in query and "(n1)-[r2]-(target)" in query:
+            return [
+                {
+                    "nodes": [
+                        {
+                            "element_id": "4:company-101",
+                            "node_id": 101,
+                            "labels": ["Company"],
+                            "props": {"name": "Acme Corp", "ticker": "ACM"},
+                        },
+                        {
+                            "element_id": "4:event-301",
+                            "node_id": 301,
+                            "labels": ["Event"],
+                            "props": {"title": "Supply Chain Initiative"},
+                        },
+                        {
+                            "element_id": "4:person-401",
+                            "node_id": 401,
+                            "labels": ["Person"],
+                            "props": {"name": "Jane Doe", "title": "COO"},
+                        },
+                    ],
+                    "relationships": [{"type": "INVOLVED_IN"}, {"type": "LED_BY"}],
+                }
+            ]
 
         return []
 

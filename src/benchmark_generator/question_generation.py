@@ -178,9 +178,16 @@ Already generated questions:
         attempts = 0
         while len(out) < num_questions and attempts < max_attempts:
             attempts += 1
+            if attempts == 1 or attempts % 3 == 0:
+                print(
+                    f"[{complexity}] попытка {attempts}/{max_attempts}, уже {len(out)}/{num_questions} вопросов",
+                    flush=True,
+                )
             anchor = self._next_anchor()
             if not anchor:
                 break
+            alabel = str(anchor.get("label") or anchor.get("labels") or "?")
+            print(f"[{complexity}] якорь: {alabel}, извлечение путей ({hop_count} хопа)...", flush=True)
             local_context = build_anchor_subgraph_context(
                 self.db,
                 anchor=anchor,

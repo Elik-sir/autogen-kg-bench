@@ -4,6 +4,8 @@ from collections import defaultdict
 import random
 from typing import Any
 
+from benchmark_generator.prompt_settings import ANCHOR_PRESELECT_CAP, PATH_EXPAND_BEAM
+
 
 def _safe_label(label: str) -> str:
     return str(label).replace("`", "``")
@@ -80,28 +82,25 @@ def get_anchor_candidates_by_label(
     label: str,
     limit_per_label: int,
 ) -> list[dict[str, Any]]:
-    preselect_limit = int(max(limit_per_label * 5, 50))
+    # Раньше: подзапрос с [*2..4] и подсчётом всех простых путей — очень дорого на плотных графах.
+    # Сейчас: топ узлов по разнообразию/степени + EXISTS на один простой 2-hop (планировщик обычно обрывает на первом совпадении).
+    raw_pre = int(max(limit_per_label * 5, 50))
+    preselect_limit = min(raw_pre, ANCHOR_PRESELECT_CAP)
     query = f"""
     MATCH (n:`{_safe_label(label)}`)
     OPTIONAL MATCH (n)-[r]-()
     WITH n, count(r) AS degree, count(DISTINCT type(r)) AS diversity
     ORDER BY diversity DESC, degree DESC
     LIMIT $preselect_limit
-    CALL (n) {{
-      OPTIONAL MATCH p=(n)-[*2..4]-(target)
-      WHERE elementId(target) <> elementId(n)
-        AND ALL(rel IN relationships(p) WHERE single(x IN relationships(p) WHERE x = rel))
-        AND ALL(node IN nodes(p) WHERE single(x IN nodes(p) WHERE x = node))
-      RETURN
-        coalesce(max(length(p)), 0) AS max_hops,
-        count(p) AS long_path_count
-    }}
-    WITH n, degree, diversity, max_hops, long_path_count
-    ORDER BY
-      diversity DESC,
-      max_hops DESC,
-      long_path_count DESC,
-      degree DESC
+    WITH n, degree, diversity,
+      EXISTS {{
+        MATCH (n)-[r1]-(m)-[r2]-(t)
+        WHERE elementId(t) <> elementId(n)
+          AND elementId(m) <> elementId(n)
+          AND elementId(m) <> elementId(t)
+          AND r1 <> r2
+      }} AS has_simple_2hop
+    ORDER BY has_simple_2hop DESC, diversity DESC, degree DESC
     LIMIT $limit_per_label
     RETURN
       elementId(n) AS element_id,
@@ -109,8 +108,8 @@ def get_anchor_candidates_by_label(
       properties(n) AS props,
       degree,
       diversity,
-      max_hops,
-      long_path_count
+      CASE WHEN has_simple_2hop THEN 2 ELSE 0 END AS max_hops,
+      CASE WHEN has_simple_2hop THEN 1 ELSE 0 END AS long_path_count
     """
     rows = db_manager.run_query(
         query,
@@ -146,8 +145,17 @@ def get_stratified_anchor_pool(
     limit_per_label: int,
 ) -> dict[str, list[dict[str, Any]]]:
     labels = get_all_node_labels(db_manager)
+    n_labels = len(labels)
+    print(
+        f"[anchors] Пул якорей: {n_labels} меток (быстрый прескоринг: степень + EXISTS 2-hop, cap={ANCHOR_PRESELECT_CAP})...",
+        flush=True,
+    )
     out: dict[str, list[dict[str, Any]]] = {}
-    for label in labels:
+    step = max(1, n_labels // 8)
+    for i, label in enumerate(labels, start=1):
+        show = n_labels <= 15 or i == 1 or i == n_labels or (i % step == 0)
+        if show:
+            print(f"[anchors] метка {i}/{n_labels}: `{label}`", flush=True)
         anchors = get_anchor_candidates_by_label(
             db_manager,
             label=label,
@@ -155,6 +163,7 @@ def get_stratified_anchor_pool(
         )
         if anchors:
             out[label] = anchors
+    print(f"[anchors] Готово: якоря для {len(out)} меток.", flush=True)
     return out
 
 
@@ -165,36 +174,105 @@ def _extract_unique_paths_for_anchor(
     hop_count: int,
     max_paths: int,
 ) -> list[dict[str, Any]]:
-    safe_hop_count = int(max(1, hop_count))
-    query = f"""
-    MATCH (anchor)
-    WHERE elementId(anchor) = $anchor_element_id
-    MATCH p=(anchor)-[*1..{safe_hop_count}]-(target)
-    WHERE length(p) = {safe_hop_count}
-      AND elementId(target) <> elementId(anchor)
-      AND ALL(rel IN relationships(p) WHERE single(x IN relationships(p) WHERE x = rel))
-      AND ALL(node IN nodes(p) WHERE single(x IN nodes(p) WHERE x = node))
-    WITH p
-    ORDER BY rand()
-    LIMIT $max_paths
-    RETURN
-      [n IN nodes(p) | {{
-        element_id: elementId(n),
-        node_id: null,
-        labels: labels(n),
-        props: properties(n)
-      }}] AS nodes,
-      [r IN relationships(p) | {{
-        type: type(r)
-      }}] AS relationships
+    """Простые пути фиксированной длины k (без повторов узлов и рёбер).
+
+    Для k∈{2,3} используется пошаговое расширение с лимитом beam и случайной прореживкой —
+    O(beam·degree) вместо полного перебора variable-length path + ORDER BY rand().
     """
-    rows = db_manager.run_query(
-        query,
-        {
-            "anchor_element_id": anchor_element_id,
-            "max_paths": int(max(1, max_paths)),
-        },
-    )
+    safe_hop_count = int(max(1, hop_count))
+    max_paths_i = int(max(1, max_paths))
+    beam = max(max_paths_i, PATH_EXPAND_BEAM)
+
+    if safe_hop_count == 2:
+        query = """
+        MATCH (anchor)
+        WHERE elementId(anchor) = $anchor_element_id
+        MATCH (anchor)-[r1]-(n1)
+        WHERE elementId(n1) <> elementId(anchor)
+        WITH anchor, r1, n1
+        ORDER BY rand()
+        LIMIT $beam
+        MATCH (n1)-[r2]-(target)
+        WHERE elementId(target) <> elementId(anchor)
+          AND elementId(target) <> elementId(n1)
+          AND r1 <> r2
+        WITH anchor, r1, n1, r2, target
+        ORDER BY rand()
+        LIMIT $max_paths
+        RETURN
+          [
+            { element_id: elementId(anchor), node_id: null, labels: labels(anchor), props: properties(anchor) },
+            { element_id: elementId(n1), node_id: null, labels: labels(n1), props: properties(n1) },
+            { element_id: elementId(target), node_id: null, labels: labels(target), props: properties(target) }
+          ] AS nodes,
+          [ { type: type(r1) }, { type: type(r2) } ] AS relationships
+        """
+    elif safe_hop_count == 3:
+        query = """
+        MATCH (anchor)
+        WHERE elementId(anchor) = $anchor_element_id
+        MATCH (anchor)-[r1]-(n1)
+        WHERE elementId(n1) <> elementId(anchor)
+        WITH anchor, r1, n1
+        ORDER BY rand()
+        LIMIT $beam
+        MATCH (n1)-[r2]-(n2)
+        WHERE elementId(n2) <> elementId(anchor)
+          AND elementId(n2) <> elementId(n1)
+          AND r1 <> r2
+        WITH anchor, r1, n1, r2, n2
+        ORDER BY rand()
+        LIMIT $beam
+        MATCH (n2)-[r3]-(target)
+        WHERE elementId(target) <> elementId(anchor)
+          AND elementId(target) <> elementId(n1)
+          AND elementId(target) <> elementId(n2)
+          AND r3 <> r2 AND r3 <> r1
+        WITH anchor, r1, n1, r2, n2, r3, target
+        ORDER BY rand()
+        LIMIT $max_paths
+        RETURN
+          [
+            { element_id: elementId(anchor), node_id: null, labels: labels(anchor), props: properties(anchor) },
+            { element_id: elementId(n1), node_id: null, labels: labels(n1), props: properties(n1) },
+            { element_id: elementId(n2), node_id: null, labels: labels(n2), props: properties(n2) },
+            { element_id: elementId(target), node_id: null, labels: labels(target), props: properties(target) }
+          ] AS nodes,
+          [ { type: type(r1) }, { type: type(r2) }, { type: type(r3) } ] AS relationships
+        """
+    else:
+        query = f"""
+        MATCH (anchor)
+        WHERE elementId(anchor) = $anchor_element_id
+        MATCH p=(anchor)-[*1..{safe_hop_count}]-(target)
+        WHERE length(p) = {safe_hop_count}
+          AND elementId(target) <> elementId(anchor)
+          AND ALL(rel IN relationships(p) WHERE single(x IN relationships(p) WHERE x = rel))
+          AND ALL(node IN nodes(p) WHERE single(x IN nodes(p) WHERE x = node))
+        WITH p
+        ORDER BY rand()
+        LIMIT $max_paths
+        RETURN
+          [n IN nodes(p) | {{
+            element_id: elementId(n),
+            node_id: null,
+            labels: labels(n),
+            props: properties(n)
+          }}] AS nodes,
+          [r IN relationships(p) | {{
+            type: type(r)
+          }}] AS relationships
+        """
+
+    params = {
+        "anchor_element_id": anchor_element_id,
+        "max_paths": max_paths_i,
+        "beam": int(beam),
+    }
+    if safe_hop_count not in (2, 3):
+        del params["beam"]
+
+    rows = db_manager.run_query(query, params)
     out: list[dict[str, Any]] = []
     for row in rows:
         nodes = row.get("nodes") or []

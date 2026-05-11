@@ -7,9 +7,11 @@ class LLMClient:
     def __init__(self):
         api_key = os.getenv("OPENROUTER_API_KEY")
         
+        timeout_sec = float(os.getenv("LLM_TIMEOUT_SEC", "300"))
         self.client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
             api_key=api_key,
+            timeout=timeout_sec,
         )
         self.model = os.getenv("LLM_MODEL")
 
