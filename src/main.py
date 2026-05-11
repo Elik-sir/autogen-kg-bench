@@ -17,7 +17,6 @@ if __name__ == "__main__":
             "multi-hop-3": 2,
             "multi-hop-4": 2,
             "aggregation": 0,
-            "cross-branch": 0,
             "subgraph-deep-analytics": 0,
         },
     )

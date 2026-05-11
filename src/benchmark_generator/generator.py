@@ -49,14 +49,6 @@ class BenchmarkGenerator:
             existing_questions=existing_questions,
         )
 
-    def generate_cross_branch_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
-        return self.question_engine.generate_cross_branch_pairs(
-            schema=schema,
-            data_samples=data_samples,
-            num_questions=num_questions,
-            existing_questions=existing_questions,
-        )
-
     def generate_same_type_common_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         return self.question_engine.generate_same_type_common_pairs(
             schema=schema,

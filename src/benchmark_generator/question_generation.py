@@ -3,6 +3,11 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from benchmark_generator.cypher_factory import (
+    build_aggregation_candidates_from_path,
+    build_multi_hop_candidate,
+    build_simple_candidate_from_path,
+)
 from benchmark_generator.prompt_settings import ANCHORS_PER_LABEL_LIMIT, MAX_PATHS_PER_ANCHOR
 from benchmark_generator.utils.anchor_subgraph_context import (
     build_anchor_subgraph_context,
@@ -12,13 +17,7 @@ from benchmark_generator.utils.anchor_subgraph_context import (
 from benchmark_generator.utils.company_subgraph_context import build_company_subgraph_contexts
 from benchmark_generator.utils.llm_response_parser import parse_qa_pairs_response
 from benchmark_generator.utils.prompt_builder import (
-    build_aggregation_prompts,
-    build_cross_branch_prompts,
-    build_multi_hop_2_prompts,
-    build_multi_hop_3_prompts,
-    build_multi_hop_4_prompts,
     build_same_type_common_prompts,
-    build_simple_prompts,
     build_subgraph_deep_analytics_prompts,
 )
 from benchmark_generator.utils.same_type_common_context import find_same_type_common_contexts
@@ -53,9 +52,35 @@ class QuestionGenerationEngine:
 
     def generate_simple_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} simple-вопросов...")
-        return self._generate_by_prompt_builder(
-            build_simple_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
-        )
+        out: list[dict[str, Any]] = []
+        max_attempts = max(num_questions * 8, 18)
+        attempts = 0
+        while len(out) < num_questions and attempts < max_attempts:
+            attempts += 1
+            anchor = self._next_anchor()
+            if not anchor:
+                break
+            local_context = build_anchor_subgraph_context(
+                self.db,
+                anchor=anchor,
+                hop_count=1,
+                max_paths_per_anchor=MAX_PATHS_PER_ANCHOR,
+            )
+            if not local_context:
+                continue
+            path = self._select_path_for_cypher(local_context)
+            if not path:
+                continue
+            candidate = build_simple_candidate_from_path(path=path, path_index=self._multi_hop_path_cursor - 1)
+            if not candidate:
+                continue
+            out.append(candidate.to_item())
+        if len(out) < num_questions:
+            print(
+                f"[ПРЕДУПРЕЖДЕНИЕ] simple: получено {len(out)}/{num_questions} "
+                f"после {attempts} попыток."
+            )
+        return out
 
     def generate_multi_hop_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         # Backward-compatible alias: old "multi-hop" maps to 2-hop variant.
@@ -94,12 +119,7 @@ class QuestionGenerationEngine:
     ):
         complexity = f"multi-hop-{hop_count}"
         print(f"Генерация {num_questions} {complexity}-вопросов...")
-        prompt_builders = {
-            2: build_multi_hop_2_prompts,
-            3: build_multi_hop_3_prompts,
-            4: build_multi_hop_4_prompts,
-        }
-        if prompt_builders.get(hop_count) is None:
+        if hop_count not in {2, 3, 4}:
             print(f"[ПРОПУСК] Неизвестный hop_count={hop_count}")
             return []
 
@@ -122,25 +142,15 @@ class QuestionGenerationEngine:
             path = self._select_path_for_cypher(local_context)
             if not path:
                 continue
-            deterministic = self._build_deterministic_multi_hop_cypher(path)
-            if not deterministic:
-                continue
-            cypher, params = deterministic
-            question = self._build_question_from_path(
+            candidate = build_multi_hop_candidate(
                 path=path,
                 hop_count=hop_count,
                 complexity=complexity,
-                existing_questions=existing_questions,
+                path_index=self._multi_hop_path_cursor - 1,
             )
-            if not question:
+            if not candidate:
                 continue
-            item: dict[str, Any] = {
-                "question": question,
-                "cypher": cypher,
-                "params": params,
-            }
-            item["complexity"] = complexity
-            out.append(item)
+            out.append(candidate.to_item())
 
         if len(out) < num_questions:
             print(
@@ -157,55 +167,6 @@ class QuestionGenerationEngine:
         self._multi_hop_path_cursor += 1
         path = paths[idx]
         return path if isinstance(path, dict) else None
-
-    def _build_deterministic_multi_hop_cypher(
-        self, path: dict[str, Any]
-    ) -> tuple[str, dict[str, Any]] | None:
-        nodes = path.get("nodes") if isinstance(path, dict) else None
-        rels = path.get("relationships") if isinstance(path, dict) else None
-        if not isinstance(nodes, list) or not isinstance(rels, list) or not nodes or not rels:
-            return None
-        if len(nodes) != len(rels) + 1:
-            return None
-
-        def _safe_label(label: str) -> str:
-            return str(label).replace("`", "``")
-
-        def _safe_rel(rel_type: str) -> str:
-            return str(rel_type).replace("`", "``")
-
-        pattern_parts = ["(n0)"]
-        for idx, rel in enumerate(rels):
-            rel_type = str((rel or {}).get("type") or "").strip()
-            if not rel_type:
-                return None
-            next_node = nodes[idx + 1] if idx + 1 < len(nodes) else {}
-            labels = next_node.get("labels") if isinstance(next_node, dict) else None
-            label_hint = ""
-            if isinstance(labels, list) and labels:
-                label_hint = ":" + "`" + _safe_label(str(labels[0])) + "`"
-            pattern_parts.append(f"-[:`{_safe_rel(rel_type)}`]-")
-            pattern_parts.append(f"(n{idx + 1}{label_hint})")
-
-        anchor_eid = str((nodes[0] or {}).get("element_id") or "").strip()
-        target_eid = str((nodes[-1] or {}).get("element_id") or "").strip()
-        if not anchor_eid or not target_eid:
-            return None
-        hop_count = len(rels)
-        path_pattern = "".join(pattern_parts)
-        cypher = f"""
-MATCH p={path_pattern}
-WHERE elementId(n0) = $anchor_element_id
-  AND elementId(n{hop_count}) = $target_element_id
-RETURN
-  DISTINCT coalesce(n{hop_count}.name, n{hop_count}.title, n{hop_count}.ticker, elementId(n{hop_count})) AS target_value
-LIMIT 10
-""".strip()
-        params = {
-            "anchor_element_id": anchor_eid,
-            "target_element_id": target_eid,
-        }
-        return cypher, params
 
     def _build_question_from_path(
         self,
@@ -285,6 +246,36 @@ LIMIT 10
                 q = q.rstrip(".") + "?"
             return q
 
+        def _normalize_text(text: str) -> str:
+            normalized = str(text or "").strip().lower()
+            normalized = re.sub(r"[^\w\s]", " ", normalized, flags=re.UNICODE)
+            normalized = re.sub(r"\s+", " ", normalized).strip()
+            return normalized
+
+        def _target_aliases(node: dict[str, Any]) -> list[str]:
+            props = node.get("props") if isinstance(node, dict) else None
+            if not isinstance(props, dict):
+                return []
+            aliases: list[str] = []
+            for key in ("name", "title", "ticker", "id", "uuid", "symbol"):
+                value = props.get(key)
+                if value in (None, ""):
+                    continue
+                aliases.append(str(value).strip())
+            return [x for x in aliases if x]
+
+        def _question_leaks_target(question_text: str, aliases: list[str]) -> bool:
+            nq = _normalize_text(question_text)
+            if not nq:
+                return False
+            for alias in aliases:
+                na = _normalize_text(alias)
+                if len(na) < 3:
+                    continue
+                if na and na in nq:
+                    return True
+            return False
+
         def _looks_too_abstract(question_text: str) -> bool:
             lowered = question_text.lower()
             banned = (
@@ -301,6 +292,7 @@ LIMIT 10
         target = nodes[-1]
         anchor_name = _node_name(anchor)
         target_label = _node_label(target)
+        target_aliases = _target_aliases(target)
         rel_types = [str((r or {}).get("type") or "RELATED_TO") for r in rels]
         rel_hints = []
         seen_hints: set[str] = set()
@@ -337,16 +329,24 @@ Constraints:
 5) Mention at least one concrete named entity from the facts.
 6) Keep the intent aligned with complexity "{complexity}".
 7) Avoid very similar wording to existing questions.
+8) Do NOT mention any direct target aliases in the question.
 
 Existing questions to avoid:
 {existing_block if existing_block else "- (none)"}
+
+Target aliases forbidden in question:
+{", ".join(target_aliases) if target_aliases else "(none)"}
 """
         response = self.llm.generate_response(
             "You create natural benchmark questions for enterprise graph QA.",
             prompt,
         )
         question = _clean_question(response)
-        if question and not _looks_too_abstract(question):
+        if (
+            question
+            and not _looks_too_abstract(question)
+            and not _question_leaks_target(question, target_aliases)
+        ):
             return question
         return (
             f"Which {target_label} is most likely implicated in the same business context as "
@@ -355,15 +355,40 @@ Existing questions to avoid:
 
     def generate_aggregation_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} aggregation-вопросов...")
-        return self._generate_by_prompt_builder(
-            build_aggregation_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
-        )
-
-    def generate_cross_branch_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
-        print(f"Генерация {num_questions} cross-branch-вопросов...")
-        return self._generate_by_prompt_builder(
-            build_cross_branch_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
-        )
+        out: list[dict[str, Any]] = []
+        max_attempts = max(num_questions * 10, 22)
+        attempts = 0
+        while len(out) < num_questions and attempts < max_attempts:
+            attempts += 1
+            anchor = self._next_anchor()
+            if not anchor:
+                break
+            local_context = build_anchor_subgraph_context(
+                self.db,
+                anchor=anchor,
+                hop_count=1,
+                max_paths_per_anchor=MAX_PATHS_PER_ANCHOR,
+            )
+            if not local_context:
+                continue
+            path = self._select_path_for_cypher(local_context)
+            if not path:
+                continue
+            candidates = build_aggregation_candidates_from_path(
+                path=path, path_index=self._multi_hop_path_cursor - 1
+            )
+            if not candidates:
+                continue
+            for candidate in candidates:
+                out.append(candidate.to_item())
+                if len(out) >= num_questions:
+                    break
+        if len(out) < num_questions:
+            print(
+                f"[ПРЕДУПРЕЖДЕНИЕ] aggregation: получено {len(out)}/{num_questions} "
+                f"после {attempts} попыток."
+            )
+        return out
 
     def generate_same_type_common_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} same-type-common-вопросов...")

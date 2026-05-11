@@ -12,7 +12,6 @@ SRC_ORDER = (
     "simple",
     "multi-hop",
     "aggregation",
-    "cross-branch",
     "subgraph-deep-analytics",
 )
 

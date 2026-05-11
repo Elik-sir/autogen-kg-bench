@@ -35,7 +35,6 @@ QUESTION_TYPE_ORDER: tuple[str, ...] = (
     "simple",
     "multi-hop",
     "aggregation",
-    "cross-branch",
     "subgraph-deep-analytics",
 )
 

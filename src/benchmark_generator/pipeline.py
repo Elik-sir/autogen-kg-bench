@@ -71,7 +71,7 @@ def run_generation_pipeline(
     sample_entities_per_type=10,
     per_type_targets=None,
 ):
-    """Генерирует бенчмарк по типам по очереди: simple -> multi-hop-X -> aggregation -> cross-branch -> subgraph."""
+    """Генерирует бенчмарк по типам по очереди: simple -> multi-hop-X -> aggregation -> subgraph."""
     schema = get_schema(db)
     data_samples = get_samples(db, per_label_limit=sample_entities_per_type)
     final_benchmark = []
@@ -111,13 +111,6 @@ def run_generation_pipeline(
                 schema, data_samples, num_questions=n, existing_questions=existing_questions
             ),
             7,
-        ),
-        (
-            "cross-branch",
-            lambda n, existing_questions=None: question_engine.generate_cross_branch_pairs(
-                schema, data_samples, num_questions=n, existing_questions=existing_questions
-            ),
-            1,
         ),
         (
             "subgraph-deep-analytics",

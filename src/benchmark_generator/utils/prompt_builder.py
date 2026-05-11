@@ -149,7 +149,9 @@ Your task is to produce a high-quality "gold standard" dataset for measuring kno
 3. Phrase each question naturally in English, as a business analyst would.
 4. In RETURN, use concrete fields, not bare nodes.
 5. Anchor to specific entities via identifying fields (name/title/ticker/id); avoid purely categorical filters.
-6. {ENGLISH_BENCHMARK_TEXT_RULE}
+6. Do not use elementId(...) in Cypher; write standard property-based filters.
+7. Do not include the expected answer entity/value directly in the question text.
+8. {ENGLISH_BENCHMARK_TEXT_RULE}
 """
 
 
@@ -290,24 +292,6 @@ Generate {count} questions of type "aggregation":
 - the wording should be analytical (rankings, comparisons, trends).
 """
         + _output_format_prompt("aggregation")
-    )
-    return BASE_SYSTEM_PROMPT, user_prompt
-
-
-def build_cross_branch_prompts(schema, data_samples, count, existing_questions=None):
-    user_prompt = (
-        _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
-        + f"""
-=== TASK TYPE: CROSS-BRANCH (SUMMARIZATION / ANALYTICS) ===
-Generate {count} questions of type "cross-branch" using this recipe:
-1) Pick a central anchor node.
-2) Build branch A from the anchor to Entity_A.
-3) Build an independent branch B from the anchor to Entity_B.
-4) In the question text, avoid naming Entity_A/Entity_B directly (entity masking), but Cypher must retrieve them explicitly.
-
-Success criterion: answering requires combining context from both chains Anchor->Entity_A and Anchor->Entity_B.
-"""
-        + _output_format_prompt("cross-branch")
     )
     return BASE_SYSTEM_PROMPT, user_prompt
 
