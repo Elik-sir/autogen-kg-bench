@@ -174,7 +174,9 @@ Already generated questions:
         print(f"Генерация {num_questions} {complexity}-вопросов...")
         prompt_builder = build_multi_hop_2_prompts if hop_count == 2 else build_multi_hop_3_prompts
         out: list[dict[str, Any]] = []
-        max_attempts = max(num_questions * 6, 15)
+        # Для 3-hop больше отбраковок (контекст/валидация строже), поэтому даём больше попыток.
+        attempts_multiplier = 10 if hop_count == 3 else 6
+        max_attempts = max(num_questions * attempts_multiplier, 15)
         attempts = 0
         while len(out) < num_questions and attempts < max_attempts:
             attempts += 1

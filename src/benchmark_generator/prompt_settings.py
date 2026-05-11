@@ -57,5 +57,7 @@ MAX_PATHS_PER_ANCHOR = max(1, int(os.getenv("BENCHMARK_MAX_PATHS_PER_ANCHOR", "2
 MAX_SUBGRAPH_NODES = max(10, int(os.getenv("BENCHMARK_MAX_SUBGRAPH_NODES", "40")))
 # Сэмплирование путей k-hop: после каждого шага оставляем не больше beam ветвей (вместо полного перебора).
 PATH_EXPAND_BEAM = max(16, int(os.getenv("BENCHMARK_PATH_EXPAND_BEAM", "128")))
+# Для 3-hop нужен более широкий beam, иначе хорошие ветви часто отсекаются на ранних шагах.
+PATH_EXPAND_BEAM_HOP3 = max(32, int(os.getenv("BENCHMARK_PATH_EXPAND_BEAM_HOP3", "256")))
 # Верхняя граница числа узлов метки, для которых считаем degree/EXISTS перед отбором якорей (дешёвый прескоринг).
 ANCHOR_PRESELECT_CAP = max(24, int(os.getenv("BENCHMARK_ANCHOR_PRESELECT_CAP", "80")))

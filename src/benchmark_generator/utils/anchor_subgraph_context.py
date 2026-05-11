@@ -4,7 +4,11 @@ from collections import defaultdict
 import random
 from typing import Any
 
-from benchmark_generator.prompt_settings import ANCHOR_PRESELECT_CAP, PATH_EXPAND_BEAM
+from benchmark_generator.prompt_settings import (
+    ANCHOR_PRESELECT_CAP,
+    PATH_EXPAND_BEAM,
+    PATH_EXPAND_BEAM_HOP3,
+)
 
 
 def _safe_label(label: str) -> str:
@@ -83,7 +87,8 @@ def get_anchor_candidates_by_label(
     limit_per_label: int,
 ) -> list[dict[str, Any]]:
     # Раньше: подзапрос с [*2..4] и подсчётом всех простых путей — очень дорого на плотных графах.
-    # Сейчас: топ узлов по разнообразию/степени + EXISTS на один простой 2-hop (планировщик обычно обрывает на первом совпадении).
+    # Сейчас: топ узлов по разнообразию/степени + EXISTS на один простой 2-hop/3-hop
+    # (планировщик обычно обрывает на первом совпадении).
     raw_pre = int(max(limit_per_label * 5, 50))
     preselect_limit = min(raw_pre, ANCHOR_PRESELECT_CAP)
     query = f"""
@@ -99,8 +104,18 @@ def get_anchor_candidates_by_label(
           AND elementId(m) <> elementId(n)
           AND elementId(m) <> elementId(t)
           AND r1 <> r2
-      }} AS has_simple_2hop
-    ORDER BY has_simple_2hop DESC, diversity DESC, degree DESC
+      }} AS has_simple_2hop,
+      EXISTS {{
+        MATCH (n)-[r1]-(m1)-[r2]-(m2)-[r3]-(t)
+        WHERE elementId(m1) <> elementId(n)
+          AND elementId(m2) <> elementId(n)
+          AND elementId(t) <> elementId(n)
+          AND elementId(m2) <> elementId(m1)
+          AND elementId(t) <> elementId(m1)
+          AND elementId(t) <> elementId(m2)
+          AND r1 <> r2 AND r1 <> r3 AND r2 <> r3
+      }} AS has_simple_3hop
+    ORDER BY has_simple_3hop DESC, has_simple_2hop DESC, diversity DESC, degree DESC
     LIMIT $limit_per_label
     RETURN
       elementId(n) AS element_id,
@@ -108,8 +123,15 @@ def get_anchor_candidates_by_label(
       properties(n) AS props,
       degree,
       diversity,
-      CASE WHEN has_simple_2hop THEN 2 ELSE 0 END AS max_hops,
-      CASE WHEN has_simple_2hop THEN 1 ELSE 0 END AS long_path_count
+      CASE
+        WHEN has_simple_3hop THEN 3
+        WHEN has_simple_2hop THEN 2
+        ELSE 0
+      END AS max_hops,
+      CASE
+        WHEN has_simple_3hop OR has_simple_2hop THEN 1
+        ELSE 0
+      END AS long_path_count
     """
     rows = db_manager.run_query(
         query,
@@ -147,7 +169,7 @@ def get_stratified_anchor_pool(
     labels = get_all_node_labels(db_manager)
     n_labels = len(labels)
     print(
-        f"[anchors] Пул якорей: {n_labels} меток (быстрый прескоринг: степень + EXISTS 2-hop, cap={ANCHOR_PRESELECT_CAP})...",
+        f"[anchors] Пул якорей: {n_labels} меток (быстрый прескоринг: степень + EXISTS 2/3-hop, cap={ANCHOR_PRESELECT_CAP})...",
         flush=True,
     )
     out: dict[str, list[dict[str, Any]]] = {}
@@ -181,7 +203,8 @@ def _extract_unique_paths_for_anchor(
     """
     safe_hop_count = int(max(1, hop_count))
     max_paths_i = int(max(1, max_paths))
-    beam = max(max_paths_i, PATH_EXPAND_BEAM)
+    base_beam = PATH_EXPAND_BEAM_HOP3 if safe_hop_count >= 3 else PATH_EXPAND_BEAM
+    beam = max(max_paths_i, base_beam)
 
     if safe_hop_count == 2:
         query = """
