@@ -66,6 +66,27 @@ class CypherFactoryTests(unittest.TestCase):
         self.assertTrue(any("toFloat" in item.cypher for item in candidates))
         self.assertTrue(any("count(DISTINCT n1)" in item.cypher for item in candidates))
 
+    def test_prefers_semantic_label_over_searchable(self):
+        path = {
+            "nodes": [
+                {"labels": ["Location"], "props": {"name": "Norwalk"}},
+                {"labels": ["Company"], "props": {"name": "Example Corp"}},
+                {"labels": ["Searchable", "Resource"], "props": {"name": "Cloud GPU"}},
+            ],
+            "relationships": [{"type": "LOCATED_IN"}, {"type": "REQUIRES"}],
+        }
+        candidate = build_multi_hop_candidate(
+            path=path,
+            hop_count=2,
+            complexity="multi-hop-2",
+        )
+        self.assertIsNotNone(candidate)
+        assert candidate is not None
+        self.assertIn("(n2:`Resource`)", candidate.cypher)
+        self.assertNotIn("(n2:`Searchable`)", candidate.cypher)
+        self.assertIn("resource", candidate.question.lower())
+        self.assertNotIn("searchable", candidate.question.lower())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -19,6 +19,13 @@ RELATION_HINTS = {
     "DEVELOPS": "technology development links",
     "BELONGS_TO": "classification links",
 }
+TECHNICAL_LABELS = {
+    "searchable",
+    "embedding",
+    "vector",
+    "entity",
+    "baseentity",
+}
 
 
 @dataclass
@@ -74,7 +81,11 @@ def _pick_identity_filter(node: dict[str, Any]) -> tuple[str, Any] | None:
 def _node_label(node: dict[str, Any], fallback: str = "Entity") -> str:
     labels = node.get("labels") if isinstance(node, dict) else None
     if isinstance(labels, list) and labels:
-        return str(labels[0])
+        normalized = [str(label).strip() for label in labels if str(label).strip()]
+        semantic = [label for label in normalized if label.lower() not in TECHNICAL_LABELS]
+        if semantic:
+            return semantic[0]
+        return normalized[0]
     return fallback
 
 
@@ -89,11 +100,24 @@ def _node_name(node: dict[str, Any], fallback: str = "the anchor entity") -> str
     return fallback
 
 
-def _coalesce_expr(var_name: str) -> str:
-    return (
-        f"coalesce({var_name}.name, {var_name}.title, {var_name}.ticker, "
-        f"{var_name}.id, {var_name}.uuid, {var_name}.symbol)"
-    )
+def _coalesce_expr(var_name: str, target_node: dict[str, Any] | None = None) -> str:
+    props = {}
+    if isinstance(target_node, dict):
+        maybe_props = target_node.get("props")
+        if isinstance(maybe_props, dict):
+            props = maybe_props
+
+    preferred_order = ("name", "title", "ticker", "id", "uuid", "symbol")
+    chosen_keys = [key for key in preferred_order if key in props]
+
+    # If path snapshot has no props, keep a conservative fallback with common keys.
+    if not chosen_keys:
+        chosen_keys = ["name", "title", "ticker", "id", "symbol"]
+
+    parts = [f"{var_name}.`{_safe_prop(key)}`" for key in chosen_keys]
+    # Stable last-resort value without elementId() (blocked by validation policy).
+    parts.append(f"toString(id({var_name}))")
+    return "coalesce(" + ", ".join(parts) + ")"
 
 
 def _path_signature(path: dict[str, Any]) -> str:
@@ -177,7 +201,7 @@ def build_multi_hop_candidate(
     cypher = f"""
 MATCH p={pattern}
 WHERE {where_block}
-RETURN DISTINCT {_coalesce_expr(f"n{hop_count}")} AS target_value
+RETURN DISTINCT {_coalesce_expr(f"n{hop_count}", nodes[-1])} AS target_value
 LIMIT 10
 """.strip()
 
@@ -243,7 +267,7 @@ def build_simple_candidate_from_path(
     cypher = f"""
 MATCH (n0:`{_safe_label(anchor_label)}`)-[:`{_safe_rel(rel_type)}`]-(n1:`{_safe_label(target_label)}`)
 WHERE n0.`{_safe_prop(anchor_filter[0])}` = $anchor_value
-RETURN DISTINCT {_coalesce_expr("n1")} AS target_value
+RETURN DISTINCT {_coalesce_expr("n1", target)} AS target_value
 LIMIT 10
 """.strip()
     anchor_name = _node_name(anchor)

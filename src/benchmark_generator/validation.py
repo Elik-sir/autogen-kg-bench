@@ -84,6 +84,17 @@ def _question_contains_answer_leak(question: str, ground_truth: str, answer: str
     return False
 
 
+def _result_has_only_null_values(result_rows: list[dict]) -> bool:
+    if not result_rows:
+        return True
+    if not all(isinstance(row, dict) for row in result_rows):
+        return False
+    for row in result_rows:
+        if any(value is not None for value in row.values()):
+            return False
+    return True
+
+
 def _compact_result_for_prompt(result_rows: list[dict], max_rows: int = 5) -> str:
     safe_rows = result_rows[: max(1, max_rows)]
     try:
@@ -204,6 +215,9 @@ def validate_generated_items(
                 result = db.run_query(cypher_query, params)
                 if not result and not (debug_only_cypher and has_precomputed_context):
                     print(f"[ПРОПУСК] Запрос вернул 0 строк: {question}")
+                    continue
+                if _result_has_only_null_values(result):
+                    print(f"[ПРОПУСК] Запрос вернул только NULL-значения: {question}")
                     continue
                 if has_precomputed_context:
                     pass
