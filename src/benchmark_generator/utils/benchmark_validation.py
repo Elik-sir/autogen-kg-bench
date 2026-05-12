@@ -25,6 +25,47 @@ def value_to_text(value):
     return str(value)
 
 
+def _clean_text(value):
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _looks_like_opaque_id(value):
+    text = _clean_text(value)
+    if not text:
+        return False
+    if re.fullmatch(r"\d{4,}", text):
+        return True
+    if re.fullmatch(r"[a-f0-9-]{24,}", text, flags=re.IGNORECASE):
+        return True
+    return False
+
+
+def _row_to_context_text(row):
+    if not isinstance(row, dict):
+        return ""
+
+    title = _clean_text(row.get("target_title") or row.get("title") or row.get("name") or row.get("target_value"))
+    context = _clean_text(
+        row.get("target_context")
+        or row.get("summary")
+        or row.get("description")
+        or row.get("content")
+        or row.get("text")
+    )
+    if context and title:
+        return f"title: {title}; context: {context}"
+    if context:
+        return f"context: {context}"
+    if title and not _looks_like_opaque_id(title):
+        return title
+
+    row_text = ", ".join(value_to_text(value) for value in row.values())
+    return _clean_text(row_text)
+
+
 def result_to_ground_truth(question, result_rows):
     lowered_question = question.strip().lower()
     if lowered_question.startswith("есть ли"):
@@ -48,7 +89,7 @@ def result_to_ground_truth(question, result_rows):
 
     row_texts = []
     for row in result_rows:
-        row_text = ", ".join(value_to_text(value) for value in row.values())
+        row_text = _row_to_context_text(row)
         if row_text:
             row_texts.append(row_text)
     return "; ".join(row_texts)

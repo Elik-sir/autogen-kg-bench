@@ -190,9 +190,20 @@ def run_generation_pipeline(
             seen_normalized_questions.append(normalized)
             final_benchmark.append(item)
 
+    benchmark_for_output = []
+    for item in final_benchmark:
+        formatted_item = {
+            "complexity": item.get("complexity"),
+            "question": item.get("question"),
+            "cypher": item.get("cypher", item.get("Cypher")),
+            "ground_truth": item.get("ground_truth"),
+            "answer": item.get("answer"),
+        }
+        benchmark_for_output.append(formatted_item)
+
     # Сохраняем в файл
     with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(final_benchmark, f, ensure_ascii=False, indent=2)
+        json.dump(benchmark_for_output, f, ensure_ascii=False, indent=2)
 
-    print(f"\nГотово! Бенчмарк на {len(final_benchmark)} вопросов сохранен в {output_file}")
-    return final_benchmark
+    print(f"\nГотово! Бенчмарк на {len(benchmark_for_output)} вопросов сохранен в {output_file}")
+    return benchmark_for_output

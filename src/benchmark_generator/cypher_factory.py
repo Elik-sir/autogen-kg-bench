@@ -120,6 +120,21 @@ def _coalesce_expr(var_name: str, target_node: dict[str, Any] | None = None) -> 
     return "coalesce(" + ", ".join(parts) + ")"
 
 
+def _context_expr(var_name: str) -> str:
+    context_keys = (
+        "summary",
+        "description",
+        "content",
+        "text",
+        "body",
+        "headline",
+        "snippet",
+    )
+    parts = [f"{var_name}.`{_safe_prop(key)}`" for key in context_keys]
+    parts.append("''")
+    return "coalesce(" + ", ".join(parts) + ")"
+
+
 def _path_signature(path: dict[str, Any]) -> str:
     rels = path.get("relationships") if isinstance(path, dict) else None
     if not isinstance(rels, list):
@@ -201,7 +216,10 @@ def build_multi_hop_candidate(
     cypher = f"""
 MATCH p={pattern}
 WHERE {where_block}
-RETURN DISTINCT {_coalesce_expr(f"n{hop_count}", nodes[-1])} AS target_value
+RETURN DISTINCT
+  {_coalesce_expr(f"n{hop_count}", nodes[-1])} AS target_value,
+  {_coalesce_expr(f"n{hop_count}", nodes[-1])} AS target_title,
+  {_context_expr(f"n{hop_count}")} AS target_context
 LIMIT 10
 """.strip()
 
@@ -267,7 +285,10 @@ def build_simple_candidate_from_path(
     cypher = f"""
 MATCH (n0:`{_safe_label(anchor_label)}`)-[:`{_safe_rel(rel_type)}`]-(n1:`{_safe_label(target_label)}`)
 WHERE n0.`{_safe_prop(anchor_filter[0])}` = $anchor_value
-RETURN DISTINCT {_coalesce_expr("n1", target)} AS target_value
+RETURN DISTINCT
+  {_coalesce_expr("n1", target)} AS target_value,
+  {_coalesce_expr("n1", target)} AS target_title,
+  {_context_expr("n1")} AS target_context
 LIMIT 10
 """.strip()
     anchor_name = _node_name(anchor)

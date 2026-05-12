@@ -259,16 +259,18 @@ def validate_generated_items(
                 continue
 
             complexity = str(item.get("complexity", "")).strip().lower()
+            fallback_answer = str(item.get("answer", "")).strip()
             if complexity.startswith("multi-hop-"):
                 deterministic_answer = _build_deterministic_answer_for_multi_hop(item)
-                item["answer"] = deterministic_answer or str(item.get("ground_truth", "")).strip()
-            else:
-                item["answer"] = build_answer_from_context(
-                    llm=llm,
-                    question=question,
-                    ground_truth=str(item.get("ground_truth", "")),
-                    fallback=str(item.get("answer", "")),
-                )
+                if not fallback_answer:
+                    fallback_answer = deterministic_answer
+
+            item["answer"] = build_answer_from_context(
+                llm=llm,
+                question=question,
+                ground_truth=str(item.get("ground_truth", "")),
+                fallback=fallback_answer,
+            )
             if _question_contains_answer_leak(
                 question=question,
                 ground_truth=str(item.get("ground_truth", "")),
