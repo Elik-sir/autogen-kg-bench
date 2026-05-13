@@ -62,6 +62,17 @@ def _safe_rel(value: str) -> str:
     return str(value).replace("`", "``")
 
 
+def _cypher_literal(value: Any) -> str:
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, (int, float)):
+        return str(value)
+    text = str(value).replace("\\", "\\\\").replace("'", "\\'")
+    return f"'{text}'"
+
+
 def _pick_identity_filter(node: dict[str, Any]) -> tuple[str, Any] | None:
     props = node.get("props") if isinstance(node, dict) else None
     if not isinstance(props, dict):
@@ -115,13 +126,13 @@ def _coalesce_expr(var_name: str, target_node: dict[str, Any] | None = None) -> 
         chosen_keys = ["name", "title", "ticker", "id", "symbol"]
 
     parts = [f"{var_name}.`{_safe_prop(key)}`" for key in chosen_keys]
-    # Stable last-resort value without elementId() (blocked by validation policy).
-    parts.append(f"toString(id({var_name}))")
+    # Keep Cypher forward-compatible: Neo4j deprecates id().
+    parts.append("''")
     return "coalesce(" + ", ".join(parts) + ")"
 
 
-def _context_expr(var_name: str) -> str:
-    context_keys = (
+def _context_expr(var_name: str, target_node: dict[str, Any] | None = None) -> str:
+    preferred_context_keys = (
         "summary",
         "description",
         "content",
@@ -130,7 +141,20 @@ def _context_expr(var_name: str) -> str:
         "headline",
         "snippet",
     )
-    parts = [f"{var_name}.`{_safe_prop(key)}`" for key in context_keys]
+    props = {}
+    if isinstance(target_node, dict):
+        maybe_props = target_node.get("props")
+        if isinstance(maybe_props, dict):
+            props = maybe_props
+
+    # Generate Cypher only with properties known for this target node shape.
+    context_keys = [key for key in preferred_context_keys if key in props]
+    if not context_keys:
+        context_keys = [key for key in ("title", "name") if key in props]
+
+    # Use dynamic map-style access to avoid Neo4j warnings
+    # when some properties are absent on a given label.
+    parts = [f"{var_name}[{_cypher_literal(key)}]" for key in context_keys]
     parts.append("''")
     return "coalesce(" + ", ".join(parts) + ")"
 
@@ -208,10 +232,12 @@ def build_multi_hop_candidate(
         pattern_parts.append(f"(n{idx + 1}{label_hint})")
     pattern = "".join(pattern_parts)
 
-    where_lines = [f"n0.`{_safe_prop(anchor_filter[0])}` = $anchor_value"]
+    where_lines = [f"n0.`{_safe_prop(anchor_filter[0])}` = {_cypher_literal(anchor_filter[1])}"]
     target_filter = _pick_identity_filter(nodes[-1])
     if target_filter:
-        where_lines.append(f"n{hop_count}.`{_safe_prop(target_filter[0])}` = $target_guard")
+        where_lines.append(
+            f"n{hop_count}.`{_safe_prop(target_filter[0])}` = {_cypher_literal(target_filter[1])}"
+        )
     where_block = "\n  AND ".join(where_lines)
     cypher = f"""
 MATCH p={pattern}
@@ -219,7 +245,7 @@ WHERE {where_block}
 RETURN DISTINCT
   {_coalesce_expr(f"n{hop_count}", nodes[-1])} AS target_value,
   {_coalesce_expr(f"n{hop_count}", nodes[-1])} AS target_title,
-  {_context_expr(f"n{hop_count}")} AS target_context
+  {_context_expr(f"n{hop_count}", nodes[-1])} AS target_context
 LIMIT 10
 """.strip()
 
@@ -232,9 +258,7 @@ LIMIT 10
         f"Which {target_label_natural} is most closely linked to {anchor_name} "
         f"when you follow {hop_count} steps across {relation_story}?"
     )
-    params: dict[str, Any] = {"anchor_value": anchor_filter[1]}
-    if target_filter:
-        params["target_guard"] = target_filter[1]
+    params: dict[str, Any] = {}
     return CypherCandidate(
         complexity=complexity,
         question=question,
@@ -284,11 +308,11 @@ def build_simple_candidate_from_path(
     rel_hint = _relation_hint(rel_type)
     cypher = f"""
 MATCH (n0:`{_safe_label(anchor_label)}`)-[:`{_safe_rel(rel_type)}`]-(n1:`{_safe_label(target_label)}`)
-WHERE n0.`{_safe_prop(anchor_filter[0])}` = $anchor_value
+WHERE n0.`{_safe_prop(anchor_filter[0])}` = {_cypher_literal(anchor_filter[1])}
 RETURN DISTINCT
   {_coalesce_expr("n1", target)} AS target_value,
   {_coalesce_expr("n1", target)} AS target_title,
-  {_context_expr("n1")} AS target_context
+  {_context_expr("n1", target)} AS target_context
 LIMIT 10
 """.strip()
     anchor_name = _node_name(anchor)
@@ -297,7 +321,7 @@ LIMIT 10
         complexity="simple",
         question=question,
         cypher=cypher,
-        params={"anchor_value": anchor_filter[1]},
+        params={},
         anchor_info={
             "label": anchor_label,
             "identity_key": anchor_filter[0],
@@ -372,12 +396,12 @@ def build_aggregation_candidates_from_path(
         "path_index": path_index,
         "path_signature": _path_signature(path),
     }
-    params = {"anchor_value": anchor_filter[1]}
+    params = {}
 
     out: list[CypherCandidate] = []
     count_cypher = f"""
 MATCH (n0:`{_safe_label(anchor_label)}`)-[:`{_safe_rel(rel_type)}`]-(n1:`{_safe_label(target_label)}`)
-WHERE n0.`{_safe_prop(anchor_filter[0])}` = $anchor_value
+WHERE n0.`{_safe_prop(anchor_filter[0])}` = {_cypher_literal(anchor_filter[1])}
 RETURN count(DISTINCT n1) AS target_value
 LIMIT 1
 """.strip()
@@ -400,7 +424,7 @@ LIMIT 1
         for agg_fn in ("max", "min", "avg"):
             cypher = f"""
 MATCH (n0:`{_safe_label(anchor_label)}`)-[:`{_safe_rel(rel_type)}`]-(n1:`{_safe_label(target_label)}`)
-WHERE n0.`{_safe_prop(anchor_filter[0])}` = $anchor_value
+WHERE n0.`{_safe_prop(anchor_filter[0])}` = {_cypher_literal(anchor_filter[1])}
   AND n1.`{_safe_prop(numeric_prop)}` IS NOT NULL
 RETURN {agg_fn}(toFloat(n1.`{_safe_prop(numeric_prop)}`)) AS target_value
 LIMIT 1

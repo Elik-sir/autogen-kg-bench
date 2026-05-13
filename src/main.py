@@ -12,11 +12,11 @@ if __name__ == "__main__":
         target_size=5,
         sample_entities_per_type=10,
         per_type_targets={
-            "simple": 0,
-            "multi-hop-2": 0,
+            "simple": 5,
+            "multi-hop-2": 5,
             "multi-hop-3": 2,
             "multi-hop-4": 2,
-            "aggregation": 0,
-            "subgraph-deep-analytics": 0,
+            "aggregation": 5,
+            "subgraph-deep-analytics":5,
         },
     )

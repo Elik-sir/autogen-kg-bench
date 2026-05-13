@@ -44,7 +44,7 @@ class CypherFactoryTests(unittest.TestCase):
         self.assertEqual("multi-hop-3", candidate.complexity)
         self.assertIn("MATCH p=(n0)-[:`MENTIONED_IN`]-(n1:`NewsArticle`)", candidate.cypher)
         self.assertIn("-[:`DEVELOPS`]-(n3:`Technology`)", candidate.cypher)
-        self.assertIn("n0.`name` = $anchor_value", candidate.cypher)
+        self.assertIn("n0.`name` = 'Acme Corp'", candidate.cypher)
         self.assertEqual("path", candidate.provenance.get("source"))
         self.assertEqual(4, candidate.provenance.get("path_index"))
 
@@ -56,7 +56,7 @@ class CypherFactoryTests(unittest.TestCase):
         self.assertIn("MATCH (n0:`Company`)-[:`PRODUCES`]-(n1:`Product`)", candidate.cypher)
         self.assertIn("RETURN DISTINCT", candidate.cypher)
         self.assertIn("AS target_value", candidate.cypher)
-        self.assertEqual({"anchor_value": "Acme Corp"}, candidate.params)
+        self.assertEqual({}, candidate.params)
 
     def test_aggregation_builder_emits_count_and_numeric_aggregates(self):
         candidates = build_aggregation_candidates_from_path(path=self.simple_path, path_index=9)

@@ -197,7 +197,11 @@ def validate_generated_items(
             if cypher_query and is_trivial_self_return(cypher_query):
                 print(f"[ПРОПУСК] Тривиальный запрос (WHERE/RETURN одного поля): {question}")
                 continue
-            if cypher_query and re.search(r"\belementId\s*\(", cypher_query, flags=re.IGNORECASE):
+            if (
+                cypher_query
+                and not debug_only_cypher
+                and re.search(r"\belementId\s*\(", cypher_query, flags=re.IGNORECASE)
+            ):
                 print(f"[ПРОПУСК] Cypher использует elementId(...): {question}")
                 continue
 
