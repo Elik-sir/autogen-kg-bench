@@ -30,14 +30,12 @@
 | Тип (`complexity`) | Промпт | Суть |
 |--------------------|--------|------|
 | `simple` | `build_simple_prompts` | 1 hop, конкретная привязка к сущности |
-| `multi-hop` | `build_multi_hop_prompts` | цепочки 2–4 связей |
+| `multi-hop-2` | `build_multi_hop_prompts(hop_count=2)` + `find_multi_hop_path_contexts` | цепочки ровно из 2 связей по verified path из Neo4j |
+| `multi-hop-3` | `build_multi_hop_prompts(hop_count=3)` + `find_multi_hop_path_contexts` | цепочки ровно из 3 связей по verified path из Neo4j |
 | `aggregation` | `build_aggregation_prompts` | COUNT / агрегаты / топы |
-| `cross-branch` | `build_cross_branch_prompts` | параллельные ветки от anchor, маскирование сущностей в формулировке вопроса |
 | `subgraph-deep-analytics` | `build_subgraph_deep_analytics_prompts` | см. отдельный подраздел ниже |
 
 Общий парсинг ответа LLM: `utils/llm_response_parser.py` → `parse_qa_pairs_response()` (строгий JSON-массив).
-
-**Дополнительный модуль (алгоритмический):** `utils/cross_branch_reasoning.py` — программная генерация cross-branch кейсов по схеме и Neo4j; при необходимости его можно снова подключить в пайплайн отдельно от LLM-ветки `cross-branch`.
 
 #### Подтип: `subgraph-deep-analytics`
 
@@ -60,7 +58,7 @@
 
 ### В. Валидация и запись в файл
 
-1. **Cypher:** для обычных типов (`simple`, `multi-hop`, `aggregation`, `cross-branch`) запрос выполняется в Neo4j с опциональными **`params`**. Пустой результат или синтаксическая ошибка → кейс отбрасывается.
+1. **Cypher:** для обычных типов (`simple`, `multi-hop-2`, `multi-hop-3`, `aggregation`) запрос выполняется в Neo4j с опциональными **`params`**. Пустой результат или синтаксическая ошибка → кейс отбрасывается.
 
 2. **`subgraph-deep-analytics`:** `cypher` выполняется как диагностика; **`ground_truth` не строится из результата запроса** — он уже задан контекстом. Пустой результат debug-запроса не должен отменять кейс, если `ground_truth` уже есть.
 
@@ -78,7 +76,7 @@
 
 ```json
 {
-  "complexity": "multi-hop",
+  "complexity": "multi-hop-2",
   "question": "…",
   "cypher": "MATCH … RETURN …",
   "params": null,
@@ -114,8 +112,8 @@
 | `utils/rel_type_cover.py` | Set cover по типам рёбер для примеров по label |
 | `utils/prompt_builder.py` | Отдельные промпты по типам вопросов |
 | `utils/company_subgraph_context.py` | Подграф компании, санитизация, `useful_context` |
+| `utils/multi_hop_context.py` | Реальные 2/3-hop пути из Neo4j для промпта multi-hop |
 | `utils/benchmark_validation.py` | Тривиальные запросы, `result_to_ground_truth` |
-| `utils/cross_branch_reasoning.py` | Опциональная программная генерация cross-branch |
 
 ## 6. Прогон бенчмарка (LightRAG / vector-rag)
 

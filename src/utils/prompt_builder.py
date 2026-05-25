@@ -218,14 +218,57 @@ Generate {count} questions of type "simple":
     return BASE_SYSTEM_PROMPT, user_prompt
 
 
-def build_multi_hop_prompts(schema, data_samples, count, existing_questions=None):
+def build_multi_hop_prompts(
+    schema,
+    data_samples,
+    count,
+    existing_questions=None,
+    hop_count: int = 2,
+    path_context: dict | None = None,
+):
+    if hop_count not in (2, 3):
+        raise ValueError("hop_count must be 2 or 3")
+    complexity = f"multi-hop-{hop_count}"
+
+    if path_context:
+        path_block = str(path_context.get("path_text") or "").strip()
+        rels = path_context.get("relationships") or []
+        rel_chain = " → ".join(str(r) for r in rels)
+        case_block = f"""
+=== VERIFIED {hop_count}-HOP PATH (from Neo4j) ===
+{path_block}
+
+Relationship chain (exactly {hop_count} hops): {rel_chain}
+Use ONLY labels, relationship types, and property values shown above or in the schema.
+"""
+        user_prompt = (
+            _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
+            + f"""
+=== TASK TYPE: {complexity.upper()} ===
+Generate exactly 1 question of type "{complexity}" for the verified path below.
+
+Requirements:
+1) The question must require traversing this exact {hop_count}-hop chain to answer.
+2) Anchor the question using concrete values from the START node shown in the path block.
+3) Cypher MUST use a directed MATCH pattern with exactly {hop_count} relationships matching: {rel_chain}
+4) Use WHERE filters only on property values present in the path block or sample data.
+5) RETURN fields that answer the question unambiguously.
+6) Do not invent entities, labels, or relationship types not shown in the path or schema.
+7) The query must return at least one row for this path in the current database.
+"""
+            + case_block
+            + _output_format_prompt(complexity)
+        )
+        return BASE_SYSTEM_PROMPT, user_prompt
+
     user_prompt = (
         _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
         + f"""
-=== TASK TYPE: MULTI-HOP ===
-Generate {count} questions of type "multi-hop":
-- paths of 2–4 hops across different node types,
-- focus on non-obvious links or dependencies.
+=== TASK TYPE: {complexity.upper()} ===
+Generate {count} questions of type "{complexity}":
+- paths of exactly {hop_count} hops (exactly {hop_count} relationships in the traversal) across different node types,
+- focus on non-obvious links or dependencies,
+- do not use shorter or longer paths than {hop_count} hops.
 
 === EXTRA RULES FOR NON-EMPTY RESULTS (MANDATORY) ===
 1. Each question must tie to at least one anchor (name/title/ticker) that CLEARLY appears in the SAMPLE DATA.
@@ -234,11 +277,12 @@ Generate {count} questions of type "multi-hop":
 4. Before finalizing Cypher, run an internal self-check:
    - is there at least one concrete anchor from the samples;
    - could the filter set yield an empty intersection;
+   - does the MATCH pattern traverse exactly {hop_count} relationships;
    - can the query be made less brittle without losing the multi-hop intent.
 5. If the query is aggregate (COUNT/SUM/AVG/MIN/MAX), phrase it so the result is informative (not null and not a trivial zero).
 6. Prefer patterns where at least one hop is supported by the samples (entities and relationships appear in the provided data).
 """
-        + _output_format_prompt("multi-hop")
+        + _output_format_prompt(complexity)
     )
     return BASE_SYSTEM_PROMPT, user_prompt
 
@@ -253,24 +297,6 @@ Generate {count} questions of type "aggregation":
 - the wording should be analytical (rankings, comparisons, trends).
 """
         + _output_format_prompt("aggregation")
-    )
-    return BASE_SYSTEM_PROMPT, user_prompt
-
-
-def build_cross_branch_prompts(schema, data_samples, count, existing_questions=None):
-    user_prompt = (
-        _base_user_prompt(schema, data_samples, existing_questions=existing_questions)
-        + f"""
-=== TASK TYPE: CROSS-BRANCH (SUMMARIZATION / ANALYTICS) ===
-Generate {count} questions of type "cross-branch" using this recipe:
-1) Pick a central anchor node.
-2) Build branch A from the anchor to Entity_A.
-3) Build an independent branch B from the anchor to Entity_B.
-4) In the question text, avoid naming Entity_A/Entity_B directly (entity masking), but Cypher must retrieve them explicitly.
-
-Success criterion: answering requires combining context from both chains Anchor→Entity_A and Anchor→Entity_B.
-"""
-        + _output_format_prompt("cross-branch")
     )
     return BASE_SYSTEM_PROMPT, user_prompt
 

@@ -1,6 +1,58 @@
 import re
 
 
+_INSUFFICIENT_ANSWER_PATTERNS = (
+    r"^no data for this query\.?$",
+    r"^no (relevant )?data\.?$",
+    r"^no information\.?$",
+    r"^cannot determine\.?$",
+    r"^can'?t determine\.?$",
+    r"^insufficient data\.?$",
+    r"^not enough (information|data)\.?$",
+    r"^unable to (determine|answer)\.?$",
+    r"^no matching records\.?$",
+    r"^unknown\.?$",
+    r"^n/?a\.?$",
+    r"^нет данных\.?$",
+    r"^недостаточно данных\.?$",
+    r"^не удалось определить\.?$",
+)
+
+_INSUFFICIENT_ANSWER_PREFIXES = (
+    "no data",
+    "no information",
+    "no relevant data",
+    "cannot determine",
+    "can't determine",
+    "insufficient data",
+    "unable to answer",
+    "unable to determine",
+    "not enough information",
+    "not enough data",
+    "there is no data",
+    "there is no information",
+    "i cannot determine",
+    "i can't determine",
+    "нет данных",
+    "недостаточно данных",
+)
+
+
+def is_insufficient_answer(answer: str) -> bool:
+    """True, если answer — отказ/заглушка без полезного эталонного ответа."""
+    text = str(answer or "").strip()
+    if not text:
+        return True
+    normalized = re.sub(r"\s+", " ", text.lower()).strip().rstrip(".")
+    for pattern in _INSUFFICIENT_ANSWER_PATTERNS:
+        if re.match(pattern, normalized, flags=re.IGNORECASE):
+            return True
+    for prefix in _INSUFFICIENT_ANSWER_PREFIXES:
+        if normalized.startswith(prefix):
+            return True
+    return False
+
+
 def is_trivial_self_return(cypher_query):
     """
     Отсекает тривиальные запросы вида:

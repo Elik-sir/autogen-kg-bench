@@ -7,15 +7,19 @@ from neo4j_manager import Neo4jManager
 from llm_client import LLMClient
 from utils.prompt_builder import (
     build_aggregation_prompts,
-    build_cross_branch_prompts,
     build_multi_hop_prompts,
     build_same_type_common_prompts,
     build_simple_prompts,
     build_subgraph_deep_analytics_prompts,
 )
+from utils.multi_hop_context import find_multi_hop_path_contexts
 from utils.same_type_common_context import find_same_type_common_contexts
 from utils.llm_response_parser import parse_qa_pairs_response
-from utils.benchmark_validation import is_trivial_self_return, result_to_ground_truth
+from utils.benchmark_validation import (
+    is_insufficient_answer,
+    is_trivial_self_return,
+    result_to_ground_truth,
+)
 from utils.schema_context import get_schema, get_samples
 from utils.company_subgraph_context import build_company_subgraph_contexts
 
@@ -86,8 +90,9 @@ class BenchmarkGenerator:
     def __init__(self):
         self.db = Neo4jManager()
         self.llm = LLMClient()
-        # Сквозной курсор по subgraph-контекстам между вызовами генератора.
+        # Сквозные курсоры по контекстам между вызовами генератора.
         self._subgraph_ctx_cursor = 0
+        self._multi_hop_ctx_cursor = {2: 0, 3: 0}
 
     def _build_answer_from_context(self, question: str, ground_truth: str, fallback: str = "") -> str:
         """
@@ -149,22 +154,71 @@ MANDATORY RULES:
             build_simple_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
         )
 
-    def generate_multi_hop_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
-        print(f"Генерация {num_questions} multi-hop-вопросов...")
-        return self._generate_by_prompt_builder(
-            build_multi_hop_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
+    def generate_multi_hop_pairs(
+        self,
+        schema,
+        data_samples,
+        num_questions=2,
+        hop_count: int = 2,
+        existing_questions=None,
+    ):
+        if hop_count not in (2, 3):
+            raise ValueError("hop_count must be 2 or 3")
+        complexity = f"multi-hop-{hop_count}"
+        print(f"Генерация {num_questions} {complexity}-вопросов...")
+
+        path_contexts = find_multi_hop_path_contexts(
+            self.db,
+            hop_count,
+            max_contexts=max(num_questions * 6, 16),
         )
+        if not path_contexts:
+            print(
+                f"[ПРОПУСК] Нет реальных {hop_count}-hop путей в Neo4j для {complexity}."
+            )
+            return []
+
+        out: list = []
+        max_attempts = max(num_questions * 5, len(path_contexts) * 3, 12)
+        attempts = 0
+        cursor = self._multi_hop_ctx_cursor.get(hop_count, 0) % len(path_contexts)
+        while len(out) < num_questions and attempts < max_attempts:
+            attempts += 1
+            ctx = path_contexts[cursor]
+            cursor = (cursor + 1) % len(path_contexts)
+            system_prompt, user_prompt = build_multi_hop_prompts(
+                schema,
+                data_samples,
+                5,
+                existing_questions=existing_questions,
+                hop_count=hop_count,
+                path_context=ctx,
+            )
+            response = self.llm.generate_response(system_prompt, user_prompt)
+            parsed = parse_qa_pairs_response(response)
+            if isinstance(parsed, dict):
+                parsed = [parsed]
+            if not parsed:
+                continue
+            item = parsed[0]
+            if not isinstance(item, dict):
+                continue
+            item["complexity"] = complexity
+            out.append(item)
+
+        self._multi_hop_ctx_cursor[hop_count] = cursor
+
+        if len(out) < num_questions:
+            print(
+                f"[ПРЕДУПРЕЖДЕНИЕ] {complexity}: получено {len(out)}/{num_questions} "
+                f"после {attempts} попыток."
+            )
+        return out
 
     def generate_aggregation_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} aggregation-вопросов...")
         return self._generate_by_prompt_builder(
             build_aggregation_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
-        )
-
-    def generate_cross_branch_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
-        print(f"Генерация {num_questions} cross-branch-вопросов...")
-        return self._generate_by_prompt_builder(
-            build_cross_branch_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
         )
 
     def generate_same_type_common_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
@@ -336,6 +390,9 @@ MANDATORY RULES:
                     ground_truth=str(item.get("ground_truth", "")),
                     fallback=str(item.get("answer", "")),
                 )
+                if is_insufficient_answer(item["answer"]):
+                    print(f"[ПРОПУСК] Недостаточный answer: {question} | answer={item['answer']!r}")
+                    continue
                 benchmark_dataset.append(item)
                 seen_exact_questions.add(normalized_question)
                 seen_normalized_questions.append(normalized_question)
@@ -358,7 +415,7 @@ MANDATORY RULES:
         sample_entities_per_type=10,
         per_type_targets=None,
     ):
-        """Генерирует бенчмарк по типам по очереди: simple -> multi-hop -> aggregation -> cross-branch -> subgraph."""
+        """Генерирует бенчмарк по типам по очереди: simple -> multi-hop-2/3 -> aggregation -> subgraph."""
         schema = get_schema(self.db)
         data_samples = get_samples(self.db, per_label_limit=sample_entities_per_type)
         final_benchmark =[]
@@ -374,11 +431,26 @@ MANDATORY RULES:
                 1,
             ),
             (
-                "multi-hop",
+                "multi-hop-2",
                 lambda n, existing_questions=None: self.generate_multi_hop_pairs(
-                    schema, data_samples, num_questions=n, existing_questions=existing_questions
+                    schema,
+                    data_samples,
+                    num_questions=n,
+                    hop_count=2,
+                    existing_questions=existing_questions,
                 ),
-                7,
+                4,
+            ),
+            (
+                "multi-hop-3",
+                lambda n, existing_questions=None: self.generate_multi_hop_pairs(
+                    schema,
+                    data_samples,
+                    num_questions=n,
+                    hop_count=3,
+                    existing_questions=existing_questions,
+                ),
+                4,
             ),
             (
                 "aggregation",
@@ -386,13 +458,6 @@ MANDATORY RULES:
                     schema, data_samples, num_questions=n, existing_questions=existing_questions
                 ),
                 7,
-            ),
-            (
-                "cross-branch",
-                lambda n, existing_questions=None: self.generate_cross_branch_pairs(
-                    schema, data_samples, num_questions=n, existing_questions=existing_questions
-                ),
-                1,
             ),
             (
                 "subgraph-deep-analytics",
@@ -485,9 +550,9 @@ if __name__ == "__main__":
         sample_entities_per_type=10,
         per_type_targets={
             "simple": 1,
-            "multi-hop": 1,
+            "multi-hop-2": 5,
+            "multi-hop-3": 5,
             "aggregation": 1,
-            "cross-branch": 1,
-            "subgraph-deep-analytics": 3,
+            "subgraph-deep-analytics": 0,
         },
     )
