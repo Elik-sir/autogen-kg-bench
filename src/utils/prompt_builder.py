@@ -234,11 +234,15 @@ def build_multi_hop_prompts(
         path_block = str(path_context.get("path_text") or "").strip()
         rels = path_context.get("relationships") or []
         rel_chain = " → ".join(str(r) for r in rels)
+        seed_cypher = str(path_context.get("seed_cypher") or "").strip()
         case_block = f"""
 === VERIFIED {hop_count}-HOP PATH (from Neo4j) ===
 {path_block}
 
 Relationship chain (exactly {hop_count} hops): {rel_chain}
+Verified seed Cypher (guaranteed to return at least 1 row):
+{seed_cypher}
+
 Use ONLY labels, relationship types, and property values shown above or in the schema.
 """
         user_prompt = (
@@ -250,11 +254,12 @@ Generate exactly 1 question of type "{complexity}" for the verified path below.
 Requirements:
 1) The question must require traversing this exact {hop_count}-hop chain to answer.
 2) Anchor the question using concrete values from the START node shown in the path block.
-3) Cypher MUST use a directed MATCH pattern with exactly {hop_count} relationships matching: {rel_chain}
+3) Cypher MUST use exactly {hop_count} relationships and the same relationship types as the verified chain: {rel_chain}
 4) Use WHERE filters only on property values present in the path block or sample data.
 5) RETURN fields that answer the question unambiguously.
 6) Do not invent entities, labels, or relationship types not shown in the path or schema.
-7) The query must return at least one row for this path in the current database.
+7) Your query should be a generalized variant of the verified seed Cypher (same chain, less brittle filters).
+8) The query must return at least one row for this path in the current database.
 """
             + case_block
             + _output_format_prompt(complexity)

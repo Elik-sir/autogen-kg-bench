@@ -59,7 +59,7 @@ def _format_path_text(nodes: list[dict[str, Any]], relationships: list[str]) -> 
         return ""
     lines = [f"Start: {_format_node_line(nodes[0]['labels'], nodes[0]['props'])}"]
     for rel, node in zip(relationships, nodes[1:]):
-        lines.append(f"  -[:{rel}]-> {_format_node_line(node['labels'], node['props'])}")
+        lines.append(f"  -[:{rel}]- {_format_node_line(node['labels'], node['props'])}")
     return "\n".join(lines)
 
 
@@ -92,12 +92,15 @@ def _row_to_context(row: dict[str, Any], hop_count: int) -> dict[str, Any] | Non
         return None
     if not _has_anchor(nodes[0]["props"]):
         return None
+    ids = [n["id"] for n in nodes]
     return {
         "hop_count": hop_count,
         "nodes": nodes,
+        "node_ids": ids,
         "relationships": relationships,
         "path_text": _format_path_text(nodes, relationships),
         "path_signature": _path_signature(nodes, relationships),
+        "seed_cypher": _build_seed_cypher(ids, relationships),
     }
 
 
@@ -113,7 +116,7 @@ def _score_context(ctx: dict[str, Any]) -> tuple:
 def _path_query(hop_count: int) -> str:
     if hop_count == 2:
         return """
-        MATCH (a)-[r1]->(b)-[r2]->(c)
+        MATCH (a)-[r1]-(b)-[r2]-(c)
         WHERE elementId(a) <> elementId(b)
           AND elementId(b) <> elementId(c)
           AND elementId(a) <> elementId(c)
@@ -127,7 +130,7 @@ def _path_query(hop_count: int) -> str:
         """
     if hop_count == 3:
         return """
-        MATCH (a)-[r1]->(b)-[r2]->(c)-[r3]->(d)
+        MATCH (a)-[r1]-(b)-[r2]-(c)-[r3]-(d)
         WHERE elementId(a) <> elementId(b)
           AND elementId(b) <> elementId(c)
           AND elementId(c) <> elementId(d)
@@ -147,6 +150,46 @@ def _path_query(hop_count: int) -> str:
     raise ValueError("hop_count must be 2 or 3")
 
 
+def _build_seed_cypher(node_ids: list[str], relationships: list[str]) -> str:
+    if len(node_ids) == 3 and len(relationships) == 2:
+        return (
+            "MATCH (a)-[:`"
+            + relationships[0]
+            + "`]-(b)-[:`"
+            + relationships[1]
+            + "`]-(c) "
+            "WHERE elementId(a) = '"
+            + node_ids[0]
+            + "' AND elementId(b) = '"
+            + node_ids[1]
+            + "' AND elementId(c) = '"
+            + node_ids[2]
+            + "' "
+            "RETURN properties(a) AS start_node, properties(c) AS end_node LIMIT 1"
+        )
+    if len(node_ids) == 4 and len(relationships) == 3:
+        return (
+            "MATCH (a)-[:`"
+            + relationships[0]
+            + "`]-(b)-[:`"
+            + relationships[1]
+            + "`]-(c)-[:`"
+            + relationships[2]
+            + "`]-(d) "
+            "WHERE elementId(a) = '"
+            + node_ids[0]
+            + "' AND elementId(b) = '"
+            + node_ids[1]
+            + "' AND elementId(c) = '"
+            + node_ids[2]
+            + "' AND elementId(d) = '"
+            + node_ids[3]
+            + "' "
+            "RETURN properties(a) AS start_node, properties(d) AS end_node LIMIT 1"
+        )
+    return ""
+
+
 def find_multi_hop_path_contexts(
     db_manager,
     hop_count: int,
@@ -156,7 +199,7 @@ def find_multi_hop_path_contexts(
     scan_limit: int = _SCAN_LIMIT,
 ) -> list[dict[str, Any]]:
     """
-    Находит реальные directed-пути длины hop_count в Neo4j и возвращает контексты для промпта.
+    Находит реальные пути длины hop_count в Neo4j и возвращает контексты для промпта.
     """
     if hop_count not in (2, 3):
         raise ValueError("hop_count must be 2 or 3")
