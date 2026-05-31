@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import json
 import os
 import re
+from concurrent.futures import ThreadPoolExecutor
 from difflib import SequenceMatcher
 from neo4j_manager import Neo4jManager
 from llm_client import LLMClient
@@ -90,6 +91,7 @@ class BenchmarkGenerator:
     def __init__(self):
         self.db = Neo4jManager()
         self.llm = LLMClient()
+        self.generation_workers = max(1, int(os.getenv("BENCHMARK_GENERATION_WORKERS", "4")))
         # Сквозные курсоры по контекстам между вызовами генератора.
         self._subgraph_ctx_cursor = 0
         self._multi_hop_ctx_cursor = {2: 0, 3: 0}
@@ -148,11 +150,60 @@ MANDATORY RULES:
         response = self.llm.generate_response(system_prompt, user_prompt)
         return parse_qa_pairs_response(response)
 
+    @staticmethod
+    def _normalize_parsed_items(parsed) -> list[dict]:
+        if isinstance(parsed, dict):
+            parsed = [parsed]
+        if not isinstance(parsed, list):
+            return []
+        return [item for item in parsed if isinstance(item, dict)]
+
+    @staticmethod
+    def _generate_with_fresh_llm(system_prompt: str, user_prompt: str):
+        worker_llm = LLMClient()
+        response = worker_llm.generate_response(system_prompt, user_prompt)
+        return parse_qa_pairs_response(response)
+
+    def _run_prompt_batch_parallel(self, prompts: list[tuple[str, str]]) -> list:
+        if not prompts:
+            return []
+        if self.generation_workers <= 1 or len(prompts) == 1:
+            out = []
+            for system_prompt, user_prompt in prompts:
+                out.append(self._generate_with_fresh_llm(system_prompt, user_prompt))
+            return out
+
+        max_workers = min(self.generation_workers, len(prompts))
+        out: list = []
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [
+                executor.submit(self._generate_with_fresh_llm, system_prompt, user_prompt)
+                for system_prompt, user_prompt in prompts
+            ]
+            for future in futures:
+                try:
+                    out.append(future.result())
+                except Exception as e:
+                    print(f"[ПРЕДУПРЕЖДЕНИЕ] Ошибка генерации в потоке: {e}")
+        return out
+
     def generate_simple_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} simple-вопросов...")
-        return self._generate_by_prompt_builder(
-            build_simple_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
-        )
+        if num_questions <= 1 or self.generation_workers <= 1:
+            return self._generate_by_prompt_builder(
+                build_simple_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
+            )
+        prompts = [
+            build_simple_prompts(schema, data_samples, 1, existing_questions=existing_questions)
+            for _ in range(num_questions)
+        ]
+        parsed_batches = self._run_prompt_batch_parallel(prompts)
+        out: list[dict] = []
+        for parsed in parsed_batches:
+            items = self._normalize_parsed_items(parsed)
+            if items:
+                out.append(items[0])
+        return out
 
     def generate_multi_hop_pairs(
         self,
@@ -183,28 +234,34 @@ MANDATORY RULES:
         attempts = 0
         cursor = self._multi_hop_ctx_cursor.get(hop_count, 0) % len(path_contexts)
         while len(out) < num_questions and attempts < max_attempts:
-            attempts += 1
-            ctx = path_contexts[cursor]
-            cursor = (cursor + 1) % len(path_contexts)
-            system_prompt, user_prompt = build_multi_hop_prompts(
-                schema,
-                data_samples,
-                5,
-                existing_questions=existing_questions,
-                hop_count=hop_count,
-                path_context=ctx,
-            )
-            response = self.llm.generate_response(system_prompt, user_prompt)
-            parsed = parse_qa_pairs_response(response)
-            if isinstance(parsed, dict):
-                parsed = [parsed]
-            if not parsed:
-                continue
-            item = parsed[0]
-            if not isinstance(item, dict):
-                continue
-            item["complexity"] = complexity
-            out.append(item)
+            remaining = num_questions - len(out)
+            attempts_left = max_attempts - attempts
+            batch_size = min(self.generation_workers, remaining, attempts_left)
+            prompts: list[tuple[str, str]] = []
+            for _ in range(batch_size):
+                ctx = path_contexts[cursor]
+                cursor = (cursor + 1) % len(path_contexts)
+                prompts.append(
+                    build_multi_hop_prompts(
+                        schema,
+                        data_samples,
+                        1,
+                        existing_questions=existing_questions,
+                        hop_count=hop_count,
+                        path_context=ctx,
+                    )
+                )
+            attempts += len(prompts)
+            parsed_batches = self._run_prompt_batch_parallel(prompts)
+            for parsed in parsed_batches:
+                items = self._normalize_parsed_items(parsed)
+                if not items:
+                    continue
+                item = items[0]
+                item["complexity"] = complexity
+                out.append(item)
+                if len(out) >= num_questions:
+                    break
 
         self._multi_hop_ctx_cursor[hop_count] = cursor
 
@@ -217,9 +274,21 @@ MANDATORY RULES:
 
     def generate_aggregation_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} aggregation-вопросов...")
-        return self._generate_by_prompt_builder(
-            build_aggregation_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
-        )
+        if num_questions <= 1 or self.generation_workers <= 1:
+            return self._generate_by_prompt_builder(
+                build_aggregation_prompts, schema, data_samples, num_questions, existing_questions=existing_questions
+            )
+        prompts = [
+            build_aggregation_prompts(schema, data_samples, 1, existing_questions=existing_questions)
+            for _ in range(num_questions)
+        ]
+        parsed_batches = self._run_prompt_batch_parallel(prompts)
+        out: list[dict] = []
+        for parsed in parsed_batches:
+            items = self._normalize_parsed_items(parsed)
+            if items:
+                out.append(items[0])
+        return out
 
     def generate_same_type_common_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} same-type-common-вопросов...")
@@ -239,23 +308,29 @@ MANDATORY RULES:
         attempts = 0
         ctx_i = 0
         while len(out) < num_questions and attempts < max_attempts:
-            attempts += 1
-            ctx = contexts[ctx_i % len(contexts)]
-            ctx_i += 1
-            system_prompt, user_prompt = build_same_type_common_prompts(
-                schema, data_samples, ctx, existing_questions=existing_questions
-            )
-            response = self.llm.generate_response(system_prompt, user_prompt)
-            parsed = parse_qa_pairs_response(response)
-            if isinstance(parsed, dict):
-                parsed = [parsed]
-            if not parsed:
-                continue
-            item = parsed[0]
-            if not isinstance(item, dict):
-                continue
-            item["complexity"] = "same-type-common"
-            out.append(item)
+            remaining = num_questions - len(out)
+            attempts_left = max_attempts - attempts
+            batch_size = min(self.generation_workers, remaining, attempts_left)
+            prompts: list[tuple[str, str]] = []
+            for _ in range(batch_size):
+                ctx = contexts[ctx_i % len(contexts)]
+                ctx_i += 1
+                prompts.append(
+                    build_same_type_common_prompts(
+                        schema, data_samples, ctx, existing_questions=existing_questions
+                    )
+                )
+            attempts += len(prompts)
+            parsed_batches = self._run_prompt_batch_parallel(prompts)
+            for parsed in parsed_batches:
+                items = self._normalize_parsed_items(parsed)
+                if not items:
+                    continue
+                item = items[0]
+                item["complexity"] = "same-type-common"
+                out.append(item)
+                if len(out) >= num_questions:
+                    break
 
         if len(out) < num_questions:
             print(
@@ -288,31 +363,45 @@ MANDATORY RULES:
         attempts = 0
         cursor = self._subgraph_ctx_cursor % len(contexts_for_prompt)
         while len(out) < num_questions and attempts < max_attempts:
-            attempts += 1
-            ctx = contexts_for_prompt[cursor]
-            cursor = (cursor + 1) % len(contexts_for_prompt)
-            generated = self._generate_by_prompt_builder(
-                build_subgraph_deep_analytics_prompts, schema, [ctx], 1, existing_questions=existing_questions
-            )
-            if isinstance(generated, dict):
-                generated = [generated]
-            if not generated:
-                continue
-            item = generated[0]
-            if not isinstance(item, dict):
-                continue
+            remaining = num_questions - len(out)
+            attempts_left = max_attempts - attempts
+            batch_size = min(self.generation_workers, remaining, attempts_left)
+            prompts: list[tuple[str, str]] = []
+            batch_contexts: list[dict] = []
+            for _ in range(batch_size):
+                ctx = contexts_for_prompt[cursor]
+                cursor = (cursor + 1) % len(contexts_for_prompt)
+                system_prompt, user_prompt = build_subgraph_deep_analytics_prompts(
+                    schema, [ctx], 1, existing_questions=existing_questions
+                )
+                prompts.append((system_prompt, user_prompt))
+                batch_contexts.append(ctx)
+            attempts += len(prompts)
+            parsed_batches = self._run_prompt_batch_parallel(prompts)
 
-            # Для этого типа `cypher` нужен только для debug-выгрузки подграфа.
-            # `answer` — эталонный ответ от LLM; `ground_truth` — тот же useful_context,
-            # что был в промпте (должен достаточен для проверки answer).
-            item["complexity"] = "subgraph-deep-analytics"
-            item["cypher"] = ctx.get("debug_cypher", "")
-            item["params"] = ctx.get("debug_params", {})
-            item["debug_only_cypher"] = True
-            item["answer"] = str(item.get("answer", "")).strip()
-            item["ground_truth"] = str(ctx.get("useful_context", "")).strip()
-            item["subgraph_context"] = ctx.get("subgraph_context", "")
-            out.append(item)
+            # Привязываем результаты к контекстам по порядку подготовки батча.
+            for i, parsed in enumerate(parsed_batches):
+                items = self._normalize_parsed_items(parsed)
+                if not items:
+                    continue
+                item = items[0]
+                if not isinstance(item, dict):
+                    continue
+                ctx = batch_contexts[i % len(batch_contexts)]
+
+                # Для этого типа `cypher` нужен только для debug-выгрузки подграфа.
+                # `answer` — эталонный ответ от LLM; `ground_truth` — тот же useful_context,
+                # что был в промпте (должен достаточен для проверки answer).
+                item["complexity"] = "subgraph-deep-analytics"
+                item["cypher"] = ctx.get("debug_cypher", "")
+                item["params"] = ctx.get("debug_params", {})
+                item["debug_only_cypher"] = True
+                item["answer"] = str(item.get("answer", "")).strip()
+                item["ground_truth"] = str(ctx.get("useful_context", "")).strip()
+                item["subgraph_context"] = ctx.get("subgraph_context", "")
+                out.append(item)
+                if len(out) >= num_questions:
+                    break
 
         self._subgraph_ctx_cursor = cursor
 
