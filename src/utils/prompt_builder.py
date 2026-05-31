@@ -235,6 +235,9 @@ def build_multi_hop_prompts(
         rels = path_context.get("relationships") or []
         rel_chain = " → ".join(str(r) for r in rels)
         seed_cypher = str(path_context.get("seed_cypher") or "").strip()
+        answer_fields = [str(f) for f in (path_context.get("answer_fields") or []) if str(f).strip()]
+        preferred_field = answer_fields[0] if answer_fields else "name"
+        answer_fields_text = ", ".join(answer_fields) if answer_fields else "name, ticker, title"
         case_block = f"""
 === VERIFIED {hop_count}-HOP PATH (from Neo4j) ===
 {path_block}
@@ -242,6 +245,7 @@ def build_multi_hop_prompts(
 Relationship chain (exactly {hop_count} hops): {rel_chain}
 Verified seed Cypher (guaranteed to return at least 1 row):
 {seed_cypher}
+Recommended answer fields from target node: {answer_fields_text}
 
 Use ONLY labels, relationship types, and property values shown above or in the schema.
 """
@@ -256,10 +260,11 @@ Requirements:
 2) Anchor the question using concrete values from the START node shown in the path block.
 3) Cypher MUST use exactly {hop_count} relationships and the same relationship types as the verified chain: {rel_chain}
 4) Use WHERE filters only on property values present in the path block or sample data.
-5) RETURN fields that answer the question unambiguously.
+5) RETURN fields that answer the question unambiguously, prioritizing target.{preferred_field} (or other recommended fields).
 6) Do not invent entities, labels, or relationship types not shown in the path or schema.
 7) Your query should be a generalized variant of the verified seed Cypher (same chain, less brittle filters).
 8) The query must return at least one row for this path in the current database.
+9) Avoid nullable answers: add an explicit non-null condition for target.{preferred_field} (or chosen answer field), e.g. `... WHERE target.{preferred_field} IS NOT NULL`.
 """
             + case_block
             + _output_format_prompt(complexity)

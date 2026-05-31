@@ -40,6 +40,15 @@ def _has_anchor(props: dict[str, Any] | None) -> bool:
     return bool(up.get("name") or up.get("ticker") or up.get("title"))
 
 
+def _answer_fields(props: dict[str, Any] | None) -> list[str]:
+    up = _useful_props(props)
+    fields = []
+    for key in ("name", "ticker", "title"):
+        if up.get(key) not in ("", None):
+            fields.append(key)
+    return fields
+
+
 def _format_node_line(labels: list[str], props: dict[str, Any]) -> str:
     useful = _useful_props(props)
     if useful:
@@ -92,12 +101,16 @@ def _row_to_context(row: dict[str, Any], hop_count: int) -> dict[str, Any] | Non
         return None
     if not _has_anchor(nodes[0]["props"]):
         return None
+    answer_fields = _answer_fields(nodes[-1]["props"])
+    if not answer_fields:
+        return None
     ids = [n["id"] for n in nodes]
     return {
         "hop_count": hop_count,
         "nodes": nodes,
         "node_ids": ids,
         "relationships": relationships,
+        "answer_fields": answer_fields,
         "path_text": _format_path_text(nodes, relationships),
         "path_signature": _path_signature(nodes, relationships),
         "seed_cypher": _build_seed_cypher(ids, relationships),

@@ -5,6 +5,8 @@ _INSUFFICIENT_ANSWER_PATTERNS = (
     r"^no data for this query\.?$",
     r"^no (relevant )?data\.?$",
     r"^no information\.?$",
+    r"^none\.?$",
+    r"^null\.?$",
     r"^cannot determine\.?$",
     r"^can'?t determine\.?$",
     r"^insufficient data\.?$",

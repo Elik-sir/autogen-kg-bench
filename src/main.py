@@ -92,6 +92,7 @@ class BenchmarkGenerator:
         self.db = Neo4jManager()
         self.llm = LLMClient()
         self.generation_workers = max(1, int(os.getenv("BENCHMARK_GENERATION_WORKERS", "4")))
+        self.multi_hop_scan_limit = max(100, int(os.getenv("BENCHMARK_MULTI_HOP_SCAN_LIMIT", "1200")))
         # Сквозные курсоры по контекстам между вызовами генератора.
         self._subgraph_ctx_cursor = 0
         self._multi_hop_ctx_cursor = {2: 0, 3: 0}
@@ -221,7 +222,8 @@ MANDATORY RULES:
         path_contexts = find_multi_hop_path_contexts(
             self.db,
             hop_count,
-            max_contexts=max(num_questions * 6, 16),
+            max_contexts=max(num_questions * 10, 24),
+            scan_limit=self.multi_hop_scan_limit,
         )
         if not path_contexts:
             print(
@@ -474,6 +476,12 @@ MANDATORY RULES:
                 # Если ground_truth уже подготовлен заранее, используем его.
                 if not has_precomputed_context:
                     item["ground_truth"] = result_to_ground_truth(question, result)
+                if is_insufficient_answer(str(item.get("ground_truth", ""))):
+                    print(
+                        f"[ПРОПУСК] Неинформативный ground_truth: {question} | "
+                        f"ground_truth={item.get('ground_truth')!r}"
+                    )
+                    continue
                 item["answer"] = self._build_answer_from_context(
                     question=question,
                     ground_truth=str(item.get("ground_truth", "")),
@@ -638,8 +646,8 @@ if __name__ == "__main__":
         target_size=30,
         sample_entities_per_type=10,
         per_type_targets={
-            "simple": 1,
-            "multi-hop-2": 5,
+            "simple": 0,
+            "multi-hop-2": 0,
             "multi-hop-3": 5,
             "aggregation": 1,
             "subgraph-deep-analytics": 0,
