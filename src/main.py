@@ -100,6 +100,7 @@ class BenchmarkGenerator:
         # Сквозные курсоры по контекстам между вызовами генератора.
         self._subgraph_ctx_cursor = 0
         self._multi_hop_ctx_cursor = {2: 0, 3: 0}
+        self._multi_hop_style_cursor = 0
 
     def _build_answer_from_context(self, question: str, ground_truth: str, fallback: str = "") -> str:
         """
@@ -208,10 +209,22 @@ MANDATORY RULES:
             return str(ctx.get("seed_cypher") or ""), {}
         anchor_value = start_useful[anchor_field]
 
-        answer_fields = [str(f) for f in (ctx.get("answer_fields") or []) if str(f).strip()]
-        answer_field = answer_fields[0] if answer_fields else "name"
-
+        answer_candidates = ctx.get("answer_candidates") or []
+        target_node_index = int(ctx.get("target_node_index", 0) or 0)
+        target_field = str(ctx.get("target_field") or "").strip()
+        if target_node_index <= 0:
+            for cand in answer_candidates:
+                idx = int(cand.get("node_index", 0) or 0)
+                fields = [str(f) for f in (cand.get("fields") or []) if str(f).strip()]
+                if idx > 0 and fields:
+                    target_node_index = idx
+                    target_field = fields[0]
+                    break
+        if not target_field:
+            target_field = "name"
         aliases = ["a", "b", "c", "d"][: hop_count + 1]
+        if target_node_index < 1 or target_node_index >= len(aliases):
+            return str(ctx.get("seed_cypher") or ""), {}
         pattern_parts = []
         for i, alias in enumerate(aliases):
             labels = [str(lbl) for lbl in (nodes[i].get("labels") or []) if str(lbl).strip()]
@@ -221,13 +234,13 @@ MANDATORY RULES:
                 rel = _safe_ident(relationships[i])
                 pattern_parts.append(f"-[:`{rel}`]-")
 
-        end_alias = aliases[-1]
+        target_alias = aliases[target_node_index]
         query = (
             "MATCH "
             + "".join(pattern_parts)
             + f" WHERE a.`{_safe_ident(anchor_field)}` = $anchor_value"
-            + f" AND {end_alias}.`{_safe_ident(answer_field)}` IS NOT NULL"
-            + f" RETURN {end_alias}.`{_safe_ident(answer_field)}` AS answer"
+            + f" AND {target_alias}.`{_safe_ident(target_field)}` IS NOT NULL"
+            + f" RETURN {target_alias}.`{_safe_ident(target_field)}` AS answer"
             + " LIMIT 10"
         )
         return query, {"anchor_value": anchor_value}
@@ -279,6 +292,14 @@ MANDATORY RULES:
         max_attempts = max(num_questions * 5, len(path_contexts) * 3, 12)
         attempts = 0
         cursor = self._multi_hop_ctx_cursor.get(hop_count, 0) % len(path_contexts)
+        style_templates = [
+            "dependency tracing",
+            "impact chain",
+            "cross-entity linkage",
+            "indirect connection",
+            "contextual association",
+            "contrastive relation",
+        ]
         while len(out) < num_questions and attempts < max_attempts:
             remaining = num_questions - len(out)
             attempts_left = max_attempts - attempts
@@ -288,7 +309,20 @@ MANDATORY RULES:
             for _ in range(batch_size):
                 ctx = path_contexts[cursor]
                 cursor = (cursor + 1) % len(path_contexts)
-                batch_contexts.append(ctx)
+                candidates = ctx.get("answer_candidates") or []
+                if not candidates:
+                    continue
+                cand_idx = (attempts + len(batch_contexts)) % len(candidates)
+                chosen = candidates[cand_idx]
+                style = style_templates[self._multi_hop_style_cursor % len(style_templates)]
+                self._multi_hop_style_cursor += 1
+                prompt_ctx = {
+                    **ctx,
+                    "target_node_index": int(chosen.get("node_index", 0) or 0),
+                    "target_field": str((chosen.get("fields") or ["name"])[0]),
+                    "question_style": style,
+                }
+                batch_contexts.append(prompt_ctx)
                 prompts.append(
                     build_multi_hop_prompts(
                         schema,
@@ -296,9 +330,11 @@ MANDATORY RULES:
                         1,
                         existing_questions=existing_questions,
                         hop_count=hop_count,
-                        path_context=ctx,
+                        path_context=prompt_ctx,
                     )
                 )
+            if not prompts:
+                break
             attempts += len(prompts)
             parsed_batches = self._run_prompt_batch_parallel(prompts)
             for i, parsed in enumerate(parsed_batches):

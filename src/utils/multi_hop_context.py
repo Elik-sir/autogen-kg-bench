@@ -66,9 +66,11 @@ def _format_node_line(labels: list[str], props: dict[str, Any]) -> str:
 def _format_path_text(nodes: list[dict[str, Any]], relationships: list[str]) -> str:
     if not nodes:
         return ""
-    lines = [f"Start: {_format_node_line(nodes[0]['labels'], nodes[0]['props'])}"]
-    for rel, node in zip(relationships, nodes[1:]):
-        lines.append(f"  -[:{rel}]- {_format_node_line(node['labels'], node['props'])}")
+    lines = [f"Node A (start): {_format_node_line(nodes[0]['labels'], nodes[0]['props'])}"]
+    node_names = ["B", "C", "D", "E", "F"]
+    for idx, (rel, node) in enumerate(zip(relationships, nodes[1:])):
+        node_tag = node_names[idx] if idx < len(node_names) else f"N{idx+2}"
+        lines.append(f"  -[:{rel}]- Node {node_tag}: {_format_node_line(node['labels'], node['props'])}")
     return "\n".join(lines)
 
 
@@ -101,16 +103,29 @@ def _row_to_context(row: dict[str, Any], hop_count: int) -> dict[str, Any] | Non
         return None
     if not _has_anchor(nodes[0]["props"]):
         return None
-    answer_fields = _answer_fields(nodes[-1]["props"])
-    if not answer_fields:
+    answer_candidates: list[dict[str, Any]] = []
+    for idx, node in enumerate(nodes[1:], start=1):
+        fields = _answer_fields(node["props"])
+        if not fields:
+            continue
+        answer_candidates.append(
+            {
+                "node_index": idx,
+                "node_labels": list(node.get("labels") or []),
+                "fields": fields,
+            }
+        )
+    if not answer_candidates:
         return None
+    # Предпочитаем более дальние узлы, чтобы вопрос чаще требовал полный проход цепочки.
+    answer_candidates.sort(key=lambda c: int(c.get("node_index", 0)), reverse=True)
     ids = [n["id"] for n in nodes]
     return {
         "hop_count": hop_count,
         "nodes": nodes,
         "node_ids": ids,
         "relationships": relationships,
-        "answer_fields": answer_fields,
+        "answer_candidates": answer_candidates,
         "path_text": _format_path_text(nodes, relationships),
         "path_signature": _path_signature(nodes, relationships),
         "seed_cypher": _build_seed_cypher(ids, relationships),

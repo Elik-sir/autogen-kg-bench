@@ -235,9 +235,22 @@ def build_multi_hop_prompts(
         rels = path_context.get("relationships") or []
         rel_chain = " → ".join(str(r) for r in rels)
         seed_cypher = str(path_context.get("seed_cypher") or "").strip()
-        answer_fields = [str(f) for f in (path_context.get("answer_fields") or []) if str(f).strip()]
-        preferred_field = answer_fields[0] if answer_fields else "name"
-        answer_fields_text = ", ".join(answer_fields) if answer_fields else "name, ticker, title"
+        answer_candidates = path_context.get("answer_candidates") or []
+        target_node_index = int(path_context.get("target_node_index", 0) or 0)
+        target_field = str(path_context.get("target_field") or "").strip() or "name"
+        question_style = str(path_context.get("question_style") or "").strip()
+        answer_fields_text = "name, ticker, title"
+        target_labels_text = "[]"
+        for cand in answer_candidates:
+            if int(cand.get("node_index", -1)) != target_node_index:
+                continue
+            fields = [str(f) for f in (cand.get("fields") or []) if str(f).strip()]
+            labels = [str(lbl) for lbl in (cand.get("node_labels") or []) if str(lbl).strip()]
+            if fields:
+                answer_fields_text = ", ".join(fields)
+            if labels:
+                target_labels_text = str(labels)
+            break
         case_block = f"""
 === VERIFIED {hop_count}-HOP PATH (from Neo4j) ===
 {path_block}
@@ -245,7 +258,9 @@ def build_multi_hop_prompts(
 Relationship chain (exactly {hop_count} hops): {rel_chain}
 Verified seed Cypher (guaranteed to return at least 1 row):
 {seed_cypher}
+Chosen target node for answer: Node index {target_node_index}, labels {target_labels_text}
 Recommended answer fields from target node: {answer_fields_text}
+Required answer field in RETURN: {target_field}
 
 Use ONLY labels, relationship types, and property values shown above or in the schema.
 """
@@ -254,17 +269,19 @@ Use ONLY labels, relationship types, and property values shown above or in the s
             + f"""
 === TASK TYPE: {complexity.upper()} ===
 Generate exactly 1 question of type "{complexity}" for the verified path below.
+Question style to use: {question_style or "comparative or relation-focused, not employment-template"}.
 
 Requirements:
 1) The question must require traversing this exact {hop_count}-hop chain to answer.
 2) Anchor the question using concrete values from the START node shown in the path block.
 3) Cypher MUST use exactly {hop_count} relationships and the same relationship types as the verified chain: {rel_chain}
 4) Use WHERE filters only on property values present in the path block or sample data.
-5) RETURN fields that answer the question unambiguously, prioritizing target.{preferred_field} (or other recommended fields).
+5) RETURN fields that answer the question unambiguously, and include `answer` based on target.{target_field}.
 6) Do not invent entities, labels, or relationship types not shown in the path or schema.
 7) Your query should be a generalized variant of the verified seed Cypher (same chain, less brittle filters).
 8) The query must return at least one row for this path in the current database.
-9) Avoid nullable answers: add an explicit non-null condition for target.{preferred_field} (or chosen answer field), e.g. `... WHERE target.{preferred_field} IS NOT NULL`.
+9) Avoid nullable answers: add an explicit non-null condition for target.{target_field}.
+10) Avoid repetitive wording like "Which person works for...". Prefer varied phrasing aligned with the specified style.
 """
             + case_block
             + _output_format_prompt(complexity)
