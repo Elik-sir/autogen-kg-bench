@@ -87,6 +87,10 @@ def _append_limit_if_missing(cypher_query: str, row_limit: int) -> str:
     return f"{q} LIMIT {row_limit}"
 
 
+def _safe_ident(name: str) -> str:
+    return str(name or "").replace("`", "``")
+
+
 class BenchmarkGenerator:
     def __init__(self):
         self.db = Neo4jManager()
@@ -188,6 +192,46 @@ MANDATORY RULES:
                     print(f"[ПРЕДУПРЕЖДЕНИЕ] Ошибка генерации в потоке: {e}")
         return out
 
+    def _build_multi_hop_cypher_from_context(self, ctx: dict) -> tuple[str, dict]:
+        nodes = ctx.get("nodes") or []
+        relationships = [str(r) for r in (ctx.get("relationships") or [])]
+        hop_count = int(ctx.get("hop_count") or 0)
+        if len(nodes) != hop_count + 1 or len(relationships) != hop_count:
+            return str(ctx.get("seed_cypher") or ""), {}
+
+        start_useful = nodes[0].get("useful_props") or {}
+        anchor_field = next(
+            (k for k in ("ticker", "name", "title") if start_useful.get(k) not in ("", None)),
+            None,
+        )
+        if not anchor_field:
+            return str(ctx.get("seed_cypher") or ""), {}
+        anchor_value = start_useful[anchor_field]
+
+        answer_fields = [str(f) for f in (ctx.get("answer_fields") or []) if str(f).strip()]
+        answer_field = answer_fields[0] if answer_fields else "name"
+
+        aliases = ["a", "b", "c", "d"][: hop_count + 1]
+        pattern_parts = []
+        for i, alias in enumerate(aliases):
+            labels = [str(lbl) for lbl in (nodes[i].get("labels") or []) if str(lbl).strip()]
+            label_suffix = "".join(f":`{_safe_ident(lbl)}`" for lbl in labels)
+            pattern_parts.append(f"({alias}{label_suffix})")
+            if i < hop_count:
+                rel = _safe_ident(relationships[i])
+                pattern_parts.append(f"-[:`{rel}`]-")
+
+        end_alias = aliases[-1]
+        query = (
+            "MATCH "
+            + "".join(pattern_parts)
+            + f" WHERE a.`{_safe_ident(anchor_field)}` = $anchor_value"
+            + f" AND {end_alias}.`{_safe_ident(answer_field)}` IS NOT NULL"
+            + f" RETURN {end_alias}.`{_safe_ident(answer_field)}` AS answer"
+            + " LIMIT 10"
+        )
+        return query, {"anchor_value": anchor_value}
+
     def generate_simple_pairs(self, schema, data_samples, num_questions=2, existing_questions=None):
         print(f"Генерация {num_questions} simple-вопросов...")
         if num_questions <= 1 or self.generation_workers <= 1:
@@ -240,9 +284,11 @@ MANDATORY RULES:
             attempts_left = max_attempts - attempts
             batch_size = min(self.generation_workers, remaining, attempts_left)
             prompts: list[tuple[str, str]] = []
+            batch_contexts: list[dict] = []
             for _ in range(batch_size):
                 ctx = path_contexts[cursor]
                 cursor = (cursor + 1) % len(path_contexts)
+                batch_contexts.append(ctx)
                 prompts.append(
                     build_multi_hop_prompts(
                         schema,
@@ -255,11 +301,20 @@ MANDATORY RULES:
                 )
             attempts += len(prompts)
             parsed_batches = self._run_prompt_batch_parallel(prompts)
-            for parsed in parsed_batches:
+            for i, parsed in enumerate(parsed_batches):
                 items = self._normalize_parsed_items(parsed)
                 if not items:
                     continue
                 item = items[0]
+                if not str(item.get("question", "")).strip():
+                    continue
+                ctx = batch_contexts[i % len(batch_contexts)]
+                fixed_cypher, fixed_params = self._build_multi_hop_cypher_from_context(ctx)
+                if not fixed_cypher:
+                    continue
+                item["cypher"] = fixed_cypher
+                if fixed_params:
+                    item["params"] = fixed_params
                 item["complexity"] = complexity
                 out.append(item)
                 if len(out) >= num_questions:
@@ -482,14 +537,21 @@ MANDATORY RULES:
                         f"ground_truth={item.get('ground_truth')!r}"
                     )
                     continue
-                item["answer"] = self._build_answer_from_context(
-                    question=question,
-                    ground_truth=str(item.get("ground_truth", "")),
-                    fallback=str(item.get("answer", "")),
-                )
-                if is_insufficient_answer(item["answer"]):
-                    print(f"[ПРОПУСК] Недостаточный answer: {question} | answer={item['answer']!r}")
+                ground_truth_text = str(item.get("ground_truth", "")).strip()
+                if debug_only_cypher and has_precomputed_context and str(item.get("answer", "")).strip():
+                    # Для subgraph-deep-analytics сохраняем уже сгенерированный answer.
+                    candidate_answer = str(item.get("answer", "")).strip()
+                else:
+                    candidate_answer = self._build_answer_from_context(
+                        question=question,
+                        ground_truth=ground_truth_text,
+                        fallback=str(item.get("answer", "")),
+                    )
+
+                if is_insufficient_answer(candidate_answer):
+                    print(f"[ПРОПУСК] Недостаточный answer: {question} | answer={candidate_answer!r}")
                     continue
+                item["answer"] = candidate_answer
                 benchmark_dataset.append(item)
                 seen_exact_questions.add(normalized_question)
                 seen_normalized_questions.append(normalized_question)
